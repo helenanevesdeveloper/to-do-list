@@ -15,6 +15,11 @@ export function navigateTo(pathname: string): void {
   window.location.assign(pathname);
 }
 
+/** Reads the current pathname through the shared browser adapter. */
+export function getCurrentPathname(): string {
+  return window.location.pathname;
+}
+
 /** Schedules a browser timeout through a shared adapter. */
 export function scheduleTimeout(callback: () => void, delayMs: number): number {
   return window.setTimeout(callback, delayMs);

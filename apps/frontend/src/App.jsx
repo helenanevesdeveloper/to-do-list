@@ -1,64 +1,31 @@
-import DashboardPage from './pages/DashboardPage.jsx';
-import { Center, Container, Heading, Text } from '@chakra-ui/react';
-import HomePage from './pages/HomePage.jsx';
-import LoginPage from './pages/LoginPage.jsx';
-import RegisterPage from './pages/RegisterPage.jsx';
 import { useEffect } from 'react';
+import { getCurrentPathname, navigateTo } from './features/auth/shared/presentation/platform/browserApi';
 import { useAuth } from './features/auth/session/presentation/hooks/useAuth';
-import { navigateTo } from './features/auth/shared/presentation/platform/browserApi';
-
-const routes = {
-  '/': HomePage,
-  '/dashboard': DashboardPage,
-  '/login': LoginPage,
-  '/register': RegisterPage
-};
-
-const authenticatedRoutes = new Set(['/dashboard']);
-const protectedRoutes = new Set(['/dashboard']);
+import { resolveAppRoute } from './app/resolveAppRoute';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
 export default function App() {
   const { isAuthenticated, isHydrated } = useAuth();
-  const pathname = window.location.pathname;
-  const Page = routes[pathname];
-  const isAuthenticatedRoute = authenticatedRoutes.has(pathname);
-  const isProtectedRoute = protectedRoutes.has(pathname);
-  const shouldWaitForAuthHydration =
-    !isHydrated && (!isAuthenticatedRoute || isProtectedRoute);
-  const shouldRedirectAuthenticatedUser =
-    isHydrated && isAuthenticated && !isAuthenticatedRoute;
-  const shouldRedirectAnonymousUser =
-    isHydrated && !isAuthenticated && isProtectedRoute;
+  const resolution = resolveAppRoute({
+    pathname: getCurrentPathname(),
+    isAuthenticated,
+    isHydrated
+  });
 
   useEffect(() => {
-    if (shouldRedirectAuthenticatedUser) {
-      navigateTo('/dashboard');
-      return;
+    if (resolution.type === 'redirect') {
+      navigateTo(resolution.to);
     }
+  }, [resolution]);
 
-    if (shouldRedirectAnonymousUser) {
-      navigateTo('/login');
-    }
-  }, [shouldRedirectAnonymousUser, shouldRedirectAuthenticatedUser]);
-
-  if (
-    shouldWaitForAuthHydration ||
-    shouldRedirectAuthenticatedUser ||
-    shouldRedirectAnonymousUser
-  ) {
+  if (resolution.type === 'pending' || resolution.type === 'redirect') {
     return null;
   }
 
-  if (Page) {
-    return <Page />;
+  if (resolution.type === 'not-found') {
+    return <NotFoundPage />;
   }
 
-  return (
-    <Container maxW="3xl" py={14}>
-      <Center flexDirection="column" gap={3}>
-        <Heading size="md">Page not found</Heading>
-        <Text color="gray.600">Use /login or /register to access the authentication pages.</Text>
-      </Center>
-    </Container>
-  );
+  const { Page } = resolution;
+  return <Page />;
 }
