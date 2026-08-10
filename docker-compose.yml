@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-dropbox}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dropbox}
+      POSTGRES_DB: ${POSTGRES_DB:-dropbox}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dropbox} -d ${POSTGRES_DB:-dropbox}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  migrate:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-dropbox}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dropbox}
+      POSTGRES_DB: ${POSTGRES_DB:-dropbox}
+    entrypoint: ["/bin/sh", "/run_migrations.sh"]
+    volumes:
+      - ./apps/backend/app/infrastructure/persistence/migrations:/migrations:ro
+      - ./apps/backend/scripts/run_migrations.sh:/run_migrations.sh:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: ./apps/backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./apps/backend/.env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-dropbox}:${POSTGRES_PASSWORD:-dropbox}@db:5432/${POSTGRES_DB:-dropbox}
+    volumes:
+      - ./apps/backend:/app
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./apps/frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/frontend/.env
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

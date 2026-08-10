@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -eu
+
+commit_msg_file="$1"
+first_line="$(sed -n '1p' "$commit_msg_file" | tr -d '\r')"
+
+# Allow common Git-generated messages that are not authored as conventional commits.
+case "$first_line" in
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *)
+    exit 0
+    ;;
+esac
+
+pattern='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._/-]+\))?(!)?: .+'
+
+if printf '%s\n' "$first_line" | grep -Eq "$pattern"; then
+  exit 0
+fi
+
+cat >&2 <<'EOF'
+Commit message rejected.
+
+Use the Conventional Commits format:
+  <type>(optional-scope): <description>
+
+Examples:
+  feat(auth): add JWT refresh flow
+  fix(tasks): handle empty category filter
+  docs: describe local setup
+
+Allowed types:
+  build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+EOF
+
+exit 1

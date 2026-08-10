@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "perflint backend",
+      "type": "shell",
+      "command": "${workspaceFolder}/apps/backend/.venv/bin/perflint",
+      "args": [
+        "${workspaceFolder}/apps/backend/app",
+        "${workspaceFolder}/apps/backend/main.py"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
