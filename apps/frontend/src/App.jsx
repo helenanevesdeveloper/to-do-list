@@ -3,7 +3,6 @@ import { Center, Container, Heading, Text } from '@chakra-ui/react';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import UploadPage from './pages/UploadPage.jsx';
 import { useEffect } from 'react';
 import { useAuth } from './features/auth/session/presentation/hooks/useAuth';
 import { navigateTo } from './features/auth/shared/presentation/platform/browserApi';
@@ -12,12 +11,11 @@ const routes = {
   '/': HomePage,
   '/dashboard': DashboardPage,
   '/login': LoginPage,
-  '/register': RegisterPage,
-  '/upload': UploadPage
+  '/register': RegisterPage
 };
 
-const authenticatedRoutes = new Set(['/dashboard', '/upload']);
-const protectedRoutes = new Set(['/dashboard', '/upload']);
+const authenticatedRoutes = new Set(['/dashboard']);
+const protectedRoutes = new Set(['/dashboard']);
 
 export default function App() {
   const { isAuthenticated, isHydrated } = useAuth();
