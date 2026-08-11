@@ -2,21 +2,23 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 
-from app.application.ports.access_token_decoder import AccessTokenDecoder
-from app.application.use_cases.authenticate_user import AuthenticateUserUseCase
-from app.application.use_cases.logout import LogoutUseCase
-from app.application.use_cases.register_user import RegisterUserUseCase
-from app.domain.services.password_policy import PasswordPolicy
-from app.environment import load_environment
-from app.infrastructure.repositories.postgres_session_repository import (
-    PostgresSessionRepository,
+from app.auth.application.ports import AccessTokenDecoder
+from app.auth.application.use_cases import (
+    AuthenticateUserUseCase,
+    LogoutUseCase,
+    RegisterUserUseCase,
 )
-from app.infrastructure.repositories.postgres_user_repository import (
+from app.auth.domain.services import PasswordPolicy
+from app.environment import load_environment
+from app.auth.infrastructure.repositories import (
+    PostgresSessionRepository,
     PostgresUserRepository,
 )
-from app.infrastructure.security.jwt_access_token_decoder import JwtAccessTokenDecoder
-from app.infrastructure.security.jwt_access_token_issuer import JwtAccessTokenIssuer
-from app.infrastructure.security.password_hasher import PBKDF2PasswordHasher
+from app.auth.infrastructure.security import (
+    JwtAccessTokenDecoder,
+    JwtAccessTokenIssuer,
+    PBKDF2PasswordHasher,
+)
 
 
 @dataclass(slots=True, frozen=True)
