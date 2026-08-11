@@ -111,7 +111,10 @@ describe('httpClient', () => {
   it('identifies public routes for relative and absolute URLs', () => {
     expect(isPublicRouteRequest('/login')).toBe(true);
     expect(isPublicRouteRequest('/register?next=/dashboard')).toBe(true);
+    expect(isPublicRouteRequest('/api/auth/login')).toBe(true);
+    expect(isPublicRouteRequest('/api/auth/register?next=/dashboard')).toBe(true);
     expect(isPublicRouteRequest('http://localhost:8000/login')).toBe(true);
+    expect(isPublicRouteRequest('http://localhost:8000/api/auth/login')).toBe(true);
     expect(isPublicRouteRequest('http://localhost:8000/files')).toBe(false);
   });
 
@@ -137,7 +140,7 @@ describe('httpClient', () => {
 
     await expect(
       handleResponseError({
-        config: { url: '/login' },
+        config: { url: '/api/auth/login' },
         response: { status: 401 }
       })
     ).rejects.toMatchObject({
@@ -172,7 +175,7 @@ describe('httpClient', () => {
     ).toBe(true);
     expect(
       shouldLogoutAfterResponseError({
-        config: { url: '/login' },
+        config: { url: '/api/auth/login' },
         response: { status: 401 }
       })
     ).toBe(false);

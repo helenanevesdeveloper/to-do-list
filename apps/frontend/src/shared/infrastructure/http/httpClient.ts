@@ -7,7 +7,12 @@ import {
 
 const DEFAULT_API_BASE_URL = 'http://localhost:8000';
 const AUTHORIZATION_HEADER = 'Authorization';
-const PUBLIC_ROUTES = new Set(['/login', '/register']);
+const PUBLIC_ROUTES = new Set([
+  '/login',
+  '/register',
+  '/api/auth/login',
+  '/api/auth/register'
+]);
 
 export function resolveApiBaseUrl(): string {
   const configuredBaseUrl = import.meta.env.VITE_API_URL;
