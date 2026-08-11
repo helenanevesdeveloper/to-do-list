@@ -55,15 +55,3 @@ class SessionNotFoundError(DomainError):
 
 class SessionAlreadyRevokedError(DomainError):
     pass
-
-
-class FileStorageError(DomainError):
-    pass
-
-
-class UploadedFileAlreadyExistsError(DomainError):
-    pass
-
-
-class UploadedFileNotFoundError(DomainError):
-    pass

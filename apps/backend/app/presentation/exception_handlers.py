@@ -3,12 +3,9 @@ from fastapi.responses import JSONResponse
 
 from app.domain.exceptions import (
     DomainError,
-    FileStorageError,
     InactiveUserError,
     InvalidCredentialsError,
     UserAlreadyExistsError,
-    UploadedFileAlreadyExistsError,
-    UploadedFileNotFoundError,
     ValidationError,
 )
 
@@ -17,9 +14,6 @@ EXCEPTION_STATUS_MAP = {
     InvalidCredentialsError: status.HTTP_401_UNAUTHORIZED,
     InactiveUserError: status.HTTP_401_UNAUTHORIZED,
     UserAlreadyExistsError: status.HTTP_409_CONFLICT,
-    UploadedFileAlreadyExistsError: status.HTTP_409_CONFLICT,
-    FileStorageError: status.HTTP_503_SERVICE_UNAVAILABLE,
-    UploadedFileNotFoundError: status.HTTP_404_NOT_FOUND,
 }
 
 

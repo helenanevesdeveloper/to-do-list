@@ -5,9 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.environment import load_environment
 from app.presentation.controllers.auth_controller import router as auth_router
-from app.presentation.controllers.file_upload_controller import (
-    router as file_upload_router,
-)
 from app.presentation.exception_handlers import add_exception_handlers
 
 load_environment()
@@ -29,4 +26,3 @@ app.add_middleware(
 add_exception_handlers(app)
 
 app.include_router(auth_router)
-app.include_router(file_upload_router)

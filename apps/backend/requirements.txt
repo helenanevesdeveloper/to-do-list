@@ -1,10 +1,6 @@
 fastapi[standard]==0.115.6
 uvicorn==0.34.0
-boto3==1.35.90
-python-multipart==0.0.20
 email-validator==2.3.0
 psycopg[binary]==3.2.10
 PyJWT==2.10.1
 python-dotenv==1.1.1
-Pillow==11.2.1
-google-cloud-storage==3.10.1
