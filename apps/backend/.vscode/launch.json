@@ -5,13 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python Debugger: FastAPI",
+      "name": "Python Debugger: Django",
       "type": "debugpy",
       "request": "launch",
-      "module": "uvicorn",
-      "args": ["main:app", "--reload"],
-      "jinja": true,
-      "justMyCode": false,
+      "args": ["runserver"],
+      "django": true,
+      "autoStartBrowser": false,
+      "program": "${workspaceFolder}/manage.py"
     }
   ]
 }
