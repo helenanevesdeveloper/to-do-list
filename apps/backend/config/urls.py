@@ -36,10 +36,6 @@ class ApiRootView(APIView):
             {
                 "auth": request.build_absolute_uri("auth/"),
                 "tasks": request.build_absolute_uri("tasks/"),
-                "task_categories": request.build_absolute_uri(
-                    "tasks/categories/"
-                ),
-                "task_sharing": request.build_absolute_uri("tasks/sharing/"),
             }
         )
 
