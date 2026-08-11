@@ -1,13 +1,13 @@
 import os
 from collections.abc import Iterator
 from datetime import UTC, datetime
-from uuid import uuid4
 
 import psycopg
 import pytest
 
 from app.auth.domain.entities.user import User
 from app.shared.exceptions import UserAlreadyExistsError
+from app.shared.runtime import generate_uuid
 from app.auth.domain.value_objects.email import Email
 from app.environment import load_environment
 from app.auth.infrastructure.repositories.postgres_user_repository import (
@@ -55,8 +55,8 @@ def test_save_persists_user_and_finders_return_saved_user(
     created_user_ids: list[str],
 ) -> None:
     user = User(
-        id=f"user-{uuid4()}",
-        email=Email(f"{uuid4().hex}@example.com"),
+        id=generate_uuid(),
+        email=Email(f"{generate_uuid()}@example.com"),
         password_hash="hashed-password",
         created_at=datetime(2026, 3, 4, 12, 0, tzinfo=UTC),
     )
@@ -81,7 +81,7 @@ def test_save_persists_user_and_finders_return_saved_user(
 def test_find_by_id_returns_none_when_user_does_not_exist(
     repository: PostgresUserRepository,
 ) -> None:
-    result = repository.find_by_id(f"missing-{uuid4()}")
+    result = repository.find_by_id(generate_uuid())
 
     assert result is None
 
@@ -90,9 +90,9 @@ def test_save_raises_for_duplicate_email(
     repository: PostgresUserRepository,
     created_user_ids: list[str],
 ) -> None:
-    email = Email(f"{uuid4().hex}@example.com")
+    email = Email(f"{generate_uuid()}@example.com")
     existing_user = User(
-        id=f"user-{uuid4()}",
+        id=generate_uuid(),
         email=email,
         password_hash="hashed-password",
         created_at=datetime(2026, 3, 4, 12, 30, tzinfo=UTC),
@@ -101,7 +101,7 @@ def test_save_raises_for_duplicate_email(
     created_user_ids.append(existing_user.id)
 
     duplicate_user = User(
-        id=f"user-{uuid4()}",
+        id=generate_uuid(),
         email=email,
         password_hash="another-hash",
         created_at=datetime(2026, 3, 4, 12, 31, tzinfo=UTC),

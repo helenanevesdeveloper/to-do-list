@@ -1,12 +1,12 @@
 import os
 from collections.abc import Iterator
 from datetime import UTC, datetime
-from uuid import uuid4
 
 import psycopg
 import pytest
 
 from app.auth.domain.entities.auth_session import AuthSession
+from app.shared.runtime import generate_uuid
 from app.environment import load_environment
 from app.auth.infrastructure.repositories.postgres_session_repository import (
     PostgresSessionRepository,
@@ -70,9 +70,9 @@ def test_save_and_revoke_persist_session_state(
     created_session_ids: list[str],
     created_user_ids: list[str],
 ) -> None:
-    user_id = f"user-{uuid4()}"
+    user_id = generate_uuid()
     session = AuthSession(
-        id=f"session-{uuid4()}",
+        id=generate_uuid(),
         user_id=user_id,
         created_at=datetime(2026, 3, 30, 10, 0, tzinfo=UTC),
         expires_at=datetime(2026, 3, 30, 10, 15, tzinfo=UTC),
@@ -89,7 +89,7 @@ def test_save_and_revoke_persist_session_state(
                 """,
                 (
                     user_id,
-                    f"{uuid4().hex}@example.com",
+                    f"{generate_uuid()}@example.com",
                     "hashed-password",
                     True,
                     datetime(2026, 3, 30, 9, 55, tzinfo=UTC),
@@ -120,8 +120,8 @@ def test_revoke_updates_existing_session(
     created_session_ids: list[str],
     created_user_ids: list[str],
 ) -> None:
-    user_id = f"user-{uuid4()}"
-    session_id = f"session-{uuid4()}"
+    user_id = generate_uuid()
+    session_id = generate_uuid()
     created_session_ids.append(session_id)
     created_user_ids.append(user_id)
 
@@ -134,7 +134,7 @@ def test_revoke_updates_existing_session(
                 """,
                 (
                     user_id,
-                    f"{uuid4().hex}@example.com",
+                    f"{generate_uuid()}@example.com",
                     "hashed-password",
                     True,
                     datetime(2026, 3, 30, 9, 55, tzinfo=UTC),
@@ -181,7 +181,7 @@ def test_revoke_returns_none_when_session_does_not_exist(
     repository: PostgresSessionRepository,
 ) -> None:
     result = repository.revoke(
-        session_id=f"missing-{uuid4()}",
+        session_id=generate_uuid(),
         revoked_at=datetime(2026, 3, 30, 10, 5, tzinfo=UTC),
     )
 
