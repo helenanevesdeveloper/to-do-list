@@ -1,7 +1,7 @@
 """Shared runtime helpers."""
 
 from datetime import UTC, datetime
-from uuid import uuid4
+from uuid import uuid7
 
 
 def utc_now() -> datetime:
@@ -9,4 +9,4 @@ def utc_now() -> datetime:
 
 
 def generate_uuid() -> str:
-    return str(uuid4())
+    return str(uuid7())
