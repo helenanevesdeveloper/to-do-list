@@ -1,28 +1,5 @@
 import os
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
-from app.environment import load_environment
-from app.presentation.controllers.auth_controller import router as auth_router
-from app.presentation.exception_handlers import add_exception_handlers
-
-load_environment()
-
-app = FastAPI()
-allowed_origins = [
-    origin.strip()
-    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
-    if origin.strip()
-]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Content-Disposition"],
-)
-add_exception_handlers(app)
-
-app.include_router(auth_router)
+from config.asgi import application as app

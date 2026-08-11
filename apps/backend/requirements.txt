@@ -1,6 +1,8 @@
-fastapi[standard]==0.115.6
 uvicorn==0.34.0
-email-validator==2.3.0
 psycopg[binary]==3.2.10
 PyJWT==2.10.1
 python-dotenv==1.1.1
+Django==6.0.8
+djangorestframework==3.17.1
+drf-spectacular==0.30.0
+django-cors-headers==4.9.0

@@ -1,0 +1,11 @@
+"""ASGI config for the Django backend."""
+
+import os
+
+from django.core.asgi import (  # type: ignore[import-untyped]
+    get_asgi_application,
+)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+
+application = get_asgi_application()
