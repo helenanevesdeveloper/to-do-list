@@ -10,8 +10,8 @@ from app.infrastructure.security.jwt_access_token_issuer import (
 def test_jwt_access_token_issuer_generates_hs256_token_with_expected_claims() -> None:
     issuer = JwtAccessTokenIssuer(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
         expires_in_seconds=900,
         now=lambda: datetime(2026, 3, 24, 12, 0, tzinfo=UTC),
     )
@@ -22,17 +22,17 @@ def test_jwt_access_token_issuer_generates_hs256_token_with_expected_claims() ->
         token,
         "super-secret-key",
         algorithms=["HS256"],
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
         options={"verify_exp": False},
     )
 
     assert header == {"alg": "HS256", "typ": "JWT"}
     assert payload == {
-        "aud": "dropbox-frontend",
+        "aud": "todo-list-frontend",
         "exp": 1774354500,
         "iat": 1774353600,
-        "iss": "dropbox-backend",
+        "iss": "todo-list-backend",
         "sid": "session-456",
         "sub": "user-123",
     }

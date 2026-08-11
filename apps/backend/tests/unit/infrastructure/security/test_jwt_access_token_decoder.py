@@ -15,15 +15,15 @@ def test_jwt_access_token_decoder_returns_session_id_from_valid_token() -> None:
     issued_at = datetime.now(UTC)
     issuer = JwtAccessTokenIssuer(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
         expires_in_seconds=900,
         now=lambda: issued_at,
     )
     decoder = JwtAccessTokenDecoder(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
     )
 
     token = issuer.issue("user-123", "session-456")
@@ -37,15 +37,15 @@ def test_jwt_access_token_decoder_returns_user_id_from_valid_token() -> None:
     issued_at = datetime.now(UTC)
     issuer = JwtAccessTokenIssuer(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
         expires_in_seconds=900,
         now=lambda: issued_at,
     )
     decoder = JwtAccessTokenDecoder(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
     )
 
     token = issuer.issue("user-123", "session-456")
@@ -59,14 +59,14 @@ def test_jwt_access_token_decoder_raises_for_token_without_sid() -> None:
     issued_at = datetime.now(UTC)
     decoder = JwtAccessTokenDecoder(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
     )
     token = jwt.encode(
         {
             "sub": "user-123",
-            "iss": "dropbox-backend",
-            "aud": "dropbox-frontend",
+            "iss": "todo-list-backend",
+            "aud": "todo-list-frontend",
             "iat": int(issued_at.timestamp()),
             "exp": int(issued_at.timestamp()) + 900,
         },
@@ -83,14 +83,14 @@ def test_jwt_access_token_decoder_raises_for_token_without_sub() -> None:
     issued_at = datetime.now(UTC)
     decoder = JwtAccessTokenDecoder(
         secret="super-secret-key",
-        issuer="dropbox-backend",
-        audience="dropbox-frontend",
+        issuer="todo-list-backend",
+        audience="todo-list-frontend",
     )
     token = jwt.encode(
         {
             "sid": "session-456",
-            "iss": "dropbox-backend",
-            "aud": "dropbox-frontend",
+            "iss": "todo-list-backend",
+            "aud": "todo-list-frontend",
             "iat": int(issued_at.timestamp()),
             "exp": int(issued_at.timestamp()) + 900,
         },
