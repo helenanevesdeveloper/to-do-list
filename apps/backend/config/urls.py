@@ -14,8 +14,8 @@ from rest_framework.views import APIView  # type: ignore[import-untyped]
 class HealthcheckView(APIView):
     """Expose a minimal healthcheck endpoint for local/runtime probes."""
 
-    authentication_classes: list[type] = []
-    permission_classes: list[type] = []
+    authentication_classes = ()
+    permission_classes = ()
 
     @extend_schema(exclude=True)
     def get(self, _request):
@@ -26,8 +26,8 @@ class HealthcheckView(APIView):
 class ApiRootView(APIView):
     """Expose the top-level API entrypoints for discovery."""
 
-    authentication_classes: list[type] = []
-    permission_classes: list[type] = []
+    authentication_classes = ()
+    permission_classes = ()
 
     @extend_schema(exclude=True)
     def get(self, request):
@@ -40,7 +40,7 @@ class ApiRootView(APIView):
         )
 
 
-urlpatterns = [
+urlpatterns = (
     path("health/", HealthcheckView.as_view(), name="healthcheck"),
     path("openapi.json", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -52,4 +52,4 @@ urlpatterns = [
     path("api/", ApiRootView.as_view(), name="api-root"),
     path("api/auth/", include("app.auth.presentation.urls")),
     path("api/tasks/", include("app.tasks.presentation.urls")),
-]
+)
