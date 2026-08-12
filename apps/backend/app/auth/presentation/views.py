@@ -8,10 +8,10 @@ from app.auth.application.dto import (
     LogoutInput,
     RegisterUserInput,
 )
-from app.auth.presentation.auth_context import resolve_current_auth_context
+from app.auth.presentation.drf_authentication import JwtAuthContext
+from app.shared.http import AuthenticatedAPIView
 
 from .dependencies import (
-    get_access_token_decoder,
     get_authenticate_user_use_case,
     get_logout_use_case,
     get_register_user_use_case,
@@ -29,6 +29,9 @@ from .serializers import (
 
 
 class AuthOverviewView(APIView):
+    authentication_classes: list[type] = []
+    permission_classes: list[type] = []
+
     @extend_schema(
         tags=["auth"],
         operation_id="auth_module_status",
@@ -45,6 +48,9 @@ class AuthOverviewView(APIView):
 
 
 class RegisterUserView(APIView):
+    authentication_classes: list[type] = []
+    permission_classes: list[type] = []
+
     @extend_schema(
         tags=["auth"],
         operation_id="register_user_register_post",
@@ -80,6 +86,9 @@ class RegisterUserView(APIView):
 
 
 class LoginUserView(APIView):
+    authentication_classes: list[type] = []
+    permission_classes: list[type] = []
+
     @extend_schema(
         tags=["auth"],
         operation_id="login_user_login_post",
@@ -108,7 +117,8 @@ class LoginUserView(APIView):
         return Response(LoginResponse(payload).data)
 
 
-class LogoutUserView(APIView):
+class LogoutUserView(AuthenticatedAPIView):
+
     @extend_schema(
         tags=["auth"],
         operation_id="logout_user_logout_post",
@@ -129,10 +139,9 @@ class LogoutUserView(APIView):
         description="Revokes the current authenticated session.",
     )
     def post(self, request):
-        auth_context = resolve_current_auth_context(
-            request.headers.get("Authorization"),
-            decoder=get_access_token_decoder(),
-        )
+        auth_context = request.auth
+        if not isinstance(auth_context, JwtAuthContext):
+            raise TypeError("request.auth must be a JwtAuthContext")
         use_case = get_logout_use_case()
         use_case.execute(LogoutInput(session_id=auth_context.session_id))
         return Response(status=status.HTTP_204_NO_CONTENT)

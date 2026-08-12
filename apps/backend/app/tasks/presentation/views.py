@@ -2,20 +2,16 @@ from dataclasses import asdict
 from urllib.parse import urlencode
 
 from drf_spectacular.utils import extend_schema
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from typing import cast
 
-from app.auth.presentation.drf_authentication import JwtAuthentication
+from app.shared.http import AuthenticatedAPIView
 
 from .dependencies import get_list_tasks_use_case
 from .serializers import TaskListQuerySerializer, TaskListResponseSerializer
 
 
-class TaskListView(APIView):
-    authentication_classes = [JwtAuthentication]
-    permission_classes = [IsAuthenticated]
+class TaskListView(AuthenticatedAPIView):
 
     @extend_schema(
         tags=["tasks"],
