@@ -1,3 +1,5 @@
+"""OpenAPI contract tests for the login endpoint."""
+
 import yaml
 
 
@@ -21,6 +23,7 @@ def test_openapi_declares_login_endpoint_contract(client) -> None:
     assert login_operation["responses"]["422"]["content"][
         "application/json"
     ]["schema"] == {"$ref": "#/components/schemas/HTTPValidationError"}
+    assert "security" not in login_operation
 
 
 def test_openapi_declares_login_request_and_response_schemas(

@@ -1,3 +1,5 @@
+"""Unit tests for the login response serializer."""
+
 from app.auth.presentation.serializers import LoginResponse
 
 

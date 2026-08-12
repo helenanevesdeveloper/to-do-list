@@ -1,3 +1,5 @@
+"""Integration tests for the Postgres user repository."""
+
 import os
 from collections.abc import Iterator
 from datetime import UTC, datetime

@@ -1,3 +1,5 @@
+"""Unit tests for shared validation helpers."""
+
 from datetime import UTC, datetime
 
 import pytest

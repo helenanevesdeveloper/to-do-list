@@ -1,3 +1,5 @@
+"""Unit tests for the user entity."""
+
 from datetime import UTC, datetime
 
 import pytest

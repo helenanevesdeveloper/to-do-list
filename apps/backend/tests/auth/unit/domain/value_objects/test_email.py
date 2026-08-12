@@ -1,3 +1,5 @@
+"""Unit tests for the email value object."""
+
 import pytest
 
 from app.shared.exceptions import EmptyFieldError, InvalidEmailError

@@ -1,3 +1,5 @@
+"""Unit tests for the authenticate-user input DTO."""
+
 from app.auth.application.dto.authenticate_user_input import (
     AuthenticateUserInput,
 )

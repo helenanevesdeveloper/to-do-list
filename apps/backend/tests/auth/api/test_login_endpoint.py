@@ -1,3 +1,5 @@
+"""API tests for the login endpoint."""
+
 import json
 
 from app.auth.application.dto.authenticate_user_output import (

@@ -1,3 +1,5 @@
+"""Unit tests for the login request serializer."""
+
 import pytest
 
 from app.auth.presentation.serializers import LoginRequest

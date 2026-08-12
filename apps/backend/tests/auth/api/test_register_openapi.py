@@ -1,3 +1,5 @@
+"""OpenAPI contract tests for the register endpoint."""
+
 import yaml
 
 

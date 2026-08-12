@@ -1,3 +1,5 @@
+"""Unit tests for the logout input DTO."""
+
 from app.auth.application.dto.logout_input import LogoutInput
 
 

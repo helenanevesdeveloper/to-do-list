@@ -1,3 +1,5 @@
+"""API tests for the register endpoint."""
+
 import json
 
 from app.auth.application.dto.register_user_output import RegisterUserOutput

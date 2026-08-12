@@ -1,3 +1,5 @@
+"""Unit tests for the password policy service."""
+
 import pytest
 
 from app.shared.exceptions import EmptyFieldError, WeakPasswordError

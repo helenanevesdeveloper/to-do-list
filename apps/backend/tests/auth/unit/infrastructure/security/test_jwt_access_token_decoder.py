@@ -1,3 +1,5 @@
+"""Unit tests for the JWT access-token decoder."""
+
 from datetime import UTC, datetime
 
 import jwt
