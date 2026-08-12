@@ -42,6 +42,7 @@ def _build_database_config() -> dict[str, str | int | Path]:
 
     if scheme == "sqlite":
         sqlite_path = unquote(parsed.path or "")
+        sqlite_name: str | Path
         if sqlite_path in {"", "/:memory:"}:
             sqlite_name = ":memory:"
         else:

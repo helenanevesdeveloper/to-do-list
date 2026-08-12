@@ -1,2 +1,5 @@
 [MASTER]
-load-plugins=perflint
+load-plugins=perflint,pylint_django
+
+[pylint_django]
+django-settings-module=config.settings
