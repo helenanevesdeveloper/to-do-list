@@ -5,6 +5,10 @@ from typing import cast
 
 from rest_framework import serializers
 
+from app.tasks.application.dto.create_tasks_input import (
+    CreateTaskItemInput,
+    CreateTasksInput,
+)
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
 
 
@@ -32,6 +36,46 @@ class TaskListQuerySerializer(serializers.Serializer):
         )
 
 
+class TaskCreateItemRequestSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=255)
+    description = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        default=None,
+    )
+    category_id = serializers.CharField(required=False, allow_null=True, default=None)
+    is_completed = serializers.BooleanField(required=False, default=False)
+
+
+class TaskCreateRequestSerializer(serializers.Serializer):
+    items = TaskCreateItemRequestSerializer(many=True, allow_empty=False)
+
+    def to_dto(self, *, user_id: str) -> CreateTasksInput:
+        data = cast(dict[str, object], self.validated_data)
+        raw_items = cast(list[dict[str, object]], data["items"])
+
+        return CreateTasksInput(
+            user_id=user_id,
+            items=[
+                CreateTaskItemInput(
+                    title=cast(str, item["title"]),
+                    description=self._normalize_optional_text(
+                        cast(str | None, item.get("description"))
+                    ),
+                    category_id=cast(str | None, item.get("category_id")),
+                    is_completed=cast(bool, item["is_completed"]),
+                )
+                for item in raw_items
+            ],
+        )
+
+    def _normalize_optional_text(self, value: str | None) -> str | None:
+        if value is None or value == "":
+            return None
+        return value
+
+
 class TaskCategoryResponseSerializer(serializers.Serializer):
     id = serializers.CharField()
     name = serializers.CharField()
@@ -40,7 +84,7 @@ class TaskCategoryResponseSerializer(serializers.Serializer):
 
 class TaskSharingSummarySerializer(serializers.Serializer):
     is_owner = serializers.BooleanField()
-    permission = serializers.CharField()
+    permission = serializers.CharField(allow_null=True)
     is_shared = serializers.BooleanField()
     shared_count = serializers.IntegerField()
 
@@ -48,7 +92,7 @@ class TaskSharingSummarySerializer(serializers.Serializer):
 class TaskItemResponseSerializer(serializers.Serializer):
     id = serializers.CharField()
     title = serializers.CharField()
-    description = serializers.CharField()
+    description = serializers.CharField(allow_null=True)
     is_completed = serializers.BooleanField()
     created_at = serializers.CharField()
     updated_at = serializers.CharField()
@@ -60,6 +104,11 @@ class TaskListResponseSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     next = serializers.CharField(allow_null=True)
     previous = serializers.CharField(allow_null=True)
+    results = TaskItemResponseSerializer(many=True)
+
+
+class TaskCreateResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
     results = TaskItemResponseSerializer(many=True)
 
 

@@ -9,7 +9,7 @@ the real implementation.
 
 from typing import Any
 
-from app.tasks.application.use_cases import ListTasksUseCase
+from app.tasks.application.use_cases import CreateTasksUseCase, ListTasksUseCase
 from app.container import build_container
 
 _OVERRIDES: dict[str, Any] = {}
@@ -38,6 +38,15 @@ def get_list_tasks_use_case() -> ListTasksUseCase:
     return _resolve(
         "list_tasks_use_case",
         lambda: build_container().list_tasks_use_case,
+    )
+
+
+def get_create_tasks_use_case() -> CreateTasksUseCase:
+    """Resolve the create-tasks use case for the current request path."""
+
+    return _resolve(
+        "create_tasks_use_case",
+        lambda: build_container().create_tasks_use_case,
     )
 
 

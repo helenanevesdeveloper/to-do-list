@@ -20,7 +20,11 @@ from app.auth.infrastructure.security import (
     PBKDF2PasswordHasher,
 )
 
+from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
+from app.tasks.infrastructure.repositories.django_orm_task_command_repository import (
+    DjangoOrmTaskCommandRepository,
+)
 from app.tasks.infrastructure.repositories.django_orm_task_query_repository import (
     DjangoOrmTaskQueryRepository,
 )
@@ -33,6 +37,7 @@ class AppContainer:
     logout_use_case: LogoutUseCase
     access_token_decoder: AccessTokenDecoder
     user_repository: UserRepository
+    create_tasks_use_case: CreateTasksUseCase
     list_tasks_use_case: ListTasksUseCase
 
 
@@ -81,6 +86,7 @@ def build_container() -> AppContainer:
         audience=jwt_audience,
     )
 
+    task_command_repository = DjangoOrmTaskCommandRepository()
     task_query_repository = DjangoOrmTaskQueryRepository()
 
     return AppContainer(
@@ -101,6 +107,9 @@ def build_container() -> AppContainer:
         ),
         access_token_decoder=access_token_decoder,
         user_repository=user_repository,
+        create_tasks_use_case=CreateTasksUseCase(
+            task_command_repository=task_command_repository
+        ),
         list_tasks_use_case=ListTasksUseCase(
             task_query_repository=task_query_repository
         ),

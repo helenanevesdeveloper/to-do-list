@@ -2,13 +2,19 @@ from dataclasses import asdict
 from urllib.parse import urlencode
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.response import Response
 from typing import cast
 
 from app.shared.http import AuthenticatedAPIView
 
-from .dependencies import get_list_tasks_use_case
-from .serializers import TaskListQuerySerializer, TaskListResponseSerializer
+from .dependencies import get_create_tasks_use_case, get_list_tasks_use_case
+from .serializers import (
+    TaskCreateRequestSerializer,
+    TaskCreateResponseSerializer,
+    TaskListQuerySerializer,
+    TaskListResponseSerializer,
+)
 
 
 class TaskListView(AuthenticatedAPIView):
@@ -35,6 +41,30 @@ class TaskListView(AuthenticatedAPIView):
             "results": [asdict(item) for item in result.items],
         }
         return Response(TaskListResponseSerializer(payload).data)
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_create_tasks_post",
+        request=TaskCreateRequestSerializer,
+        responses={201: TaskCreateResponseSerializer},
+        description="Create tasks in batch",
+    )
+    def post(self, request):
+        payload = cast(
+            TaskCreateRequestSerializer, TaskCreateRequestSerializer(data=request.data)
+        )
+        payload.is_valid(raise_exception=True)
+
+        use_case = get_create_tasks_use_case()
+        result = use_case.execute(payload.to_dto(user_id=request.user.id))
+        response_body = {
+            "count": len(result.items),
+            "results": [asdict(item) for item in result.items],
+        }
+        return Response(
+            TaskCreateResponseSerializer(response_body).data,
+            status=status.HTTP_201_CREATED,
+        )
 
     def _build_next_url(self, request, result) -> str | None:
         """Build the next-page URL in the API response.
