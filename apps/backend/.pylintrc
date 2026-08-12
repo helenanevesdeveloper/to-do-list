@@ -1,5 +1,6 @@
 [MASTER]
 load-plugins=perflint,pylint_django
+init-hook=import sys; from pathlib import Path; sys.path.insert(0, str(Path.cwd() / "apps/backend") if (Path.cwd() / "apps/backend").exists() else str(Path.cwd()))
 
 [pylint_django]
 django-settings-module=config.settings
