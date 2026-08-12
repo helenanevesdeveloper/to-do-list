@@ -1,15 +1,22 @@
+from dataclasses import asdict
 from urllib.parse import urlencode
 
 from drf_spectacular.utils import extend_schema
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from typing import cast
+
+from app.auth.presentation.drf_authentication import JwtAuthentication
 
 from .dependencies import get_list_tasks_use_case
 from .serializers import TaskListQuerySerializer, TaskListResponseSerializer
 
 
 class TaskListView(APIView):
+    authentication_classes = [JwtAuthentication]
+    permission_classes = [IsAuthenticated]
+
     @extend_schema(
         tags=["tasks"],
         parameters=[TaskListQuerySerializer],
@@ -29,7 +36,7 @@ class TaskListView(APIView):
             "count": result.total,
             "next": self._build_next_url(request, result),
             "previous": self._build_previous_url(request, result),
-            "results": [item.__dict__ for item in result.items],
+            "results": [asdict(item) for item in result.items],
         }
         return Response(TaskListResponseSerializer(payload).data)
 

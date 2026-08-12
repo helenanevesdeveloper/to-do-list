@@ -100,3 +100,6 @@ class JwtAuthentication(BaseAuthentication):
                 access_token=token,
             ),
         )
+
+    def authenticate_header(self, request) -> str:
+        return self.keyword
