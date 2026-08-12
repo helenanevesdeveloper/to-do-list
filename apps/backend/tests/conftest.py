@@ -7,13 +7,13 @@ import django
 import pytest
 from django.test import Client
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+django.setup()
+
 from app.auth.presentation.dependencies import clear_dependency_overrides as clear_auth
 from app.tasks.presentation.dependencies import (
     clear_dependency_overrides as clear_tasks,
 )
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-django.setup()
 
 
 @pytest.fixture
