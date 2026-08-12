@@ -3,6 +3,16 @@
   "python.analysis.extraPaths": [
     "${workspaceFolder}/apps/backend"
   ],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.path": [
+    "${interpreter}",
+    "-m",
+    "mypy"
+  ],
+  "mypy-type-checker.cwd": "${workspaceFolder}/apps/backend",
+  "mypy-type-checker.args": [
+    "--config-file=${workspaceFolder}/apps/backend/mypy.ini"
+  ],
   "pylint.importStrategy": "fromEnvironment",
   "pylint.path": [
     "${interpreter}",
