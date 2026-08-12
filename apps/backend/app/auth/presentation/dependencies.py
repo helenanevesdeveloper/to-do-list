@@ -9,7 +9,7 @@ the real implementation.
 
 from typing import Any
 
-from app.auth.application.ports import AccessTokenDecoder
+from app.auth.application.ports import AccessTokenDecoder, UserRepository
 from app.auth.application.use_cases import (
     AuthenticateUserUseCase,
     LogoutUseCase,
@@ -67,6 +67,15 @@ def get_access_token_decoder() -> AccessTokenDecoder:
     return _resolve(
         "access_token_decoder",
         lambda: build_container().access_token_decoder,
+    )
+
+
+def get_user_repository() -> UserRepository:
+    """Resolve the user repository used by JWT-backed DRF authentication."""
+
+    return _resolve(
+        "user_repository",
+        lambda: build_container().user_repository,
     )
 
 

@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 
-from app.auth.application.ports import AccessTokenDecoder
+from app.auth.application.ports import AccessTokenDecoder, UserRepository
 from app.auth.application.use_cases import (
     AuthenticateUserUseCase,
     LogoutUseCase,
@@ -32,6 +32,7 @@ class AppContainer:
     authenticate_user_use_case: AuthenticateUserUseCase
     logout_use_case: LogoutUseCase
     access_token_decoder: AccessTokenDecoder
+    user_repository: UserRepository
     list_tasks_use_case: ListTasksUseCase
 
 
@@ -99,6 +100,7 @@ def build_container() -> AppContainer:
             session_repository=session_repository,
         ),
         access_token_decoder=access_token_decoder,
+        user_repository=user_repository,
         list_tasks_use_case=ListTasksUseCase(
             task_query_repository=task_query_repository
         ),
