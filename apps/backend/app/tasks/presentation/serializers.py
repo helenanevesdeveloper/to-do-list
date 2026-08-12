@@ -1,3 +1,6 @@
+# pylint: disable=abstract-method,missing-class-docstring,missing-function-docstring
+"""Serializers for the tasks presentation layer."""
+
 from typing import cast
 
 from rest_framework import serializers
