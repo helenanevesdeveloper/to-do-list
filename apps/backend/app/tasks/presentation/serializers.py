@@ -5,6 +5,7 @@ from typing import cast
 
 from rest_framework import serializers
 
+from app.tasks.application.dto.create_task_category_input import CreateTaskCategoryInput
 from app.tasks.application.dto.create_tasks_input import (
     CreateTaskItemInput,
     CreateTasksInput,
@@ -76,10 +77,42 @@ class TaskCreateRequestSerializer(serializers.Serializer):
         return value
 
 
+class TaskCategoryCreateRequestSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=120)
+    color = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        default=None,
+        max_length=32,
+    )
+
+    def to_dto(self, *, user_id: str) -> CreateTaskCategoryInput:
+        data = cast(dict[str, object], self.validated_data)
+        return CreateTaskCategoryInput(
+            user_id=user_id,
+            name=cast(str, data["name"]),
+            color=self._normalize_optional_text(cast(str | None, data.get("color"))),
+        )
+
+    def _normalize_optional_text(self, value: str | None) -> str | None:
+        if value is None or value == "":
+            return None
+        return value
+
+
 class TaskCategoryResponseSerializer(serializers.Serializer):
     id = serializers.CharField()
     name = serializers.CharField()
     color = serializers.CharField(allow_null=True)
+
+
+class TaskCategoryItemResponseSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    name = serializers.CharField()
+    color = serializers.CharField(allow_null=True)
+    created_at = serializers.CharField()
+    updated_at = serializers.CharField()
 
 
 class TaskSharingSummarySerializer(serializers.Serializer):

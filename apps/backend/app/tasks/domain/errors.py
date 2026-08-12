@@ -11,3 +11,17 @@ class InvalidTaskPayloadError(ValidationError):
     @property
     def issues(self) -> list[ValidationIssue] | None:
         return self._issues
+
+
+class InvalidTaskCategoryPayloadError(ValidationError):
+    def __init__(self, issues: list[ValidationIssue]) -> None:
+        if not issues:
+            raise ValueError(
+                "InvalidTaskCategoryPayloadError requires at least one issue"
+            )
+        super().__init__(issues[0].message)
+        self._issues = issues
+
+    @property
+    def issues(self) -> list[ValidationIssue] | None:
+        return self._issues

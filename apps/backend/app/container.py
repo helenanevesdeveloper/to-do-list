@@ -20,8 +20,12 @@ from app.auth.infrastructure.security import (
     PBKDF2PasswordHasher,
 )
 
+from app.tasks.application.use_cases.create_task_category import CreateTaskCategoryUseCase
 from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
+from app.tasks.infrastructure.repositories.django_orm_task_category_command_repository import (
+    DjangoOrmTaskCategoryCommandRepository,
+)
 from app.tasks.infrastructure.repositories.django_orm_task_command_repository import (
     DjangoOrmTaskCommandRepository,
 )
@@ -37,6 +41,7 @@ class AppContainer:
     logout_use_case: LogoutUseCase
     access_token_decoder: AccessTokenDecoder
     user_repository: UserRepository
+    create_task_category_use_case: CreateTaskCategoryUseCase
     create_tasks_use_case: CreateTasksUseCase
     list_tasks_use_case: ListTasksUseCase
 
@@ -86,6 +91,7 @@ def build_container() -> AppContainer:
         audience=jwt_audience,
     )
 
+    task_category_command_repository = DjangoOrmTaskCategoryCommandRepository()
     task_command_repository = DjangoOrmTaskCommandRepository()
     task_query_repository = DjangoOrmTaskQueryRepository()
 
@@ -107,6 +113,9 @@ def build_container() -> AppContainer:
         ),
         access_token_decoder=access_token_decoder,
         user_repository=user_repository,
+        create_task_category_use_case=CreateTaskCategoryUseCase(
+            task_category_command_repository=task_category_command_repository
+        ),
         create_tasks_use_case=CreateTasksUseCase(
             task_command_repository=task_command_repository
         ),
