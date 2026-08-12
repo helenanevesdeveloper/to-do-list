@@ -64,6 +64,9 @@ class DjangoOrmTaskQueryRepository(TaskQueryRepository):
             current_user_permission=Subquery(share_for_user.values("permission")[:1]),
         )
 
+        queryset = self._apply_scope(queryset, input_dto)
+        queryset = self._apply_filters(queryset, input_dto)
+
         total = queryset.count()
         offset = (input_dto.page - 1) * input_dto.page_size
         rows = queryset.order_by("-created_at")[offset : offset + input_dto.page_size]
@@ -75,6 +78,23 @@ class DjangoOrmTaskQueryRepository(TaskQueryRepository):
             page=input_dto.page,
             page_size=input_dto.page_size,
         )
+
+    def _apply_scope(self, queryset, input_dto: ListTasksInput):
+        if input_dto.scope == "owned":
+            return queryset.filter(owner_user_id=input_dto.user_id)
+        if input_dto.scope == "shared":
+            return queryset.filter(shares__shared_with_user_id=input_dto.user_id)
+        return queryset.filter(
+            Q(owner_user_id=input_dto.user_id)
+            | Q(shares__shared_with_user_id=input_dto.user_id)
+        ).distinct()
+
+    def _apply_filters(self, queryset, input_dto: ListTasksInput):
+        if input_dto.is_completed is not None:
+            queryset = queryset.filter(is_completed=input_dto.is_completed)
+        if input_dto.category_id is not None:
+            queryset = queryset.filter(category_id=input_dto.category_id)
+        return queryset
 
     def _to_list_item(self, row: TaskListRow) -> TaskListItem:
         category = None
