@@ -22,7 +22,7 @@ from app.tasks.application.dto.list_tasks_output import (
     TaskSharingSummary,
 )
 from app.tasks.application.ports.task_query_repository import TaskQueryRepository
-from app.tasks.infrastructure.orm.models import (
+from app.tasks.models import (
     TaskModel,
     TaskShareModel,
     TaskCategoryModel,

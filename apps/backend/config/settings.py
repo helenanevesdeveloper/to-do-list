@@ -79,7 +79,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "app.auth.presentation.apps.AuthApiConfig",
-    "app.tasks.presentation.apps.TasksApiConfig",
+    "app.tasks.apps.TasksConfig",
 ]
 
 MIDDLEWARE = [
