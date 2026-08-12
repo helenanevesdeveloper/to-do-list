@@ -6,3 +6,6 @@ class AuthApiConfig(AppConfig):
     name = "app.auth.presentation"
     label = "auth_api"
     verbose_name = "Authentication API"
+
+    def ready(self) -> None:
+        import app.auth.presentation.openapi  # noqa: F401

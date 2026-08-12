@@ -1,4 +1,4 @@
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -123,15 +123,6 @@ class LogoutUserView(AuthenticatedAPIView):
         tags=["auth"],
         operation_id="logout_user_logout_post",
         request=None,
-        parameters=[
-            OpenApiParameter(
-                name="Authorization",
-                type=str,
-                location=OpenApiParameter.HEADER,
-                required=True,
-                description="Bearer access token.",
-            )
-        ],
         responses={
             204: None,
             401: ErrorResponse,
