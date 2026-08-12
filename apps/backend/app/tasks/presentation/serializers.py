@@ -1,13 +1,32 @@
+from typing import cast
+
 from rest_framework import serializers
+
+from app.tasks.application.dto.list_tasks_input import ListTasksInput
 
 
 class TaskListQuerySerializer(serializers.Serializer):
     page = serializers.IntegerField(required=False, default=1, min_value=1)
+    page_size = serializers.IntegerField(
+        required=False, default=20, min_value=1, max_value=100
+    )
     is_completed = serializers.BooleanField(required=False)
     category_id = serializers.CharField(required=False)
     scope = serializers.ChoiceField(
         required=False, default="owned", choices=["owned", "shared", "all"]
     )
+
+    def to_dto(self, *, user_id: str) -> ListTasksInput:
+        data = cast(dict[str, object], self.validated_data)
+
+        return ListTasksInput(
+            user_id=user_id,
+            page=cast(int, data["page"]),
+            page_size=cast(int, data["page_size"]),
+            is_completed=cast(bool | None, data.get("is_completed")),
+            category_id=cast(str | None, data.get("category_id")),
+            scope=cast(str, data["scope"]),
+        )
 
 
 class TaskCategoryResponseSerializer(serializers.Serializer):
@@ -49,4 +68,4 @@ class TaskShareResponseSerializer(serializers.Serializer):
 
 
 class TaskDetailResponseSerializer(TaskItemResponseSerializer):
-    shares = TaskShareResponseSerializer
+    shares = TaskShareResponseSerializer(many=True)

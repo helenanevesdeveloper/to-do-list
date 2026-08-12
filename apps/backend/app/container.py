@@ -20,6 +20,11 @@ from app.auth.infrastructure.security import (
     PBKDF2PasswordHasher,
 )
 
+from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
+from app.tasks.infrastructure.repositories.django_orm_task_query_repository import (
+    DjangoOrmTaskQueryRepository,
+)
+
 
 @dataclass(slots=True, frozen=True)
 class AppContainer:
@@ -27,6 +32,7 @@ class AppContainer:
     authenticate_user_use_case: AuthenticateUserUseCase
     logout_use_case: LogoutUseCase
     access_token_decoder: AccessTokenDecoder
+    list_tasks_use_case: ListTasksUseCase
 
 
 @lru_cache
@@ -74,6 +80,8 @@ def build_container() -> AppContainer:
         audience=jwt_audience,
     )
 
+    task_query_repository = DjangoOrmTaskQueryRepository()
+
     return AppContainer(
         register_user_use_case=RegisterUserUseCase(
             user_repository=user_repository,
@@ -91,6 +99,9 @@ def build_container() -> AppContainer:
             session_repository=session_repository,
         ),
         access_token_decoder=access_token_decoder,
+        list_tasks_use_case=ListTasksUseCase(
+            task_query_repository=task_query_repository
+        ),
     )
 
 
