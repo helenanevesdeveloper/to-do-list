@@ -15,6 +15,9 @@ from app.tasks.application.dto.delete_task_categories_input import (
 )
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
+from app.tasks.application.dto.update_task_category_input import (
+    UpdateTaskCategoryInput,
+)
 from app.tasks.application.dto.update_task_input import UpdateTaskInput
 
 
@@ -104,6 +107,18 @@ class TaskCategoryCreateRequestSerializer(serializers.Serializer):
         if value is None or value == "":
             return None
         return value
+
+
+class TaskCategoryUpdateRequestSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=120)
+
+    def to_dto(self, *, user_id: str, category_id: str) -> UpdateTaskCategoryInput:
+        data = cast(dict[str, object], self.validated_data)
+        return UpdateTaskCategoryInput(
+            user_id=user_id,
+            category_id=category_id,
+            name=cast(str, data["name"]),
+        )
 
 
 class TaskCategoryResponseSerializer(serializers.Serializer):

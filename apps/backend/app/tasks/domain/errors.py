@@ -27,5 +27,9 @@ class InvalidTaskCategoryPayloadError(ValidationError):
         return self._issues
 
 
+class TaskCategoryNotFoundError(DomainError):
+    pass
+
+
 class TaskNotFoundError(DomainError):
     pass

@@ -28,6 +28,9 @@ from app.tasks.application.use_cases.delete_task_categories import (
 from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
+from app.tasks.application.use_cases.update_task_category import (
+    UpdateTaskCategoryUseCase,
+)
 from app.tasks.application.use_cases.update_task import UpdateTaskUseCase
 from app.tasks.infrastructure.repositories.django_orm_task_category_command_repository import (
     DjangoOrmTaskCategoryCommandRepository,
@@ -52,6 +55,7 @@ class AppContainer:
     user_repository: UserRepository
     create_task_category_use_case: CreateTaskCategoryUseCase
     delete_task_categories_use_case: DeleteTaskCategoriesUseCase
+    update_task_category_use_case: UpdateTaskCategoryUseCase
     create_tasks_use_case: CreateTasksUseCase
     delete_tasks_use_case: DeleteTasksUseCase
     list_task_categories_use_case: ListTaskCategoriesUseCase
@@ -131,6 +135,9 @@ def build_container() -> AppContainer:
             task_category_command_repository=task_category_command_repository
         ),
         delete_task_categories_use_case=DeleteTaskCategoriesUseCase(
+            task_category_command_repository=task_category_command_repository
+        ),
+        update_task_category_use_case=UpdateTaskCategoryUseCase(
             task_category_command_repository=task_category_command_repository
         ),
         create_tasks_use_case=CreateTasksUseCase(

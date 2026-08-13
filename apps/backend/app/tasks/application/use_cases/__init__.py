@@ -8,6 +8,9 @@ from app.tasks.application.use_cases.delete_task_categories import (
 from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
+from app.tasks.application.use_cases.update_task_category import (
+    UpdateTaskCategoryUseCase,
+)
 from app.tasks.application.use_cases.update_task import UpdateTaskUseCase
 
 __all__ = [
@@ -17,5 +20,6 @@ __all__ = [
     "DeleteTasksUseCase",
     "ListTaskCategoriesUseCase",
     "ListTasksUseCase",
+    "UpdateTaskCategoryUseCase",
     "UpdateTaskUseCase",
 ]

@@ -24,6 +24,9 @@ from app.tasks.application.dto.list_task_categories_output import (
 )
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
 from app.tasks.application.dto.list_tasks_output import PaginatedTasks
+from app.tasks.application.dto.update_task_category_input import (
+    UpdateTaskCategoryInput,
+)
 from app.tasks.application.dto.update_task_input import UpdateTaskInput
 
 __all__ = [
@@ -41,5 +44,6 @@ __all__ = [
     "ListTasksInput",
     "PaginatedTasks",
     "TaskCategoryItem",
+    "UpdateTaskCategoryInput",
     "UpdateTaskInput",
 ]
