@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const {
     actions,
     categoryOptions,
+    handleCreateCategory,
     filters,
     handleCreateTask,
     handleTaskClick,
@@ -38,6 +39,7 @@ export default function DashboardPage() {
 
         <TaskCreateInlineRow
           categoryOptions={categoryOptions}
+          onCreateCategory={handleCreateCategory}
           onCreateTask={handleCreateTask}
         />
 

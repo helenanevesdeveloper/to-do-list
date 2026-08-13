@@ -2,21 +2,23 @@ import {
   Box,
   FormControl,
   Input,
-  Select,
   Stack,
   Text
 } from '@chakra-ui/react';
+import TaskInlineCategoryField from '../../../categories/presentation/components/TaskInlineCategoryField';
 import type { TaskCategoryOption } from '../../../shared/types';
 import { useTaskInlineCreate, type TaskInlineCreateInput } from '../hooks/useTaskInlineCreate';
 
 export type TaskCreateInlineRowProps = {
   categoryOptions: TaskCategoryOption[];
+  onCreateCategory: (name: string) => TaskCategoryOption;
   onCreateTask: (input: TaskInlineCreateInput) => void;
 };
 
 /** Renders the inline task-create row that saves a local task on outside click. */
 export default function TaskCreateInlineRow({
   categoryOptions,
+  onCreateCategory,
   onCreateTask
 }: TaskCreateInlineRowProps) {
   const {
@@ -41,7 +43,7 @@ export default function TaskCreateInlineRow({
         <Stack
           direction={{ base: 'column', md: 'row' }}
           spacing={3}
-          align={{ base: 'stretch', md: 'center' }}
+          align={{ base: 'stretch', md: 'flex-start' }}
         >
           <FormControl flex={{ md: '2' }}>
             <Input
@@ -62,20 +64,12 @@ export default function TaskCreateInlineRow({
             />
           </FormControl>
 
-          <FormControl flex={{ md: '1' }}>
-            <Select
-              aria-label="Categoria da tarefa"
-              placeholder="Categoria"
-              value={draft.categoryId}
-              onChange={(event) => setCategoryId(event.target.value)}
-            >
-              {categoryOptions.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+          <TaskInlineCategoryField
+            categoryOptions={categoryOptions}
+            value={draft.categoryId}
+            onSelectCategory={setCategoryId}
+            onCreateCategory={onCreateCategory}
+          />
         </Stack>
 
         <Stack

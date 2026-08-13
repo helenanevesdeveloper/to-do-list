@@ -10,7 +10,7 @@ import {
 
 /** Orchestrates local dashboard state while the task feature is still using sample data. */
 export function useTaskDashboard() {
-  const categoryOptions = TASK_CATEGORY_SAMPLE_OPTIONS;
+  const [categoryOptions, setCategoryOptions] = useState(TASK_CATEGORY_SAMPLE_OPTIONS);
   const [taskItems, setTaskItems] = useState(TASK_LIST_SAMPLE_DATA);
   const { filters, actions } = useTaskListFilters();
   const paginatedTasks = selectVisibleTaskListItems({
@@ -35,11 +35,22 @@ export function useTaskDashboard() {
     actions.setPage(1);
   }
 
+  function handleCreateCategory(name: string) {
+    const createdCategory = {
+      id: `local-category-${Date.now()}`,
+      name
+    };
+
+    setCategoryOptions((current) => [...current, createdCategory]);
+    return createdCategory;
+  }
+
   function handleTaskClick(): void {}
 
   return {
     actions,
     categoryOptions,
+    handleCreateCategory,
     filters,
     handleCreateTask,
     handleTaskClick,
