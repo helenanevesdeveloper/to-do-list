@@ -1,7 +1,7 @@
 import { Box, Center, Stack, Text } from '@chakra-ui/react';
-import type { TaskListItem } from '../../../shared/types.js';
-import TaskTableDesktop from './TaskTableDesktop.js';
-import TaskTableMobileList from './TaskTableMobileList.js';
+import type { TaskListItem } from '../../../shared/types';
+import TaskTableDesktop from './TaskTableDesktop';
+import TaskTableMobileList from './TaskTableMobileList';
 
 export type TaskTableProps = {
   items: TaskListItem[];

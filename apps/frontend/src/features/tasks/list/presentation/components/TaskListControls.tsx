@@ -1,9 +1,9 @@
 import { Box, Stack } from '@chakra-ui/react';
-import type { TaskCategoryOption, TaskListFilters } from '../../../shared/types.js';
-import type { TaskListFilterActions } from '../hooks/useTaskListFilters.js';
-import { buildActiveTaskFilterChips } from '../mappers/buildActiveTaskFilterChips.js';
-import ActiveTaskFilters from './ActiveTaskFilters.js';
-import TaskListToolbar from './TaskListToolbar.js';
+import type { TaskCategoryOption, TaskListFilters } from '../../../shared/types';
+import type { TaskListFilterActions } from '../hooks/useTaskListFilters';
+import { buildActiveTaskFilterChips } from '../mappers/buildActiveTaskFilterChips';
+import ActiveTaskFilters from './ActiveTaskFilters';
+import TaskListToolbar from './TaskListToolbar';
 
 export type TaskListControlsProps = {
   categoryOptions: TaskCategoryOption[];

@@ -4,7 +4,7 @@ import {
   type TaskListFilters,
   type TaskScopeFilter,
   type TaskStatusFilter
-} from '../../../shared/types.js';
+} from '../../../shared/types';
 
 /** Write actions supported by the dashboard task-list filters. */
 export type TaskListFilterActions = {

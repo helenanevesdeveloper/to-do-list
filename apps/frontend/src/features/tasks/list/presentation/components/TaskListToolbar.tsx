@@ -4,11 +4,11 @@ import type {
   TaskListFilters,
   TaskScopeFilter,
   TaskStatusFilter
-} from '../../../shared/types.js';
-import TaskCategoryField from './TaskCategoryField.js';
-import TaskPageSizeField from './TaskPageSizeField.js';
-import TaskScopeField from './TaskScopeField.js';
-import TaskStatusField from './TaskStatusField.js';
+} from '../../../shared/types';
+import TaskCategoryField from './TaskCategoryField';
+import TaskPageSizeField from './TaskPageSizeField';
+import TaskScopeField from './TaskScopeField';
+import TaskStatusField from './TaskStatusField';
 
 export type TaskListToolbarProps = {
   filters: TaskListFilters;

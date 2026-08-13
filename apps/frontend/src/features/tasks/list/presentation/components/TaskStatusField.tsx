@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Select } from '@chakra-ui/react';
-import type { TaskStatusFilter } from '../../../shared/types.js';
+import type { TaskStatusFilter } from '../../../shared/types';
 
 export type TaskStatusFieldProps = {
   value: TaskStatusFilter;

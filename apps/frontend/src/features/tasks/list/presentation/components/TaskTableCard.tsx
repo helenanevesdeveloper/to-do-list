@@ -1,6 +1,6 @@
 import { Badge, Box, Stack, Text } from '@chakra-ui/react';
-import type { TaskListItem } from '../../../shared/types.js';
-import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay.js';
+import type { TaskListItem } from '../../../shared/types';
+import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
 
 export type TaskTableCardProps = {
   task: TaskListItem;

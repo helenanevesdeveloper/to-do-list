@@ -1,4 +1,4 @@
-import type { TaskListFilters, TaskListItem } from '../../shared/types.js';
+import type { TaskListFilters, TaskListItem } from '../../shared/types';
 
 type SelectVisibleTaskListItemsArgs = {
   items: TaskListItem[];

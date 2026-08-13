@@ -6,8 +6,8 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react';
-import type { TaskListItem } from '../../../shared/types.js';
-import TaskTableRow from './TaskTableRow.js';
+import type { TaskListItem } from '../../../shared/types';
+import TaskTableRow from './TaskTableRow';
 
 export type TaskTableDesktopProps = {
   items: TaskListItem[];

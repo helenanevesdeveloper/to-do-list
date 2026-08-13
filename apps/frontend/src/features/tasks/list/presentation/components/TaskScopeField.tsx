@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Select } from '@chakra-ui/react';
-import type { TaskScopeFilter } from '../../../shared/types.js';
+import type { TaskScopeFilter } from '../../../shared/types';
 
 export type TaskScopeFieldProps = {
   value: TaskScopeFilter;

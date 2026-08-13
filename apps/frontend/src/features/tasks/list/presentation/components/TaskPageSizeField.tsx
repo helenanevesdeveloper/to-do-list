@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Select } from '@chakra-ui/react';
-import { TASK_PAGE_SIZE_OPTIONS } from '../../../shared/types.js';
+import { TASK_PAGE_SIZE_OPTIONS } from '../../../shared/types';
 
 export type TaskPageSizeFieldProps = {
   value: number;

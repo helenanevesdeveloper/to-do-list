@@ -9,7 +9,7 @@ import {
   Wrap,
   WrapItem
 } from '@chakra-ui/react';
-import type { ActiveTaskFilterChip } from '../mappers/buildActiveTaskFilterChips.js';
+import type { ActiveTaskFilterChip } from '../mappers/buildActiveTaskFilterChips';
 
 export type ActiveTaskFiltersProps = {
   chips: ActiveTaskFilterChip[];

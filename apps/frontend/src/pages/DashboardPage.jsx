@@ -2,16 +2,16 @@ import { Container, Stack } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useAuth } from '../features/auth/session/presentation/hooks/useAuth';
 import { useDashboardLogout } from '../features/auth/session/presentation/hooks/useDashboardLogout';
-import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader.js';
-import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls.js';
-import TaskPagination from '../features/tasks/list/presentation/components/TaskPagination.js';
-import TaskTable from '../features/tasks/list/presentation/components/TaskTable.js';
-import { selectVisibleTaskListItems } from '../features/tasks/list/application/selectVisibleTaskListItems.js';
-import { useTaskListFilters } from '../features/tasks/list/presentation/hooks/useTaskListFilters.js';
+import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader';
+import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls';
+import TaskPagination from '../features/tasks/list/presentation/components/TaskPagination';
+import TaskTable from '../features/tasks/list/presentation/components/TaskTable';
+import { selectVisibleTaskListItems } from '../features/tasks/list/application/selectVisibleTaskListItems';
+import { useTaskListFilters } from '../features/tasks/list/presentation/hooks/useTaskListFilters';
 import {
   TASK_CATEGORY_SAMPLE_OPTIONS,
   TASK_LIST_SAMPLE_DATA
-} from '../features/tasks/list/presentation/state/taskListSampleData.js';
+} from '../features/tasks/list/presentation/state/taskListSampleData';
 
 export default function DashboardPage() {
   const { currentUserEmail, logout } = useAuth();

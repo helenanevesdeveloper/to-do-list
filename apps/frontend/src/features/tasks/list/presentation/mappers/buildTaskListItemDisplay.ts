@@ -1,4 +1,4 @@
-import type { TaskListItem } from '../../../shared/types.js';
+import type { TaskListItem } from '../../../shared/types';
 
 export type TaskListItemDisplay = {
   categoryLabel: string;

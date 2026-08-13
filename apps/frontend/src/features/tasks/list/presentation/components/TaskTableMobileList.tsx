@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react';
-import type { TaskListItem } from '../../../shared/types.js';
-import TaskTableCard from './TaskTableCard.js';
+import type { TaskListItem } from '../../../shared/types';
+import TaskTableCard from './TaskTableCard';
 
 export type TaskTableMobileListProps = {
   items: TaskListItem[];

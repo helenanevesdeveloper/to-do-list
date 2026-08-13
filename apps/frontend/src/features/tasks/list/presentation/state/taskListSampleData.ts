@@ -1,4 +1,4 @@
-import type { TaskCategoryOption, TaskListItem } from '../../../shared/types.js';
+import type { TaskCategoryOption, TaskListItem } from '../../../shared/types';
 
 /** Local sample categories used until task categories are loaded from the API. */
 export const TASK_CATEGORY_SAMPLE_OPTIONS: TaskCategoryOption[] = [
