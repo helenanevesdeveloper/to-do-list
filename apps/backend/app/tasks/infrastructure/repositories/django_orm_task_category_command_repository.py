@@ -11,6 +11,12 @@ from app.shared.exceptions import ValidationIssue
 from app.shared.runtime import generate_uuid, utc_now
 from app.tasks.application.dto.create_task_category_input import CreateTaskCategoryInput
 from app.tasks.application.dto.create_task_category_output import CreatedTaskCategory
+from app.tasks.application.dto.delete_task_categories_input import (
+    DeleteTaskCategoriesInput,
+)
+from app.tasks.application.dto.delete_task_categories_output import (
+    DeletedTaskCategories,
+)
 from app.tasks.application.ports.task_category_command_repository import (
     TaskCategoryCommandRepository,
 )
@@ -60,6 +66,21 @@ class DjangoOrmTaskCategoryCommandRepository(TaskCategoryCommandRepository):
             color=input_dto.color,
             created_at=timestamp.isoformat(),
             updated_at=timestamp.isoformat(),
+        )
+
+    def delete_categories(
+        self,
+        input_dto: DeleteTaskCategoriesInput,
+    ) -> DeletedTaskCategories:
+        deleted_count, _ = TaskCategoryModel.objects.filter(
+            owner_user_id=input_dto.user_id,
+            id__in=input_dto.ids,
+        ).delete()
+        requested_count = len(input_dto.ids)
+        return DeletedTaskCategories(
+            requested=requested_count,
+            deleted=deleted_count,
+            failed=requested_count - deleted_count,
         )
 
     def _ensure_category_name_is_available(

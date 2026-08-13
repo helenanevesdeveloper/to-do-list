@@ -22,6 +22,9 @@ from app.auth.infrastructure.security import (
 
 from app.tasks.application.use_cases.create_task_category import CreateTaskCategoryUseCase
 from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
+from app.tasks.application.use_cases.delete_task_categories import (
+    DeleteTaskCategoriesUseCase,
+)
 from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
@@ -47,6 +50,7 @@ class AppContainer:
     access_token_decoder: AccessTokenDecoder
     user_repository: UserRepository
     create_task_category_use_case: CreateTaskCategoryUseCase
+    delete_task_categories_use_case: DeleteTaskCategoriesUseCase
     create_tasks_use_case: CreateTasksUseCase
     delete_tasks_use_case: DeleteTasksUseCase
     list_task_categories_use_case: ListTaskCategoriesUseCase
@@ -122,6 +126,9 @@ def build_container() -> AppContainer:
         access_token_decoder=access_token_decoder,
         user_repository=user_repository,
         create_task_category_use_case=CreateTaskCategoryUseCase(
+            task_category_command_repository=task_category_command_repository
+        ),
+        delete_task_categories_use_case=DeleteTaskCategoriesUseCase(
             task_category_command_repository=task_category_command_repository
         ),
         create_tasks_use_case=CreateTasksUseCase(

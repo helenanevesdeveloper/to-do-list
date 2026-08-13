@@ -10,6 +10,9 @@ from app.tasks.application.dto.create_tasks_input import (
     CreateTaskItemInput,
     CreateTasksInput,
 )
+from app.tasks.application.dto.delete_task_categories_input import (
+    DeleteTaskCategoriesInput,
+)
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
 
@@ -166,6 +169,26 @@ class TaskDeleteRequestSerializer(serializers.Serializer):
 
 
 class TaskDeleteResponseSerializer(serializers.Serializer):
+    requested = serializers.IntegerField()
+    deleted = serializers.IntegerField()
+    failed = serializers.IntegerField()
+
+
+class TaskCategoryDeleteRequestSerializer(serializers.Serializer):
+    ids = serializers.ListField(
+        child=serializers.CharField(),
+        allow_empty=False,
+    )
+
+    def to_dto(self, *, user_id: str) -> DeleteTaskCategoriesInput:
+        data = cast(dict[str, object], self.validated_data)
+        return DeleteTaskCategoriesInput(
+            user_id=user_id,
+            ids=cast(list[str], data["ids"]),
+        )
+
+
+class TaskCategoryDeleteResponseSerializer(serializers.Serializer):
     requested = serializers.IntegerField()
     deleted = serializers.IntegerField()
     failed = serializers.IntegerField()

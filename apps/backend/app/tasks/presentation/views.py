@@ -14,12 +14,15 @@ from app.tasks.application.dto.list_task_categories_input import (
 from .dependencies import (
     get_create_task_category_use_case,
     get_create_tasks_use_case,
+    get_delete_task_categories_use_case,
     get_delete_tasks_use_case,
     get_list_task_categories_use_case,
     get_list_tasks_use_case,
 )
 from .serializers import (
     TaskCategoryCreateRequestSerializer,
+    TaskCategoryDeleteRequestSerializer,
+    TaskCategoryDeleteResponseSerializer,
     TaskCategoryItemResponseSerializer,
     TaskCategoryListResponseSerializer,
     TaskCreateRequestSerializer,
@@ -172,4 +175,30 @@ class TaskCategoryListView(AuthenticatedAPIView):
         return Response(
             TaskCategoryItemResponseSerializer(asdict(result)).data,
             status=status.HTTP_201_CREATED,
+        )
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_delete_task_categories_delete",
+        request=TaskCategoryDeleteRequestSerializer,
+        responses={200: TaskCategoryDeleteResponseSerializer},
+        description="Delete task categories in batch",
+    )
+    def delete(self, request):
+        payload = cast(
+            TaskCategoryDeleteRequestSerializer,
+            TaskCategoryDeleteRequestSerializer(data=request.data),
+        )
+        payload.is_valid(raise_exception=True)
+
+        use_case = get_delete_task_categories_use_case()
+        result = use_case.execute(payload.to_dto(user_id=request.user.id))
+        return Response(
+            TaskCategoryDeleteResponseSerializer(
+                {
+                    "requested": result.requested,
+                    "deleted": result.deleted,
+                    "failed": result.failed,
+                }
+            ).data
         )
