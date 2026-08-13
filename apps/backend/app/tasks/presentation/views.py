@@ -14,6 +14,7 @@ from app.tasks.application.dto.list_task_categories_input import (
 from .dependencies import (
     get_create_task_category_use_case,
     get_create_tasks_use_case,
+    get_delete_tasks_use_case,
     get_list_task_categories_use_case,
     get_list_tasks_use_case,
 )
@@ -23,6 +24,8 @@ from .serializers import (
     TaskCategoryListResponseSerializer,
     TaskCreateRequestSerializer,
     TaskCreateResponseSerializer,
+    TaskDeleteRequestSerializer,
+    TaskDeleteResponseSerializer,
     TaskListQuerySerializer,
     TaskListResponseSerializer,
 )
@@ -75,6 +78,31 @@ class TaskListView(AuthenticatedAPIView):
         return Response(
             TaskCreateResponseSerializer(response_body).data,
             status=status.HTTP_201_CREATED,
+        )
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_delete_tasks_delete",
+        request=TaskDeleteRequestSerializer,
+        responses={200: TaskDeleteResponseSerializer},
+        description="Delete tasks in batch",
+    )
+    def delete(self, request):
+        payload = cast(
+            TaskDeleteRequestSerializer, TaskDeleteRequestSerializer(data=request.data)
+        )
+        payload.is_valid(raise_exception=True)
+
+        use_case = get_delete_tasks_use_case()
+        result = use_case.execute(payload.to_dto(user_id=request.user.id))
+        return Response(
+            TaskDeleteResponseSerializer(
+                {
+                    "requested": result.requested,
+                    "deleted": result.deleted,
+                    "failed": result.failed,
+                }
+            ).data
         )
 
     def _build_next_url(self, request, result) -> str | None:

@@ -12,6 +12,7 @@ from typing import Any
 from app.tasks.application.use_cases import (
     CreateTaskCategoryUseCase,
     CreateTasksUseCase,
+    DeleteTasksUseCase,
     ListTaskCategoriesUseCase,
     ListTasksUseCase,
 )
@@ -52,6 +53,15 @@ def get_create_tasks_use_case() -> CreateTasksUseCase:
     return _resolve(
         "create_tasks_use_case",
         lambda: build_container().create_tasks_use_case,
+    )
+
+
+def get_delete_tasks_use_case() -> DeleteTasksUseCase:
+    """Resolve the delete-tasks use case for the current request path."""
+
+    return _resolve(
+        "delete_tasks_use_case",
+        lambda: build_container().delete_tasks_use_case,
     )
 
 

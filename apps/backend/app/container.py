@@ -22,6 +22,7 @@ from app.auth.infrastructure.security import (
 
 from app.tasks.application.use_cases.create_task_category import CreateTaskCategoryUseCase
 from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
+from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
 from app.tasks.infrastructure.repositories.django_orm_task_category_command_repository import (
@@ -47,6 +48,7 @@ class AppContainer:
     user_repository: UserRepository
     create_task_category_use_case: CreateTaskCategoryUseCase
     create_tasks_use_case: CreateTasksUseCase
+    delete_tasks_use_case: DeleteTasksUseCase
     list_task_categories_use_case: ListTaskCategoriesUseCase
     list_tasks_use_case: ListTasksUseCase
 
@@ -123,6 +125,9 @@ def build_container() -> AppContainer:
             task_category_command_repository=task_category_command_repository
         ),
         create_tasks_use_case=CreateTasksUseCase(
+            task_command_repository=task_command_repository
+        ),
+        delete_tasks_use_case=DeleteTasksUseCase(
             task_command_repository=task_command_repository
         ),
         list_task_categories_use_case=ListTaskCategoriesUseCase(

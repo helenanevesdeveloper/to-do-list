@@ -7,6 +7,8 @@ from app.tasks.application.dto.create_tasks_input import (
     CreateTasksInput,
 )
 from app.tasks.application.dto.create_tasks_output import CreatedTasks
+from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
+from app.tasks.application.dto.delete_tasks_output import DeletedTasks
 from app.tasks.application.dto.list_task_categories_input import (
     ListTaskCategoriesInput,
 )
@@ -23,6 +25,8 @@ __all__ = [
     "CreatedTaskCategory",
     "CreateTasksInput",
     "CreatedTasks",
+    "DeletedTasks",
+    "DeleteTasksInput",
     "ListedTaskCategories",
     "ListTaskCategoriesInput",
     "ListTasksInput",

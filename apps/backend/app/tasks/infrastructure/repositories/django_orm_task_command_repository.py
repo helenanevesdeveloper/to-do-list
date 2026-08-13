@@ -13,6 +13,8 @@ from app.tasks.application.dto.create_tasks_input import (
     CreateTasksInput,
 )
 from app.tasks.application.dto.create_tasks_output import CreatedTasks
+from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
+from app.tasks.application.dto.delete_tasks_output import DeletedTasks
 from app.tasks.application.dto.list_tasks_output import (
     TaskCategoryListItem,
     TaskListItem,
@@ -69,6 +71,18 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             TaskModel.objects.bulk_create(records)
 
         return CreatedTasks(items=created_items)
+
+    def delete_tasks(self, input_dto: DeleteTasksInput) -> DeletedTasks:
+        deleted_count, _ = TaskModel.objects.filter(
+            owner_user_id=input_dto.user_id,
+            id__in=input_dto.ids,
+        ).delete()
+        requested_count = len(input_dto.ids)
+        return DeletedTasks(
+            requested=requested_count,
+            deleted=deleted_count,
+            failed=requested_count - deleted_count,
+        )
 
     def _load_categories(
         self,
