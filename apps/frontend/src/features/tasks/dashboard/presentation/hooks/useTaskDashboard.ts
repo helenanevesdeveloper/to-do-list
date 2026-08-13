@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createTaskCategoryApi } from '../../../categories/infrastructure/createTaskCategoryApi';
 import { useTaskCategories } from '../../../categories/presentation/hooks/useTaskCategories';
 import { createLocalTaskListItem } from '../../../create/application/createLocalTaskListItem';
 import type { TaskInlineCreateInput } from '../../../create/presentation/hooks/useTaskInlineCreate';
@@ -31,7 +32,7 @@ function buildOptimisticTaskListPage(args: {
   };
 }
 
-/** Orchestrates dashboard state while task reads come from the backend and writes remain local. */
+/** Orchestrates dashboard state while reads come from the backend and task creation remains local. */
 export function useTaskDashboard() {
   const [localCategoryOptions, setLocalCategoryOptions] = useState<TaskCategoryOption[]>(
     []
@@ -80,11 +81,8 @@ export function useTaskDashboard() {
     actions.setPage(1);
   }
 
-  function handleCreateCategory(name: string) {
-    const createdCategory = {
-      id: `local-category-${Date.now()}`,
-      name
-    };
+  async function handleCreateCategory(name: string): Promise<TaskCategoryOption> {
+    const createdCategory = await createTaskCategoryApi({ name });
 
     setLocalCategoryOptions((current) => [...current, createdCategory]);
     return createdCategory;

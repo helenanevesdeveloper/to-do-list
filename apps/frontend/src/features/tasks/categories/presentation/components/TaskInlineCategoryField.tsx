@@ -6,7 +6,7 @@ import TaskInlineCategoryTrigger from './TaskInlineCategoryTrigger';
 
 export type TaskInlineCategoryFieldProps = {
   categoryOptions: TaskCategoryOption[];
-  onCreateCategory: (name: string) => TaskCategoryOption;
+  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onSelectCategory: (categoryId: string) => void;
   value: string;
 };
@@ -19,10 +19,12 @@ export default function TaskInlineCategoryField({
   value
 }: TaskInlineCategoryFieldProps) {
   const {
+    categoryErrorMessage,
     canCreateCategory,
     createLabel,
     filteredCategoryOptions,
     inputRef,
+    isCreatingCategory,
     isOpen,
     listboxId,
     query,
@@ -53,8 +55,10 @@ export default function TaskInlineCategoryField({
         {isOpen ? (
           <TaskInlineCategoryPopover
             create={{
+              categoryErrorMessage,
               canCreateCategory,
               createLabel,
+              isCreatingCategory,
               onCreateCategory: createCategory
             }}
             list={{

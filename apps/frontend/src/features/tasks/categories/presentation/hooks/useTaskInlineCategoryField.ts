@@ -15,16 +15,18 @@ import {
 
 export type UseTaskInlineCategoryFieldArgs = {
   categoryOptions: TaskCategoryOption[];
-  onCreateCategory: (name: string) => TaskCategoryOption;
+  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onSelectCategory: (categoryId: string) => void;
   value: string;
 };
 
 export type UseTaskInlineCategoryFieldResult = {
+  categoryErrorMessage: string | null;
   canCreateCategory: boolean;
   createLabel: string | null;
   filteredCategoryOptions: TaskCategoryOption[];
   inputRef: React.RefObject<HTMLInputElement | null>;
+  isCreatingCategory: boolean;
   isOpen: boolean;
   listboxId: string;
   query: string;
@@ -33,7 +35,7 @@ export type UseTaskInlineCategoryFieldResult = {
   triggerLabel: string;
   clearSelectedCategory: () => void;
   closeField: () => void;
-  createCategory: () => void;
+  createCategory: () => Promise<void>;
   handleFieldClick: () => void;
   handleInputChange: (value: string) => void;
   openField: () => void;
@@ -71,7 +73,13 @@ export function useTaskInlineCategoryField({
     [categoryOptions, query, value]
   );
 
-  const { clearSelectedCategory, createCategory, selectCategory } =
+  const {
+    categoryErrorMessage,
+    clearSelectedCategory,
+    createCategory,
+    isCreatingCategory,
+    selectCategory
+  } =
     useTaskInlineCategorySelectionActions({
       onCreateCategory,
       onSelectCategory,
@@ -91,10 +99,12 @@ export function useTaskInlineCategoryField({
   });
 
   return {
+    categoryErrorMessage,
     canCreateCategory,
     createLabel,
     filteredCategoryOptions,
     inputRef,
+    isCreatingCategory,
     isOpen,
     listboxId,
     query,

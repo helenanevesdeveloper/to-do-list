@@ -11,7 +11,7 @@ import { useTaskInlineCreate, type TaskInlineCreateInput } from '../hooks/useTas
 
 export type TaskCreateInlineRowProps = {
   categoryOptions: TaskCategoryOption[];
-  onCreateCategory: (name: string) => TaskCategoryOption;
+  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onCreateTask: (input: TaskInlineCreateInput) => void;
 };
 

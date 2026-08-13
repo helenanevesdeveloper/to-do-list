@@ -20,9 +20,11 @@ export type TaskInlineCategoryPopoverListProps = {
 };
 
 export type TaskInlineCategoryPopoverCreateProps = {
+  categoryErrorMessage: string | null;
   canCreateCategory: boolean;
   createLabel: string | null;
-  onCreateCategory: () => void;
+  isCreatingCategory: boolean;
+  onCreateCategory: () => Promise<void>;
 };
 
 export type TaskInlineCategoryPopoverProps = {
@@ -55,7 +57,9 @@ export default function TaskInlineCategoryPopover({
         <TaskInlineCategoryPopoverListSection {...list} />
         {create.canCreateCategory && create.createLabel ? (
           <TaskInlineCategoryPopoverCreateFooter
+            errorMessage={create.categoryErrorMessage}
             createLabel={create.createLabel}
+            isLoading={create.isCreatingCategory}
             onCreateCategory={create.onCreateCategory}
           />
         ) : null}
