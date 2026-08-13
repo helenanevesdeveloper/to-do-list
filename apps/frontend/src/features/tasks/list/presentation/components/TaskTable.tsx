@@ -1,4 +1,4 @@
-import { Box, Center, Stack, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import type { TaskListItem } from '../../../shared/types';
 import TaskTableDesktop from './TaskTableDesktop';
 import TaskTableMobileList from './TaskTableMobileList';
@@ -8,21 +8,8 @@ export type TaskTableProps = {
   onTaskClick: (task: TaskListItem) => void;
 };
 
-/** Renders the task results area with desktop table, mobile cards, and empty state. */
+/** Renders only the success state of the task results area. */
 export default function TaskTable({ items, onTaskClick }: TaskTableProps) {
-  if (items.length === 0) {
-    return (
-      <Center borderWidth="1px" borderRadius="lg" p={{ base: 8, md: 10 }}>
-        <Stack spacing={2} textAlign="center" maxW="md">
-          <Text fontWeight="semibold">Nenhuma tarefa encontrada</Text>
-          <Text color="gray.600">
-            Ajuste os filtros atuais ou crie uma nova tarefa para começar a listar resultados.
-          </Text>
-        </Stack>
-      </Center>
-    );
-  }
-
   return (
     <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
       <TaskTableDesktop items={items} onTaskClick={onTaskClick} />

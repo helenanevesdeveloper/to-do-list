@@ -1,4 +1,4 @@
-/** Placeholder shared HTTP adapter for future task API clients. */
-export async function taskApiClient(): Promise<never> {
-  throw new Error('TODO: implement shared taskApiClient.');
-}
+import { httpClient } from '../../../../shared/infrastructure/http/httpClient';
+
+/** Shared authenticated HTTP client for task-related API requests. */
+export const taskApiClient = httpClient;

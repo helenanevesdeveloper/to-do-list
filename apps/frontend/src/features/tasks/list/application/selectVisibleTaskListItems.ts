@@ -1,19 +1,9 @@
-import type { TaskListFilters, TaskListItem } from '../../shared/types';
+import type { TaskListFilters, TaskListItem, TaskListPage } from '../../shared/types';
+import { buildTaskListPage } from './buildTaskListPage';
 
 type SelectVisibleTaskListItemsArgs = {
   items: TaskListItem[];
   filters: TaskListFilters;
-};
-
-export type VisibleTaskListItemsResult = {
-  currentPage: number;
-  endItem: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  items: TaskListItem[];
-  startItem: number;
-  totalItems: number;
-  totalPages: number;
 };
 
 /** Returns whether a task matches the current scope filter. */
@@ -51,31 +41,32 @@ function matchesCategory(task: TaskListItem, filters: TaskListFilters): boolean 
   return task.category?.id === filters.categoryId;
 }
 
+/** Returns only the task items that match the active dashboard filters. */
+export function filterTaskListItemsByFilters(
+  items: TaskListItem[],
+  filters: TaskListFilters
+): TaskListItem[] {
+  return items
+    .filter((item) => matchesScope(item, filters))
+    .filter((item) => matchesStatus(item, filters))
+    .filter((item) => matchesCategory(item, filters));
+}
+
 /** Applies filters and local pagination to dashboard task-list items. */
 export function selectVisibleTaskListItems({
   items,
   filters
-}: SelectVisibleTaskListItemsArgs): VisibleTaskListItemsResult {
-  const visibleItems = items
-    .filter((item) => matchesScope(item, filters))
-    .filter((item) => matchesStatus(item, filters))
-    .filter((item) => matchesCategory(item, filters));
-  const totalItems = visibleItems.length;
-  const totalPages = totalItems === 0 ? 1 : Math.ceil(totalItems / filters.pageSize);
-  const currentPage = filters.page > totalPages ? totalPages : filters.page;
-  const startOffset = (currentPage - 1) * filters.pageSize;
-  const pageItems = visibleItems.slice(startOffset, startOffset + filters.pageSize);
-  const startItem = pageItems.length === 0 ? 0 : startOffset + 1;
-  const endItem = pageItems.length === 0 ? 0 : startOffset + pageItems.length;
+}: SelectVisibleTaskListItemsArgs): TaskListPage {
+  const visibleItems = filterTaskListItemsByFilters(items, filters);
+  const pageItems = visibleItems.slice(
+    (filters.page - 1) * filters.pageSize,
+    filters.page * filters.pageSize
+  );
 
-  return {
-    currentPage,
-    endItem,
-    hasNextPage: currentPage < totalPages,
-    hasPreviousPage: currentPage > 1,
+  return buildTaskListPage({
     items: pageItems,
-    startItem,
-    totalItems,
-    totalPages
-  };
+    page: filters.page,
+    pageSize: filters.pageSize,
+    totalItems: visibleItems.length
+  });
 }

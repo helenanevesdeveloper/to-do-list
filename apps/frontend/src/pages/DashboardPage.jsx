@@ -1,4 +1,4 @@
-import { Container, Stack } from '@chakra-ui/react';
+import { Alert, AlertIcon, Container, Stack } from '@chakra-ui/react';
 import { useAuth } from '../features/auth/session/presentation/hooks/useAuth';
 import { useDashboardLogout } from '../features/auth/session/presentation/hooks/useDashboardLogout';
 import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader';
@@ -6,7 +6,7 @@ import { useTaskDashboard } from '../features/tasks/dashboard/presentation/hooks
 import TaskCreateInlineRow from '../features/tasks/create/presentation/components/TaskCreateInlineRow';
 import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls';
 import TaskPagination from '../features/tasks/list/presentation/components/TaskPagination';
-import TaskTable from '../features/tasks/list/presentation/components/TaskTable';
+import TaskResultsPanel from '../features/tasks/list/presentation/components/TaskResultsPanel';
 
 export default function DashboardPage() {
   const { currentUserEmail, logout } = useAuth();
@@ -14,11 +14,14 @@ export default function DashboardPage() {
   const {
     actions,
     categoryOptions,
+    errorMessage,
     handleCreateCategory,
     filters,
     handleCreateTask,
     handleTaskClick,
-    paginatedTasks
+    isLoading,
+    paginatedTasks,
+    reloadTasks
   } = useTaskDashboard();
 
   return (
@@ -43,7 +46,20 @@ export default function DashboardPage() {
           onCreateTask={handleCreateTask}
         />
 
-        <TaskTable items={paginatedTasks.items} onTaskClick={handleTaskClick} />
+        {errorMessage && paginatedTasks.items.length > 0 ? (
+          <Alert status="warning" borderRadius="lg">
+            <AlertIcon />
+            Nao foi possivel atualizar a lista. Exibindo os dados anteriores.
+          </Alert>
+        ) : null}
+
+        <TaskResultsPanel
+          errorMessage={errorMessage}
+          items={paginatedTasks.items}
+          isLoading={isLoading}
+          onTaskClick={handleTaskClick}
+          onRetry={reloadTasks}
+        />
 
         <TaskPagination
           currentPage={paginatedTasks.currentPage}

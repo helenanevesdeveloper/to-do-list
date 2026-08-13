@@ -37,6 +37,18 @@ export type TaskListItem = {
   sharing: TaskSharingSummary;
 };
 
+/** Paginated task-list state consumed by the dashboard results and pagination UI. */
+export type TaskListPage = {
+  currentPage: number;
+  endItem: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  items: TaskListItem[];
+  startItem: number;
+  totalItems: number;
+  totalPages: number;
+};
+
 /** Filter state used by the task list controls on the dashboard. */
 export type TaskListFilters = {
   page: number;
