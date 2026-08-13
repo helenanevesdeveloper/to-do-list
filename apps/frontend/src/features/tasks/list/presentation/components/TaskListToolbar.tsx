@@ -4,7 +4,7 @@ import type {
   TaskListFilters,
   TaskScopeFilter,
   TaskStatusFilter
-} from '../../shared/types.js';
+} from '../../../shared/types.js';
 import TaskCategoryField from './TaskCategoryField.js';
 import TaskPageSizeField from './TaskPageSizeField.js';
 import TaskScopeField from './TaskScopeField.js';

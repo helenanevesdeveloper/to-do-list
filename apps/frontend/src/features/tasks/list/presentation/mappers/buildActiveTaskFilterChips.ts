@@ -2,7 +2,7 @@ import {
   DEFAULT_TASK_LIST_FILTERS,
   type TaskCategoryOption,
   type TaskListFilters
-} from '../../shared/types.js';
+} from '../../../shared/types.js';
 
 export type ActiveTaskFilterChip = {
   id: 'scope' | 'status' | 'category';

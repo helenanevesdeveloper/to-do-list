@@ -1,5 +1,5 @@
 import { Box, Stack } from '@chakra-ui/react';
-import type { TaskCategoryOption, TaskListFilters } from '../../shared/types.js';
+import type { TaskCategoryOption, TaskListFilters } from '../../../shared/types.js';
 import type { TaskListFilterActions } from '../hooks/useTaskListFilters.js';
 import { buildActiveTaskFilterChips } from '../mappers/buildActiveTaskFilterChips.js';
 import ActiveTaskFilters from './ActiveTaskFilters.js';
@@ -11,7 +11,7 @@ export type TaskListControlsProps = {
   actions: TaskListFilterActions;
 };
 
-/** Composes task-list controls while keeping the page shell free of filter wiring. */
+/** Composes the task-list toolbar and active-filter summary for the dashboard. */
 export default function TaskListControls({
   categoryOptions,
   filters,

@@ -10,6 +10,7 @@ export type TaskDashboardHeaderProps = {
   logoutLabel?: string;
 };
 
+/** Renders the top dashboard header with primary task and logout actions. */
 export default function TaskDashboardHeader({
   title,
   subtitle,

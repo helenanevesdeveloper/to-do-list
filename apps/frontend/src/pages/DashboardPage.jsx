@@ -1,9 +1,9 @@
 import { Container, Stack } from '@chakra-ui/react';
 import { useAuth } from '../features/auth/session/presentation/hooks/useAuth';
 import { useDashboardLogout } from '../features/auth/session/presentation/hooks/useDashboardLogout';
-import TaskDashboardHeader from '../features/tasks/presentation/components/TaskDashboardHeader.tsx';
-import TaskListControls from '../features/tasks/presentation/components/TaskListControls.tsx';
-import { useTaskListFilters } from '../features/tasks/presentation/hooks/useTaskListFilters.ts';
+import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader.js';
+import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls.js';
+import { useTaskListFilters } from '../features/tasks/list/presentation/hooks/useTaskListFilters.js';
 
 export default function DashboardPage() {
   const { currentUserEmail, logout } = useAuth();

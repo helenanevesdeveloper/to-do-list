@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Select } from '@chakra-ui/react';
-import type { TaskCategoryOption } from '../../shared/types.js';
+import type { TaskCategoryOption } from '../../../shared/types.js';
 
 export type TaskCategoryFieldProps = {
   value: string;
