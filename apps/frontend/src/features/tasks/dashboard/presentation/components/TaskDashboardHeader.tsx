@@ -3,9 +3,9 @@ import { Box, Button, Heading, HStack, Stack, Text } from '@chakra-ui/react';
 export type TaskDashboardHeaderProps = {
   title: string;
   subtitle: string;
-  onAddTasks: () => void;
   onLogout: () => void;
   isLoggingOut?: boolean;
+  onAddTasks?: () => void;
   addTasksLabel?: string;
   logoutLabel?: string;
 };
@@ -14,9 +14,9 @@ export type TaskDashboardHeaderProps = {
 export default function TaskDashboardHeader({
   title,
   subtitle,
-  onAddTasks,
   onLogout,
   isLoggingOut = false,
+  onAddTasks,
   addTasksLabel = 'Adicionar tarefas',
   logoutLabel = 'Logout'
 }: TaskDashboardHeaderProps) {
@@ -36,9 +36,11 @@ export default function TaskDashboardHeader({
         </Box>
 
         <HStack spacing={3} alignSelf={{ base: 'stretch', md: 'center' }}>
-          <Button colorScheme="blue" onClick={onAddTasks}>
-            {addTasksLabel}
-          </Button>
+          {onAddTasks ? (
+            <Button colorScheme="blue" onClick={onAddTasks}>
+              {addTasksLabel}
+            </Button>
+          ) : null}
           <Button
             colorScheme="red"
             variant="outline"

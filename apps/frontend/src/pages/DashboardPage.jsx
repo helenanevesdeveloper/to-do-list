@@ -1,36 +1,24 @@
 import { Container, Stack } from '@chakra-ui/react';
-import { useEffect } from 'react';
 import { useAuth } from '../features/auth/session/presentation/hooks/useAuth';
 import { useDashboardLogout } from '../features/auth/session/presentation/hooks/useDashboardLogout';
 import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader';
+import { useTaskDashboard } from '../features/tasks/dashboard/presentation/hooks/useTaskDashboard';
+import TaskCreateInlineRow from '../features/tasks/create/presentation/components/TaskCreateInlineRow';
 import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls';
 import TaskPagination from '../features/tasks/list/presentation/components/TaskPagination';
 import TaskTable from '../features/tasks/list/presentation/components/TaskTable';
-import { selectVisibleTaskListItems } from '../features/tasks/list/application/selectVisibleTaskListItems';
-import { useTaskListFilters } from '../features/tasks/list/presentation/hooks/useTaskListFilters';
-import {
-  TASK_CATEGORY_SAMPLE_OPTIONS,
-  TASK_LIST_SAMPLE_DATA
-} from '../features/tasks/list/presentation/state/taskListSampleData';
 
 export default function DashboardPage() {
   const { currentUserEmail, logout } = useAuth();
   const { isLoggingOut, handleLogout } = useDashboardLogout(logout);
-  const handleAddTasks = () => {};
-  const categoryOptions = TASK_CATEGORY_SAMPLE_OPTIONS;
-  const { filters, actions } = useTaskListFilters();
-  const paginatedTasks = selectVisibleTaskListItems({
-    items: TASK_LIST_SAMPLE_DATA,
-    filters
-  });
-
-  useEffect(() => {
-    if (paginatedTasks.currentPage !== filters.page) {
-      actions.setPage(paginatedTasks.currentPage);
-    }
-  }, [actions, filters.page, paginatedTasks.currentPage]);
-
-  function handleTaskClick() {}
+  const {
+    actions,
+    categoryOptions,
+    filters,
+    handleCreateTask,
+    handleTaskClick,
+    paginatedTasks
+  } = useTaskDashboard();
 
   return (
     <Container maxW="6xl" py={{ base: 10, md: 14 }}>
@@ -38,7 +26,6 @@ export default function DashboardPage() {
         <TaskDashboardHeader
           title="Minhas tarefas"
           subtitle={`Sessão ativa para ${currentUserEmail ?? 'um usuário autenticado'}.`}
-          onAddTasks={handleAddTasks}
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
         />
@@ -47,6 +34,11 @@ export default function DashboardPage() {
           categoryOptions={categoryOptions}
           filters={filters}
           actions={actions}
+        />
+
+        <TaskCreateInlineRow
+          categoryOptions={categoryOptions}
+          onCreateTask={handleCreateTask}
         />
 
         <TaskTable items={paginatedTasks.items} onTaskClick={handleTaskClick} />
