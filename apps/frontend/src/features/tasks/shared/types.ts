@@ -10,6 +10,33 @@ export type TaskCategoryOption = {
   name: string;
 };
 
+/** Minimal category payload rendered inside task list items. */
+export type TaskCategorySummary = {
+  id: string;
+  name: string;
+  color: string | null;
+};
+
+/** Sharing summary rendered in task list rows and cards. */
+export type TaskSharingSummary = {
+  isOwner: boolean;
+  permission: string | null;
+  isShared: boolean;
+  sharedCount: number;
+};
+
+/** Frontend task-list item shape aligned with the current backend contract. */
+export type TaskListItem = {
+  id: string;
+  title: string;
+  description: string | null;
+  isCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  category: TaskCategorySummary | null;
+  sharing: TaskSharingSummary;
+};
+
 /** Filter state used by the task list controls on the dashboard. */
 export type TaskListFilters = {
   scope: TaskScopeFilter;
