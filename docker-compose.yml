@@ -15,21 +15,6 @@ services:
     volumes:
       - db_data:/var/lib/postgresql
 
-  migrate:
-    image: postgres:18-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-todo_list}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todo_list}
-      POSTGRES_DB: ${POSTGRES_DB:-todo_list}
-    entrypoint: ["/bin/sh", "/run_migrations.sh"]
-    volumes:
-      - ./apps/backend/app/auth/infrastructure/persistence/migrations:/migrations:ro
-      - ./apps/backend/scripts/run_migrations.sh:/run_migrations.sh:ro
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: "no"
-
   backend:
     build:
       context: ./apps/backend
@@ -42,8 +27,8 @@ services:
     volumes:
       - ./apps/backend:/app
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
 
   frontend:
     build:
