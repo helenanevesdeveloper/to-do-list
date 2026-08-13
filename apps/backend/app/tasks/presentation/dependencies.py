@@ -12,6 +12,7 @@ from typing import Any
 from app.tasks.application.use_cases import (
     CreateTaskCategoryUseCase,
     CreateTasksUseCase,
+    ListTaskCategoriesUseCase,
     ListTasksUseCase,
 )
 from app.container import build_container
@@ -60,6 +61,15 @@ def get_create_task_category_use_case() -> CreateTaskCategoryUseCase:
     return _resolve(
         "create_task_category_use_case",
         lambda: build_container().create_task_category_use_case,
+    )
+
+
+def get_list_task_categories_use_case() -> ListTaskCategoriesUseCase:
+    """Resolve the list-task-categories use case for the current request path."""
+
+    return _resolve(
+        "list_task_categories_use_case",
+        lambda: build_container().list_task_categories_use_case,
     )
 
 

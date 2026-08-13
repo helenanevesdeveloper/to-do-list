@@ -7,15 +7,20 @@ from rest_framework.response import Response
 from typing import cast
 
 from app.shared.http import AuthenticatedAPIView
+from app.tasks.application.dto.list_task_categories_input import (
+    ListTaskCategoriesInput,
+)
 
 from .dependencies import (
     get_create_task_category_use_case,
     get_create_tasks_use_case,
+    get_list_task_categories_use_case,
     get_list_tasks_use_case,
 )
 from .serializers import (
     TaskCategoryCreateRequestSerializer,
     TaskCategoryItemResponseSerializer,
+    TaskCategoryListResponseSerializer,
     TaskCreateRequestSerializer,
     TaskCreateResponseSerializer,
     TaskListQuerySerializer,
@@ -104,6 +109,21 @@ class TaskListView(AuthenticatedAPIView):
 
 
 class TaskCategoryListView(AuthenticatedAPIView):
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_list_task_categories_get",
+        responses={200: TaskCategoryListResponseSerializer},
+        description="List task categories",
+    )
+    def get(self, request):
+        use_case = get_list_task_categories_use_case()
+        result = use_case.execute(ListTaskCategoriesInput(user_id=request.user.id))
+        payload = {
+            "count": len(result.items),
+            "results": [asdict(item) for item in result.items],
+        }
+        return Response(TaskCategoryListResponseSerializer(payload).data)
 
     @extend_schema(
         tags=["tasks"],

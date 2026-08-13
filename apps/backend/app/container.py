@@ -22,9 +22,13 @@ from app.auth.infrastructure.security import (
 
 from app.tasks.application.use_cases.create_task_category import CreateTaskCategoryUseCase
 from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
+from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
 from app.tasks.infrastructure.repositories.django_orm_task_category_command_repository import (
     DjangoOrmTaskCategoryCommandRepository,
+)
+from app.tasks.infrastructure.repositories.django_orm_task_category_query_repository import (
+    DjangoOrmTaskCategoryQueryRepository,
 )
 from app.tasks.infrastructure.repositories.django_orm_task_command_repository import (
     DjangoOrmTaskCommandRepository,
@@ -43,6 +47,7 @@ class AppContainer:
     user_repository: UserRepository
     create_task_category_use_case: CreateTaskCategoryUseCase
     create_tasks_use_case: CreateTasksUseCase
+    list_task_categories_use_case: ListTaskCategoriesUseCase
     list_tasks_use_case: ListTasksUseCase
 
 
@@ -92,6 +97,7 @@ def build_container() -> AppContainer:
     )
 
     task_category_command_repository = DjangoOrmTaskCategoryCommandRepository()
+    task_category_query_repository = DjangoOrmTaskCategoryQueryRepository()
     task_command_repository = DjangoOrmTaskCommandRepository()
     task_query_repository = DjangoOrmTaskQueryRepository()
 
@@ -118,6 +124,9 @@ def build_container() -> AppContainer:
         ),
         create_tasks_use_case=CreateTasksUseCase(
             task_command_repository=task_command_repository
+        ),
+        list_task_categories_use_case=ListTaskCategoriesUseCase(
+            task_category_query_repository=task_category_query_repository
         ),
         list_tasks_use_case=ListTasksUseCase(
             task_query_repository=task_query_repository

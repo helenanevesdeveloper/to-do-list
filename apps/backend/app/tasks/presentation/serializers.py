@@ -115,6 +115,11 @@ class TaskCategoryItemResponseSerializer(serializers.Serializer):
     updated_at = serializers.CharField()
 
 
+class TaskCategoryListResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    results = TaskCategoryItemResponseSerializer(many=True)
+
+
 class TaskSharingSummarySerializer(serializers.Serializer):
     is_owner = serializers.BooleanField()
     permission = serializers.CharField(allow_null=True)
