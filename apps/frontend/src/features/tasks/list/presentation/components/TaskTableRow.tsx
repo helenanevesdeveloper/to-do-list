@@ -26,6 +26,7 @@ export default function TaskTableRow({ task, onClick }: TaskTableRowProps) {
         <Badge colorScheme={display.statusColorScheme}>{display.statusLabel}</Badge>
       </Td>
       <Td>{display.sharingLabel}</Td>
+      <Td>{display.createdAtLabel}</Td>
       <Td>{display.updatedAtLabel}</Td>
     </Tr>
   );

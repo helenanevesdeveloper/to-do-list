@@ -28,6 +28,7 @@ export default function TaskTableDesktop({
             <Th>Categoria</Th>
             <Th>Status</Th>
             <Th>Compartilhamento</Th>
+            <Th>Criada em</Th>
             <Th>Atualizada em</Th>
           </Tr>
         </Thead>

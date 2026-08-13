@@ -41,6 +41,9 @@ export default function TaskTableCard({ task, onClick }: TaskTableCardProps) {
           {display.sharingLabel}
         </Text>
         <Text fontSize="sm" color="gray.500">
+          Criada em {display.createdAtLabel}
+        </Text>
+        <Text fontSize="sm" color="gray.500">
           Atualizada em {display.updatedAtLabel}
         </Text>
       </Stack>

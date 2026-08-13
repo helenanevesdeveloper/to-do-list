@@ -2,6 +2,7 @@ import type { TaskListItem } from '../../../shared/types';
 
 export type TaskListItemDisplay = {
   categoryLabel: string;
+  createdAtLabel: string;
   descriptionLabel: string;
   sharingLabel: string;
   statusColorScheme: 'green' | 'yellow';
@@ -10,7 +11,7 @@ export type TaskListItemDisplay = {
 };
 
 /** Formats an ISO timestamp into a compact pt-BR label for task list rendering. */
-function formatUpdatedAt(value: string): string {
+function formatDateTime(value: string): string {
   return new Intl.DateTimeFormat('pt-BR', {
     dateStyle: 'short',
     timeStyle: 'short'
@@ -32,10 +33,11 @@ function buildSharingLabel(task: TaskListItem): string {
 export function buildTaskListItemDisplay(task: TaskListItem): TaskListItemDisplay {
   return {
     categoryLabel: task.category?.name ?? 'Sem categoria',
+    createdAtLabel: formatDateTime(task.createdAt),
     descriptionLabel: task.description ?? 'Sem descrição',
     sharingLabel: buildSharingLabel(task),
     statusColorScheme: task.isCompleted ? 'green' : 'yellow',
     statusLabel: task.isCompleted ? 'Concluída' : 'Pendente',
-    updatedAtLabel: formatUpdatedAt(task.updatedAt)
+    updatedAtLabel: formatDateTime(task.updatedAt)
   };
 }
