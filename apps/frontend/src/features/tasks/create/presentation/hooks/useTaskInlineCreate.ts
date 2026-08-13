@@ -1,30 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  EMPTY_TASK_INLINE_CREATE_DRAFT,
-  resolveTaskInlineCreateAttempt
-} from '../state/taskInlineCreateState';
+import { useRef } from 'react';
 import { useLatestRef } from './useLatestRef';
-import { usePointerDownOutside } from './usePointerDownOutside';
+import { useTaskInlineCreateDraftState } from './useTaskInlineCreateDraftState';
+import { useTaskInlineCreateEffects } from './useTaskInlineCreateEffects';
+import { useTaskInlineCreateSubmission } from './useTaskInlineCreateSubmission';
+import type {
+  TaskInlineCreateDraft,
+  TaskInlineCreateInput
+} from '../state/taskInlineCreateTypes';
 
-export type TaskInlineCreateDraft = {
-  categoryId: string;
-  description: string;
-  title: string;
-};
-
-export type TaskInlineCreateInput = {
-  categoryId: string | null;
-  description: string | null;
-  title: string;
-};
+export type { TaskInlineCreateDraft, TaskInlineCreateInput } from '../state/taskInlineCreateTypes';
 
 export type UseTaskInlineCreateArgs = {
-  onCreateTask: (input: TaskInlineCreateInput) => void;
+  onCreateTask: (input: TaskInlineCreateInput) => Promise<void>;
 };
 
 export type UseTaskInlineCreateResult = {
   draft: TaskInlineCreateDraft;
   errorMessage: string | null;
+  isSubmitting: boolean;
   rootRef: React.RefObject<HTMLDivElement | null>;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
   setCategoryId: (value: string) => void;
@@ -36,62 +29,37 @@ export type UseTaskInlineCreateResult = {
 export function useTaskInlineCreate({
   onCreateTask
 }: UseTaskInlineCreateArgs): UseTaskInlineCreateResult {
-  const [draft, setDraft] = useState<TaskInlineCreateDraft>(
-    EMPTY_TASK_INLINE_CREATE_DRAFT
-  );
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const {
+    draft,
+    errorMessage,
+    resetDraft,
+    setCategoryId,
+    setDescription,
+    setErrorMessage,
+    setTitle
+  } = useTaskInlineCreateDraftState();
   const draftRef = useLatestRef(draft);
   const onCreateTaskRef = useLatestRef(onCreateTask);
-
-  useEffect(() => {
-    titleInputRef.current?.focus();
-  }, []);
-
-  const handlePointerDownOutside = useCallback((): void => {
-    const attempt = resolveTaskInlineCreateAttempt(draftRef.current);
-
-    if (attempt.type === 'ignore') {
-      setErrorMessage(null);
-      return;
-    }
-
-    if (attempt.type === 'invalid') {
-      setErrorMessage(attempt.errorMessage);
-      titleInputRef.current?.focus();
-      return;
-    }
-
-    onCreateTaskRef.current(attempt.input);
-    setDraft(EMPTY_TASK_INLINE_CREATE_DRAFT);
-    setErrorMessage(null);
-    window.setTimeout(() => {
-      titleInputRef.current?.focus();
-    }, 0);
-  }, [draftRef, onCreateTaskRef]);
-
-  usePointerDownOutside({
-    onPointerDownOutside: handlePointerDownOutside,
-    rootRef
+  const { handlePointerDownOutside, isSubmitting } = useTaskInlineCreateSubmission({
+    draftRef,
+    onCreateTaskRef,
+    resetDraft,
+    setErrorMessage,
+    titleInputRef
   });
 
-  function setTitle(value: string): void {
-    setDraft((current) => ({ ...current, title: value }));
-    setErrorMessage(null);
-  }
-
-  function setDescription(value: string): void {
-    setDraft((current) => ({ ...current, description: value }));
-  }
-
-  function setCategoryId(value: string): void {
-    setDraft((current) => ({ ...current, categoryId: value }));
-  }
+  useTaskInlineCreateEffects({
+    onPointerDownOutside: handlePointerDownOutside,
+    rootRef,
+    titleInputRef
+  });
 
   return {
     draft,
     errorMessage,
+    isSubmitting,
     rootRef,
     titleInputRef,
     setCategoryId,

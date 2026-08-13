@@ -1,43 +1,17 @@
 import { useEffect, useState } from 'react';
 import { createTaskCategoryApi } from '../../../categories/infrastructure/createTaskCategoryApi';
 import { useTaskCategories } from '../../../categories/presentation/hooks/useTaskCategories';
-import { createLocalTaskListItem } from '../../../create/application/createLocalTaskListItem';
+import { createTasksApi } from '../../../create/infrastructure/createTasksApi';
 import type { TaskInlineCreateInput } from '../../../create/presentation/hooks/useTaskInlineCreate';
 import { useTaskListFilters } from '../../../list/presentation/hooks/useTaskListFilters';
 import { useTaskListQuery } from '../../../list/presentation/hooks/useTaskListQuery';
-import type { TaskCategoryOption, TaskListItem, TaskListPage } from '../../../shared/types';
+import type { TaskCategoryOption } from '../../../shared/types';
 
-function buildOptimisticTaskListPage(args: {
-  createdTaskItem: TaskListItem;
-  currentPage: TaskListPage;
-  pageSize: number;
-}): TaskListPage {
-  if (args.currentPage.currentPage !== 1) {
-    return args.currentPage;
-  }
-
-  const items = [args.createdTaskItem, ...args.currentPage.items].slice(0, args.pageSize);
-  const totalItems = args.currentPage.totalItems + 1;
-  const totalPages = Math.ceil(totalItems / args.pageSize);
-
-  return {
-    currentPage: 1,
-    endItem: items.length,
-    hasNextPage: totalPages > 1,
-    hasPreviousPage: false,
-    items,
-    startItem: items.length === 0 ? 0 : 1,
-    totalItems,
-    totalPages
-  };
-}
-
-/** Orchestrates dashboard state while reads come from the backend and task creation remains local. */
+/** Orchestrates dashboard state while reads and category/task creation use the backend. */
 export function useTaskDashboard() {
   const [localCategoryOptions, setLocalCategoryOptions] = useState<TaskCategoryOption[]>(
     []
   );
-  const [optimisticPage, setOptimisticPage] = useState<TaskListPage | null>(null);
   const {
     errorMessage: categoryErrorMessage,
     isLoading: isLoadingCategories,
@@ -46,7 +20,7 @@ export function useTaskDashboard() {
   const { filters, actions } = useTaskListFilters();
   const { errorMessage, isLoading, page, reload } = useTaskListQuery(filters);
   const categoryOptions = [...remoteCategoryOptions, ...localCategoryOptions];
-  const paginatedTasks = optimisticPage ?? page;
+  const paginatedTasks = page;
 
   useEffect(() => {
     if (paginatedTasks.currentPage !== filters.page) {
@@ -54,30 +28,14 @@ export function useTaskDashboard() {
     }
   }, [actions, filters.page, paginatedTasks.currentPage]);
 
-  useEffect(() => {
-    setOptimisticPage(null);
-  }, [
-    filters.categoryId,
-    filters.page,
-    filters.pageSize,
-    filters.scope,
-    filters.status,
-    page
-  ]);
+  async function handleCreateTask(input: TaskInlineCreateInput): Promise<void> {
+    await createTasksApi(input);
 
-  function handleCreateTask(input: TaskInlineCreateInput): void {
-    const createdTaskItem = createLocalTaskListItem({
-      categoryOptions,
-      input
-    });
+    if (filters.page === 1) {
+      reload();
+      return;
+    }
 
-    setOptimisticPage((current) =>
-      buildOptimisticTaskListPage({
-        createdTaskItem,
-        currentPage: current ?? page,
-        pageSize: filters.pageSize
-      })
-    );
     actions.setPage(1);
   }
 

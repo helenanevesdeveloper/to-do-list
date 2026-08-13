@@ -1,4 +1,7 @@
-import type { TaskInlineCreateDraft, TaskInlineCreateInput } from '../hooks/useTaskInlineCreate';
+import type {
+  TaskInlineCreateDraft,
+  TaskInlineCreateInput
+} from './taskInlineCreateTypes';
 
 export type TaskInlineCreateAttemptResult =
   | { type: 'ignore' }
