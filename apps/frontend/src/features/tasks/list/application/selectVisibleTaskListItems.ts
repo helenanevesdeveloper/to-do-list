@@ -5,6 +5,17 @@ type SelectVisibleTaskListItemsArgs = {
   filters: TaskListFilters;
 };
 
+export type VisibleTaskListItemsResult = {
+  currentPage: number;
+  endItem: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  items: TaskListItem[];
+  startItem: number;
+  totalItems: number;
+  totalPages: number;
+};
+
 /** Returns whether a task matches the current scope filter. */
 function matchesScope(task: TaskListItem, filters: TaskListFilters): boolean {
   if (filters.scope === 'owned') {
@@ -40,14 +51,31 @@ function matchesCategory(task: TaskListItem, filters: TaskListFilters): boolean 
   return task.category?.id === filters.categoryId;
 }
 
-/** Applies the current dashboard filters to locally available task-list items. */
+/** Applies filters and local pagination to dashboard task-list items. */
 export function selectVisibleTaskListItems({
   items,
   filters
-}: SelectVisibleTaskListItemsArgs): TaskListItem[] {
-  return items
+}: SelectVisibleTaskListItemsArgs): VisibleTaskListItemsResult {
+  const visibleItems = items
     .filter((item) => matchesScope(item, filters))
     .filter((item) => matchesStatus(item, filters))
-    .filter((item) => matchesCategory(item, filters))
-    .slice(0, filters.pageSize);
+    .filter((item) => matchesCategory(item, filters));
+  const totalItems = visibleItems.length;
+  const totalPages = totalItems === 0 ? 1 : Math.ceil(totalItems / filters.pageSize);
+  const currentPage = filters.page > totalPages ? totalPages : filters.page;
+  const startOffset = (currentPage - 1) * filters.pageSize;
+  const pageItems = visibleItems.slice(startOffset, startOffset + filters.pageSize);
+  const startItem = pageItems.length === 0 ? 0 : startOffset + 1;
+  const endItem = pageItems.length === 0 ? 0 : startOffset + pageItems.length;
+
+  return {
+    currentPage,
+    endItem,
+    hasNextPage: currentPage < totalPages,
+    hasPreviousPage: currentPage > 1,
+    items: pageItems,
+    startItem,
+    totalItems,
+    totalPages
+  };
 }

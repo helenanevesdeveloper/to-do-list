@@ -7,10 +7,10 @@ export const TASK_CATEGORY_SAMPLE_OPTIONS: TaskCategoryOption[] = [
   { id: 'cat-ops', name: 'Ops' }
 ];
 
-/** Local sample tasks used to render the dashboard list before API wiring lands. */
-export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = [
+type TaskListSampleTemplate = Omit<TaskListItem, 'id'>;
+
+const TASK_LIST_SAMPLE_TEMPLATES: TaskListSampleTemplate[] = [
   {
-    id: 'task-1',
     title: 'Prepare backend release checklist',
     description: 'Owned task used to validate the default dashboard state.',
     isCompleted: false,
@@ -25,7 +25,6 @@ export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = [
     }
   },
   {
-    id: 'task-2',
     title: 'Buy light bulbs',
     description: 'Private home task without sharing.',
     isCompleted: false,
@@ -40,7 +39,6 @@ export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = [
     }
   },
   {
-    id: 'task-3',
     title: 'Update incident template',
     description: 'Shared task with edit permission.',
     isCompleted: true,
@@ -55,7 +53,6 @@ export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = [
     }
   },
   {
-    id: 'task-4',
     title: 'Archive outdated docs',
     description: null,
     isCompleted: true,
@@ -70,7 +67,6 @@ export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = [
     }
   },
   {
-    id: 'task-5',
     title: 'Review on-call handoff',
     description: 'Shared task with view permission only.',
     isCompleted: false,
@@ -85,3 +81,19 @@ export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = [
     }
   }
 ];
+
+/** Local sample tasks used to render the dashboard list before API wiring lands. */
+export const TASK_LIST_SAMPLE_DATA: TaskListItem[] = Array.from(
+  { length: 28 },
+  (_, index) => {
+    const template = TASK_LIST_SAMPLE_TEMPLATES[index % TASK_LIST_SAMPLE_TEMPLATES.length];
+
+    return {
+      ...template,
+      id: `task-${index + 1}`,
+      title: `${template.title} #${index + 1}`,
+      createdAt: `2026-08-${String((index % 9) + 1).padStart(2, '0')}T09:00:00+00:00`,
+      updatedAt: `2026-08-${String((index % 9) + 4).padStart(2, '0')}T12:30:00+00:00`
+    };
+  }
+);

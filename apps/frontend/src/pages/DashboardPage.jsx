@@ -1,8 +1,10 @@
 import { Container, Stack } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { useAuth } from '../features/auth/session/presentation/hooks/useAuth';
 import { useDashboardLogout } from '../features/auth/session/presentation/hooks/useDashboardLogout';
 import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader.js';
 import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls.js';
+import TaskPagination from '../features/tasks/list/presentation/components/TaskPagination.js';
 import TaskTable from '../features/tasks/list/presentation/components/TaskTable.js';
 import { selectVisibleTaskListItems } from '../features/tasks/list/application/selectVisibleTaskListItems.js';
 import { useTaskListFilters } from '../features/tasks/list/presentation/hooks/useTaskListFilters.js';
@@ -17,10 +19,16 @@ export default function DashboardPage() {
   const handleAddTasks = () => {};
   const categoryOptions = TASK_CATEGORY_SAMPLE_OPTIONS;
   const { filters, actions } = useTaskListFilters();
-  const visibleTasks = selectVisibleTaskListItems({
+  const paginatedTasks = selectVisibleTaskListItems({
     items: TASK_LIST_SAMPLE_DATA,
     filters
   });
+
+  useEffect(() => {
+    if (paginatedTasks.currentPage !== filters.page) {
+      actions.setPage(paginatedTasks.currentPage);
+    }
+  }, [actions, filters.page, paginatedTasks.currentPage]);
 
   function handleTaskClick() {}
 
@@ -41,7 +49,19 @@ export default function DashboardPage() {
           actions={actions}
         />
 
-        <TaskTable items={visibleTasks} onTaskClick={handleTaskClick} />
+        <TaskTable items={paginatedTasks.items} onTaskClick={handleTaskClick} />
+
+        <TaskPagination
+          currentPage={paginatedTasks.currentPage}
+          endItem={paginatedTasks.endItem}
+          hasNextPage={paginatedTasks.hasNextPage}
+          hasPreviousPage={paginatedTasks.hasPreviousPage}
+          onNextPage={actions.goToNextPage}
+          onPreviousPage={actions.goToPreviousPage}
+          startItem={paginatedTasks.startItem}
+          totalItems={paginatedTasks.totalItems}
+          totalPages={paginatedTasks.totalPages}
+        />
       </Stack>
     </Container>
   );

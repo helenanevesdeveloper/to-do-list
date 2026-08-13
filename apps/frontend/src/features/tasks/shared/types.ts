@@ -39,6 +39,7 @@ export type TaskListItem = {
 
 /** Filter state used by the task list controls on the dashboard. */
 export type TaskListFilters = {
+  page: number;
   scope: TaskScopeFilter;
   status: TaskStatusFilter;
   categoryId: string;
@@ -47,6 +48,7 @@ export type TaskListFilters = {
 
 /** Default filter state for the initial dashboard render. */
 export const DEFAULT_TASK_LIST_FILTERS: TaskListFilters = {
+  page: 1,
   scope: 'owned',
   status: 'all',
   categoryId: '',
