@@ -40,14 +40,14 @@ const TASK_LIST_SAMPLE_TEMPLATES: TaskListSampleTemplate[] = [
   },
   {
     title: 'Update incident template',
-    description: 'Shared task with edit permission.',
+    description: 'Shared task with read-only access.',
     isCompleted: true,
     createdAt: '2026-08-08T14:00:00+00:00',
     updatedAt: '2026-08-12T08:15:00+00:00',
     category: { id: 'cat-ops', name: 'Ops', color: '#7A3E9D' },
     sharing: {
       isOwner: false,
-      permission: 'edit',
+      permission: 'reader',
       isShared: true,
       sharedCount: 2
     }
@@ -68,14 +68,14 @@ const TASK_LIST_SAMPLE_TEMPLATES: TaskListSampleTemplate[] = [
   },
   {
     title: 'Review on-call handoff',
-    description: 'Shared task with view permission only.',
+    description: 'Shared task with read-only access.',
     isCompleted: false,
     createdAt: '2026-08-06T10:10:00+00:00',
     updatedAt: '2026-08-11T09:20:00+00:00',
     category: { id: 'cat-ops', name: 'Ops', color: '#7A3E9D' },
     sharing: {
       isOwner: false,
-      permission: 'view',
+      permission: 'reader',
       isShared: true,
       sharedCount: 1
     }

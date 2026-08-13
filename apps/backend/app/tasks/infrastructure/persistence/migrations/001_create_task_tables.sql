@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS task_shares (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT uq_task_shares_task_user UNIQUE (task_id, shared_with_user_id),
-    CONSTRAINT chk_task_shares_permission CHECK (permission IN ('view', 'edit'))
+    CONSTRAINT chk_task_shares_permission CHECK (permission IN ('reader'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_task_categories_owner_user_id

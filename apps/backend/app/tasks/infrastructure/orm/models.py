@@ -5,6 +5,10 @@ from django.utils import timezone
 from app.auth.infrastructure.orm.models import UserModel
 
 
+class TaskSharePermission(models.TextChoices):
+    READER = "reader", "Leitor"
+
+
 class TaskCategoryModel(models.Model):
     id = models.TextField(primary_key=True)
     owner_user = models.ForeignKey(
@@ -92,7 +96,10 @@ class TaskShareModel(models.Model):
         db_column="shared_with_user_id",
         related_name="received_task_shares",
     )
-    permission = models.CharField(max_length=16)
+    permission = models.CharField(
+        max_length=16,
+        choices=TaskSharePermission.choices,
+    )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
 
@@ -104,7 +111,7 @@ class TaskShareModel(models.Model):
                 name="uq_task_shares_task_user",
             ),
             models.CheckConstraint(
-                condition=Q(permission__in=["view", "edit"]),
+                condition=Q(permission__in=[TaskSharePermission.READER]),
                 name="chk_task_shares_permission",
             ),
         ]

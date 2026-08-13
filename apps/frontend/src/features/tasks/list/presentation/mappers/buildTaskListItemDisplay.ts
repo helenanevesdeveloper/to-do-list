@@ -26,7 +26,7 @@ function buildSharingLabel(task: TaskListItem): string {
       : 'Privada';
   }
 
-  return task.sharing.permission === 'edit' ? 'Recebida com edição' : 'Recebida com leitura';
+  return 'Recebida com leitura';
 }
 
 /** Builds the render-ready labels and colors for a single task list item. */

@@ -31,7 +31,12 @@ from app.tasks.domain import (
     InvalidTaskSharePayloadError,
     TaskNotFoundError,
 )
-from app.tasks.models import TaskCategoryModel, TaskModel, TaskShareModel
+from app.tasks.models import (
+    TaskCategoryModel,
+    TaskModel,
+    TaskShareModel,
+)
+from app.tasks.infrastructure.orm.models import TaskSharePermission
 
 
 @dataclass(slots=True)

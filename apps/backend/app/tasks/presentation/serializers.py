@@ -5,6 +5,7 @@ from typing import cast
 
 from rest_framework import serializers
 
+from app.tasks.infrastructure.orm.models import TaskSharePermission
 from app.tasks.application.dto.create_task_category_input import CreateTaskCategoryInput
 from app.tasks.application.dto.create_task_share_input import CreateTaskShareInput
 from app.tasks.application.dto.create_tasks_input import (
@@ -112,7 +113,10 @@ class TaskCategoryCreateRequestSerializer(serializers.Serializer):
 
 class TaskShareCreateRequestSerializer(serializers.Serializer):
     shared_with_user_id = serializers.CharField()
-    permission = serializers.ChoiceField(choices=["view", "edit"])
+    permission = serializers.ChoiceField(
+        choices=TaskSharePermission.choices,
+        default=TaskSharePermission.READER,
+    )
 
     def to_dto(self, *, user_id: str, task_id: str) -> CreateTaskShareInput:
         data = cast(dict[str, object], self.validated_data)

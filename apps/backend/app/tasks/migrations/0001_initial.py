@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
             name='TaskShareModel',
             fields=[
                 ('id', models.TextField(primary_key=True, serialize=False)),
-                ('permission', models.CharField(max_length=16)),
+                ('permission', models.CharField(choices=[('reader', 'Leitor')], max_length=16)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('updated_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('shared_with_user', models.ForeignKey(db_column='shared_with_user_id', on_delete=django.db.models.deletion.CASCADE, related_name='received_task_shares', to='auth_app.usermodel')),
@@ -92,6 +92,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='tasksharemodel',
-            constraint=models.CheckConstraint(condition=models.Q(('permission__in', ['view', 'edit'])), name='chk_task_shares_permission'),
+            constraint=models.CheckConstraint(condition=models.Q(('permission__in', ['reader'])), name='chk_task_shares_permission'),
         ),
     ]
