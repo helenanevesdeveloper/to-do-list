@@ -13,6 +13,7 @@ from app.tasks.application.dto.list_task_categories_input import (
 
 from .dependencies import (
     get_create_task_category_use_case,
+    get_create_task_share_use_case,
     get_create_tasks_use_case,
     get_delete_task_categories_use_case,
     get_delete_tasks_use_case,
@@ -28,6 +29,8 @@ from .serializers import (
     TaskCategoryItemResponseSerializer,
     TaskCategoryListResponseSerializer,
     TaskCategoryUpdateRequestSerializer,
+    TaskShareCreateRequestSerializer,
+    TaskShareResponseSerializer,
     TaskCreateRequestSerializer,
     TaskCreateResponseSerializer,
     TaskDeleteRequestSerializer,
@@ -259,3 +262,32 @@ class TaskCategoryDetailView(AuthenticatedAPIView):
             )
         )
         return Response(TaskCategoryItemResponseSerializer(asdict(result)).data)
+
+
+class TaskShareListView(AuthenticatedAPIView):
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_create_task_share_post",
+        request=TaskShareCreateRequestSerializer,
+        responses={201: TaskShareResponseSerializer},
+        description="Share a task with another user",
+    )
+    def post(self, request, task_id: str):
+        payload = cast(
+            TaskShareCreateRequestSerializer,
+            TaskShareCreateRequestSerializer(data=request.data),
+        )
+        payload.is_valid(raise_exception=True)
+
+        use_case = get_create_task_share_use_case()
+        result = use_case.execute(
+            payload.to_dto(
+                user_id=request.user.id,
+                task_id=task_id,
+            )
+        )
+        return Response(
+            TaskShareResponseSerializer(asdict(result)).data,
+            status=status.HTTP_201_CREATED,
+        )

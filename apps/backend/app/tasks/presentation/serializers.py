@@ -6,6 +6,7 @@ from typing import cast
 from rest_framework import serializers
 
 from app.tasks.application.dto.create_task_category_input import CreateTaskCategoryInput
+from app.tasks.application.dto.create_task_share_input import CreateTaskShareInput
 from app.tasks.application.dto.create_tasks_input import (
     CreateTaskItemInput,
     CreateTasksInput,
@@ -107,6 +108,20 @@ class TaskCategoryCreateRequestSerializer(serializers.Serializer):
         if value is None or value == "":
             return None
         return value
+
+
+class TaskShareCreateRequestSerializer(serializers.Serializer):
+    shared_with_user_id = serializers.CharField()
+    permission = serializers.ChoiceField(choices=["view", "edit"])
+
+    def to_dto(self, *, user_id: str, task_id: str) -> CreateTaskShareInput:
+        data = cast(dict[str, object], self.validated_data)
+        return CreateTaskShareInput(
+            user_id=user_id,
+            task_id=task_id,
+            shared_with_user_id=cast(str, data["shared_with_user_id"]),
+            permission=cast(str, data["permission"]),
+        )
 
 
 class TaskCategoryUpdateRequestSerializer(serializers.Serializer):

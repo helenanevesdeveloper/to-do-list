@@ -4,10 +4,14 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Callable
 
+from django.db import IntegrityError
 from django.db import transaction
 
+from app.auth.models import UserModel
 from app.shared.exceptions import ValidationIssue
 from app.shared.runtime import generate_uuid, utc_now
+from app.tasks.application.dto.create_task_share_input import CreateTaskShareInput
+from app.tasks.application.dto.create_task_share_output import CreatedTaskShare
 from app.tasks.application.dto.create_tasks_input import (
     CreateTaskItemInput,
     CreateTasksInput,
@@ -22,8 +26,12 @@ from app.tasks.application.dto.list_tasks_output import (
 )
 from app.tasks.application.dto.update_task_input import UpdateTaskInput
 from app.tasks.application.ports.task_command_repository import TaskCommandRepository
-from app.tasks.domain import InvalidTaskPayloadError, TaskNotFoundError
-from app.tasks.models import TaskCategoryModel, TaskModel
+from app.tasks.domain import (
+    InvalidTaskPayloadError,
+    InvalidTaskSharePayloadError,
+    TaskNotFoundError,
+)
+from app.tasks.models import TaskCategoryModel, TaskModel, TaskShareModel
 
 
 @dataclass(slots=True)
@@ -31,6 +39,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
     """Persist task-creation requests and return the created collection view."""
 
     generate_task_id: Callable[[], str] = field(default=generate_uuid)
+    generate_task_share_id: Callable[[], str] = field(default=generate_uuid)
     get_now: Callable[[], datetime] = field(default=utc_now)
 
     def create_tasks(self, input_dto: CreateTasksInput) -> CreatedTasks:
@@ -83,6 +92,46 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             requested=requested_count,
             deleted=deleted_count,
             failed=requested_count - deleted_count,
+        )
+
+    def create_task_share(self, input_dto: CreateTaskShareInput) -> CreatedTaskShare:
+        task = TaskModel.objects.filter(
+            id=input_dto.task_id,
+            owner_user_id=input_dto.user_id,
+        ).first()
+        if task is None:
+            raise TaskNotFoundError("task was not found")
+
+        self._validate_task_share_payload(input_dto)
+
+        share_id = self.generate_task_share_id()
+        timestamp = self.get_now()
+
+        try:
+            with transaction.atomic():
+                TaskShareModel.objects.create(
+                    id=share_id,
+                    task_id=input_dto.task_id,
+                    shared_with_user_id=input_dto.shared_with_user_id,
+                    permission=input_dto.permission,
+                    created_at=timestamp,
+                    updated_at=timestamp,
+                )
+        except IntegrityError as exc:
+            raise InvalidTaskSharePayloadError(
+                [
+                    ValidationIssue(
+                        field="shared_with_user_id",
+                        message="task is already shared with the provided user",
+                    )
+                ]
+            ) from exc
+
+        return CreatedTaskShare(
+            id=share_id,
+            shared_with_user_id=input_dto.shared_with_user_id,
+            permission=input_dto.permission,
+            created_at=timestamp.isoformat(),
         )
 
     def update_task(self, input_dto: UpdateTaskInput) -> TaskListItem:
@@ -216,6 +265,27 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                 ]
             )
         return category
+
+    def _validate_task_share_payload(self, input_dto: CreateTaskShareInput) -> None:
+        if input_dto.shared_with_user_id == input_dto.user_id:
+            raise InvalidTaskSharePayloadError(
+                [
+                    ValidationIssue(
+                        field="shared_with_user_id",
+                        message="task owner cannot be added as a share recipient",
+                    )
+                ]
+            )
+
+        if not UserModel.objects.filter(id=input_dto.shared_with_user_id).exists():
+            raise InvalidTaskSharePayloadError(
+                [
+                    ValidationIssue(
+                        field="shared_with_user_id",
+                        message="shared user does not exist",
+                    )
+                ]
+            )
 
     def _to_task_list_item_from_model(self, task: TaskModel) -> TaskListItem:
         category_item = None

@@ -11,6 +11,7 @@ from typing import Any
 
 from app.tasks.application.use_cases import (
     CreateTaskCategoryUseCase,
+    CreateTaskShareUseCase,
     CreateTasksUseCase,
     DeleteTaskCategoriesUseCase,
     DeleteTasksUseCase,
@@ -56,6 +57,15 @@ def get_create_tasks_use_case() -> CreateTasksUseCase:
     return _resolve(
         "create_tasks_use_case",
         lambda: build_container().create_tasks_use_case,
+    )
+
+
+def get_create_task_share_use_case() -> CreateTaskShareUseCase:
+    """Resolve the create-task-share use case for the current request path."""
+
+    return _resolve(
+        "create_task_share_use_case",
+        lambda: build_container().create_task_share_use_case,
     )
 
 

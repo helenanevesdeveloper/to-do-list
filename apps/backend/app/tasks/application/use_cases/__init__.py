@@ -1,6 +1,7 @@
 """Tasks use-case exports."""
 
 from app.tasks.application.use_cases.create_task_category import CreateTaskCategoryUseCase
+from app.tasks.application.use_cases.create_task_share import CreateTaskShareUseCase
 from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
 from app.tasks.application.use_cases.delete_task_categories import (
     DeleteTaskCategoriesUseCase,
@@ -15,6 +16,7 @@ from app.tasks.application.use_cases.update_task import UpdateTaskUseCase
 
 __all__ = [
     "CreateTaskCategoryUseCase",
+    "CreateTaskShareUseCase",
     "CreateTasksUseCase",
     "DeleteTaskCategoriesUseCase",
     "DeleteTasksUseCase",
