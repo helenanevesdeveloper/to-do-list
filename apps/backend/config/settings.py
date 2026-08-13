@@ -79,7 +79,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
-    "app.auth.presentation.apps.AuthApiConfig",
+    "app.auth.apps.AuthConfig",
     "app.tasks.apps.TasksConfig",
 ]
 
