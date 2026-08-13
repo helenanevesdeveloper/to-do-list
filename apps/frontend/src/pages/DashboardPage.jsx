@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const { isLoggingOut, handleLogout } = useDashboardLogout(logout);
   const {
     actions,
+    categoryErrorMessage,
     categoryOptions,
     errorMessage,
     handleCreateCategory,
@@ -20,6 +21,7 @@ export default function DashboardPage() {
     handleCreateTask,
     handleTaskClick,
     isLoading,
+    isLoadingCategories,
     paginatedTasks,
     reloadTasks
   } = useTaskDashboard();
@@ -38,7 +40,15 @@ export default function DashboardPage() {
           categoryOptions={categoryOptions}
           filters={filters}
           actions={actions}
+          isLoadingCategories={isLoadingCategories}
         />
+
+        {categoryErrorMessage ? (
+          <Alert status="warning" borderRadius="lg">
+            <AlertIcon />
+            Nao foi possivel carregar as categorias. O filtro e a selecao seguem com os dados disponiveis.
+          </Alert>
+        ) : null}
 
         <TaskCreateInlineRow
           categoryOptions={categoryOptions}

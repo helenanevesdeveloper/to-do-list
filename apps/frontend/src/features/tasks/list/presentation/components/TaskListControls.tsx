@@ -6,16 +6,18 @@ import ActiveTaskFilters from './ActiveTaskFilters';
 import TaskListToolbar from './TaskListToolbar';
 
 export type TaskListControlsProps = {
+  actions: TaskListFilterActions;
   categoryOptions: TaskCategoryOption[];
   filters: TaskListFilters;
-  actions: TaskListFilterActions;
+  isLoadingCategories?: boolean;
 };
 
 /** Composes the task-list toolbar and active-filter summary for the dashboard. */
 export default function TaskListControls({
+  actions,
   categoryOptions,
   filters,
-  actions
+  isLoadingCategories = false
 }: TaskListControlsProps) {
   const activeFilterChips = buildActiveTaskFilterChips({
     filters,
@@ -31,6 +33,7 @@ export default function TaskListControls({
         <TaskListToolbar
           filters={filters}
           categoryOptions={categoryOptions}
+          isLoadingCategories={isLoadingCategories}
           onScopeChange={actions.setScope}
           onStatusChange={actions.setStatus}
           onCategoryChange={actions.setCategoryId}

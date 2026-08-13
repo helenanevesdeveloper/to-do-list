@@ -11,22 +11,24 @@ import TaskScopeField from './TaskScopeField';
 import TaskStatusField from './TaskStatusField';
 
 export type TaskListToolbarProps = {
-  filters: TaskListFilters;
   categoryOptions: TaskCategoryOption[];
-  onScopeChange: (value: TaskScopeFilter) => void;
-  onStatusChange: (value: TaskStatusFilter) => void;
+  filters: TaskListFilters;
+  isLoadingCategories?: boolean;
   onCategoryChange: (value: string) => void;
   onPageSizeChange: (value: number) => void;
+  onScopeChange: (value: TaskScopeFilter) => void;
+  onStatusChange: (value: TaskStatusFilter) => void;
 };
 
 /** Renders only the filter and page-size inputs for the task dashboard list. */
 export default function TaskListToolbar({
-  filters,
   categoryOptions,
+  filters,
+  isLoadingCategories = false,
+  onCategoryChange,
+  onPageSizeChange,
   onScopeChange,
   onStatusChange,
-  onCategoryChange,
-  onPageSizeChange
 }: TaskListToolbarProps) {
   return (
     <Stack
@@ -46,6 +48,7 @@ export default function TaskListToolbar({
         <TaskCategoryField
           value={filters.categoryId}
           categoryOptions={categoryOptions}
+          isDisabled={isLoadingCategories}
           onChange={onCategoryChange}
         />
       </Stack>

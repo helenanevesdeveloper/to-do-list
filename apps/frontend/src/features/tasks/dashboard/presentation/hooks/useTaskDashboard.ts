@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useTaskCategories } from '../../../categories/presentation/hooks/useTaskCategories';
 import { createLocalTaskListItem } from '../../../create/application/createLocalTaskListItem';
 import type { TaskInlineCreateInput } from '../../../create/presentation/hooks/useTaskInlineCreate';
 import { useTaskListFilters } from '../../../list/presentation/hooks/useTaskListFilters';
 import { useTaskListQuery } from '../../../list/presentation/hooks/useTaskListQuery';
-import type { TaskListItem, TaskListPage } from '../../../shared/types';
-import {
-  TASK_CATEGORY_SAMPLE_OPTIONS
-} from '../../../list/presentation/state/taskListSampleData';
+import type { TaskCategoryOption, TaskListItem, TaskListPage } from '../../../shared/types';
 
 function buildOptimisticTaskListPage(args: {
   createdTaskItem: TaskListItem;
@@ -35,10 +33,18 @@ function buildOptimisticTaskListPage(args: {
 
 /** Orchestrates dashboard state while task reads come from the backend and writes remain local. */
 export function useTaskDashboard() {
-  const [categoryOptions, setCategoryOptions] = useState(TASK_CATEGORY_SAMPLE_OPTIONS);
+  const [localCategoryOptions, setLocalCategoryOptions] = useState<TaskCategoryOption[]>(
+    []
+  );
   const [optimisticPage, setOptimisticPage] = useState<TaskListPage | null>(null);
+  const {
+    errorMessage: categoryErrorMessage,
+    isLoading: isLoadingCategories,
+    options: remoteCategoryOptions
+  } = useTaskCategories();
   const { filters, actions } = useTaskListFilters();
   const { errorMessage, isLoading, page, reload } = useTaskListQuery(filters);
+  const categoryOptions = [...remoteCategoryOptions, ...localCategoryOptions];
   const paginatedTasks = optimisticPage ?? page;
 
   useEffect(() => {
@@ -80,7 +86,7 @@ export function useTaskDashboard() {
       name
     };
 
-    setCategoryOptions((current) => [...current, createdCategory]);
+    setLocalCategoryOptions((current) => [...current, createdCategory]);
     return createdCategory;
   }
 
@@ -88,6 +94,7 @@ export function useTaskDashboard() {
 
   return {
     actions,
+    categoryErrorMessage,
     categoryOptions,
     errorMessage,
     handleCreateCategory,
@@ -95,6 +102,7 @@ export function useTaskDashboard() {
     handleCreateTask,
     handleTaskClick,
     isLoading,
+    isLoadingCategories,
     paginatedTasks,
     reloadTasks: reload
   };
