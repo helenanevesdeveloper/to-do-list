@@ -28,6 +28,7 @@ from app.tasks.application.use_cases.delete_task_categories import (
 from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_tasks import ListTasksUseCase
+from app.tasks.application.use_cases.update_task import UpdateTaskUseCase
 from app.tasks.infrastructure.repositories.django_orm_task_category_command_repository import (
     DjangoOrmTaskCategoryCommandRepository,
 )
@@ -55,6 +56,7 @@ class AppContainer:
     delete_tasks_use_case: DeleteTasksUseCase
     list_task_categories_use_case: ListTaskCategoriesUseCase
     list_tasks_use_case: ListTasksUseCase
+    update_task_use_case: UpdateTaskUseCase
 
 
 @lru_cache
@@ -142,6 +144,9 @@ def build_container() -> AppContainer:
         ),
         list_tasks_use_case=ListTasksUseCase(
             task_query_repository=task_query_repository
+        ),
+        update_task_use_case=UpdateTaskUseCase(
+            task_command_repository=task_command_repository
         ),
     )
 

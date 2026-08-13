@@ -15,6 +15,7 @@ from app.tasks.application.dto.delete_task_categories_input import (
 )
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
+from app.tasks.application.dto.update_task_input import UpdateTaskInput
 
 
 class TaskListQuerySerializer(serializers.Serializer):
@@ -152,6 +153,52 @@ class TaskListResponseSerializer(serializers.Serializer):
 class TaskCreateResponseSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     results = TaskItemResponseSerializer(many=True)
+
+
+class TaskUpdateRequestSerializer(serializers.Serializer):
+    title = serializers.CharField(required=False, max_length=255)
+    description = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+    )
+    category_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+    )
+    is_completed = serializers.BooleanField(required=False)
+
+    def validate(self, attrs):
+        if not attrs:
+            raise serializers.ValidationError(
+                "at least one updatable field must be provided"
+            )
+        return attrs
+
+    def to_dto(self, *, user_id: str, task_id: str) -> UpdateTaskInput:
+        data = cast(dict[str, object], self.validated_data)
+        return UpdateTaskInput(
+            user_id=user_id,
+            task_id=task_id,
+            title=cast(str | None, data.get("title")),
+            title_provided="title" in data,
+            description=self._normalize_optional_text(
+                cast(str | None, data.get("description"))
+            ),
+            description_provided="description" in data,
+            category_id=self._normalize_optional_text(
+                cast(str | None, data.get("category_id"))
+            ),
+            category_id_provided="category_id" in data,
+            is_completed=cast(bool | None, data.get("is_completed")),
+            is_completed_provided="is_completed" in data,
+        )
+
+    def _normalize_optional_text(self, value: str | None) -> str | None:
+        if value is None or value == "":
+            return None
+        return value
 
 
 class TaskDeleteRequestSerializer(serializers.Serializer):

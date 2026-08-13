@@ -14,6 +14,7 @@ from app.shared.exceptions import (
     UserAlreadyExistsError,
     ValidationError,
 )
+from app.tasks.domain import TaskNotFoundError
 
 EXCEPTION_STATUS_MAP = {
     ValidationError: status.HTTP_400_BAD_REQUEST,
@@ -22,6 +23,7 @@ EXCEPTION_STATUS_MAP = {
     UserAlreadyExistsError: status.HTTP_409_CONFLICT,
     SessionNotFoundError: status.HTTP_404_NOT_FOUND,
     SessionAlreadyRevokedError: status.HTTP_409_CONFLICT,
+    TaskNotFoundError: status.HTTP_404_NOT_FOUND,
 }
 
 

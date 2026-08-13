@@ -18,6 +18,7 @@ from .dependencies import (
     get_delete_tasks_use_case,
     get_list_task_categories_use_case,
     get_list_tasks_use_case,
+    get_update_task_use_case,
 )
 from .serializers import (
     TaskCategoryCreateRequestSerializer,
@@ -31,6 +32,8 @@ from .serializers import (
     TaskDeleteResponseSerializer,
     TaskListQuerySerializer,
     TaskListResponseSerializer,
+    TaskItemResponseSerializer,
+    TaskUpdateRequestSerializer,
 )
 
 
@@ -202,3 +205,29 @@ class TaskCategoryListView(AuthenticatedAPIView):
                 }
             ).data
         )
+
+
+class TaskDetailView(AuthenticatedAPIView):
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_update_task_patch",
+        request=TaskUpdateRequestSerializer,
+        responses={200: TaskItemResponseSerializer},
+        description="Update a task partially",
+    )
+    def patch(self, request, task_id: str):
+        payload = cast(
+            TaskUpdateRequestSerializer,
+            TaskUpdateRequestSerializer(data=request.data),
+        )
+        payload.is_valid(raise_exception=True)
+
+        use_case = get_update_task_use_case()
+        result = use_case.execute(
+            payload.to_dto(
+                user_id=request.user.id,
+                task_id=task_id,
+            )
+        )
+        return Response(TaskItemResponseSerializer(asdict(result)).data)

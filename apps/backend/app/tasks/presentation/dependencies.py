@@ -16,6 +16,7 @@ from app.tasks.application.use_cases import (
     DeleteTasksUseCase,
     ListTaskCategoriesUseCase,
     ListTasksUseCase,
+    UpdateTaskUseCase,
 )
 from app.container import build_container
 
@@ -72,6 +73,15 @@ def get_create_task_category_use_case() -> CreateTaskCategoryUseCase:
     return _resolve(
         "create_task_category_use_case",
         lambda: build_container().create_task_category_use_case,
+    )
+
+
+def get_update_task_use_case() -> UpdateTaskUseCase:
+    """Resolve the update-task use case for the current request path."""
+
+    return _resolve(
+        "update_task_use_case",
+        lambda: build_container().update_task_use_case,
     )
 
 

@@ -1,4 +1,4 @@
-from app.shared.exceptions import ValidationError, ValidationIssue
+from app.shared.exceptions import DomainError, ValidationError, ValidationIssue
 
 
 class InvalidTaskPayloadError(ValidationError):
@@ -25,3 +25,7 @@ class InvalidTaskCategoryPayloadError(ValidationError):
     @property
     def issues(self) -> list[ValidationIssue] | None:
         return self._issues
+
+
+class TaskNotFoundError(DomainError):
+    pass

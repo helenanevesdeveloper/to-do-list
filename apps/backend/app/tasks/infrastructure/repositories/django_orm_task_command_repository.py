@@ -20,8 +20,9 @@ from app.tasks.application.dto.list_tasks_output import (
     TaskListItem,
     TaskSharingSummary,
 )
+from app.tasks.application.dto.update_task_input import UpdateTaskInput
 from app.tasks.application.ports.task_command_repository import TaskCommandRepository
-from app.tasks.domain import InvalidTaskPayloadError
+from app.tasks.domain import InvalidTaskPayloadError, TaskNotFoundError
 from app.tasks.models import TaskCategoryModel, TaskModel
 
 
@@ -84,6 +85,45 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             failed=requested_count - deleted_count,
         )
 
+    def update_task(self, input_dto: UpdateTaskInput) -> TaskListItem:
+        with transaction.atomic():
+            task = (
+                TaskModel.objects.select_related("category")
+                .filter(
+                    id=input_dto.task_id,
+                    owner_user_id=input_dto.user_id,
+                )
+                .first()
+            )
+            if task is None:
+                raise TaskNotFoundError("task was not found")
+
+            update_fields: list[str] = []
+
+            if input_dto.title_provided:
+                task.title = input_dto.title or ""
+                update_fields.append("title")
+
+            if input_dto.description_provided:
+                task.description = input_dto.description
+                update_fields.append("description")
+
+            if input_dto.category_id_provided:
+                category = self._load_update_category(input_dto)
+                task.category = category
+                update_fields.append("category")
+
+            if input_dto.is_completed_provided:
+                task.is_completed = bool(input_dto.is_completed)
+                update_fields.append("is_completed")
+
+            timestamp = self.get_now()
+            task.updated_at = timestamp
+            update_fields.append("updated_at")
+            task.save(update_fields=update_fields)
+
+        return self._to_task_list_item_from_model(task)
+
     def _load_categories(
         self,
         input_dto: CreateTasksInput,
@@ -144,6 +184,55 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             is_completed=item.is_completed,
             created_at=created_at.isoformat(),
             updated_at=updated_at.isoformat(),
+            category=category_item,
+            sharing=TaskSharingSummary(
+                is_owner=True,
+                permission=None,
+                is_shared=False,
+                shared_count=0,
+            ),
+        )
+
+    def _load_update_category(
+        self,
+        input_dto: UpdateTaskInput,
+    ) -> TaskCategoryModel | None:
+        if input_dto.category_id is None:
+            return None
+
+        category = TaskCategoryModel.objects.filter(
+            id=input_dto.category_id,
+            owner_user_id=input_dto.user_id,
+        ).first()
+        if category is None:
+            raise InvalidTaskPayloadError(
+                [
+                    ValidationIssue(
+                        field="category_id",
+                        message=(
+                            "category does not exist or is not owned by the authenticated user"
+                        ),
+                    )
+                ]
+            )
+        return category
+
+    def _to_task_list_item_from_model(self, task: TaskModel) -> TaskListItem:
+        category_item = None
+        if task.category is not None:
+            category_item = TaskCategoryListItem(
+                id=task.category.id,
+                name=task.category.name,
+                color=task.category.color,
+            )
+
+        return TaskListItem(
+            id=task.id,
+            title=task.title,
+            description=task.description,
+            is_completed=task.is_completed,
+            created_at=task.created_at.isoformat(),
+            updated_at=task.updated_at.isoformat(),
             category=category_item,
             sharing=TaskSharingSummary(
                 is_owner=True,
