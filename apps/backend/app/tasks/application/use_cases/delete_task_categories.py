@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.tasks.application.dto.delete_task_categories_input import (
     DeleteTaskCategoriesInput,
 )
-from app.tasks.application.ports.task_category_command_repository import (
+from app.tasks.infrastructure.repositories.task_category_command_repository import (
     TaskCategoryCommandRepository,
 )
 

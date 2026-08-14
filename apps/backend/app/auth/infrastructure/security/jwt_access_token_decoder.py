@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import jwt
 
-from app.auth.application.ports.access_token_decoder import AccessTokenDecoder
+from app.auth.application.contracts import AccessTokenDecoder
 from app.shared.validation import require_non_empty_string
 
 

@@ -4,7 +4,6 @@ from datetime import datetime
 import psycopg
 from psycopg.rows import class_row
 
-from app.auth.application.ports.session_repository import SessionRepository
 from app.auth.domain.entities import AuthSession
 
 
@@ -17,7 +16,7 @@ class AuthSessionRow:
     revoked_at: datetime | None
 
 
-class PostgresSessionRepository(SessionRepository):
+class PostgresSessionRepository:
     def __init__(self, database_url: str) -> None:
         self.database_url = database_url
 

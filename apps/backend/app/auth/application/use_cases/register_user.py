@@ -5,17 +5,19 @@ from datetime import datetime
 from app.shared.runtime import generate_uuid, utc_now
 from app.auth.application.dto.register_user_input import RegisterUserInput
 from app.auth.application.dto.register_user_output import RegisterUserOutput
-from app.auth.application.ports.password_hasher import PasswordHasher
-from app.auth.application.ports.user_repository import UserRepository
+from app.auth.application.contracts import PasswordHasher
 from app.auth.domain.entities import User
 from app.auth.domain.services import PasswordPolicy
 from app.auth.domain.value_objects import Email
+from app.auth.infrastructure.repositories.postgres_user_repository import (
+    PostgresUserRepository,
+)
 from app.shared.exceptions import UserAlreadyExistsError
 
 
 @dataclass(slots=True)
 class RegisterUserUseCase:
-    user_repository: UserRepository
+    user_repository: PostgresUserRepository
     password_policy: PasswordPolicy
     password_hasher: PasswordHasher
     generate_user_id: Callable[[], str] = field(default=generate_uuid)

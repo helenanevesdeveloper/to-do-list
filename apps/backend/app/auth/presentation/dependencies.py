@@ -9,11 +9,14 @@ the real implementation.
 
 from typing import Any
 
-from app.auth.application.ports import AccessTokenDecoder, UserRepository
+from app.auth.application.contracts import AccessTokenDecoder
 from app.auth.application.use_cases import (
     AuthenticateUserUseCase,
     LogoutUseCase,
     RegisterUserUseCase,
+)
+from app.auth.infrastructure.repositories.postgres_user_repository import (
+    PostgresUserRepository,
 )
 from app.container import build_container
 
@@ -70,7 +73,7 @@ def get_access_token_decoder() -> AccessTokenDecoder:
     )
 
 
-def get_user_repository() -> UserRepository:
+def get_user_repository() -> PostgresUserRepository:
     """Resolve the user repository used by JWT-backed DRF authentication."""
 
     return _resolve(

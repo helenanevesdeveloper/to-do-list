@@ -26,7 +26,6 @@ from app.tasks.application.dto.list_tasks_output import (
     TaskListItem,
     TaskSharingSummary,
 )
-from app.tasks.application.ports.task_query_repository import TaskQueryRepository
 from app.tasks.domain import TaskNotFoundError
 from app.tasks.models import (
     TaskModel,
@@ -50,7 +49,7 @@ class TaskListRow(Protocol):
 
 
 @dataclass(slots=True)
-class DjangoOrmTaskQueryRepository(TaskQueryRepository):
+class TaskQueryRepository:
     def list_tasks(self, input_dto: ListTasksInput) -> PaginatedTasks:
         #  - “procure shares da task atual” - “apenas para o usuário autenticado”
         share_for_user = TaskShareModel.objects.filter(

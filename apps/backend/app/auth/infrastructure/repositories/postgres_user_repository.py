@@ -4,7 +4,6 @@ from datetime import datetime
 import psycopg
 from psycopg.rows import class_row
 
-from app.auth.application.ports.user_repository import UserRepository
 from app.auth.domain.entities import User
 from app.auth.domain.value_objects import Email
 from app.shared.exceptions import UserAlreadyExistsError
@@ -19,7 +18,7 @@ class UserRow:
     is_active: bool
 
 
-class PostgresUserRepository(UserRepository):
+class PostgresUserRepository:
     def __init__(self, database_url: str) -> None:
         self.database_url = database_url
 

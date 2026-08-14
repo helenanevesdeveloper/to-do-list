@@ -4,7 +4,9 @@ from datetime import datetime
 
 from app.shared.runtime import utc_now
 from app.auth.application.dto.logout_input import LogoutInput
-from app.auth.application.ports.session_repository import SessionRepository
+from app.auth.infrastructure.repositories.postgres_session_repository import (
+    PostgresSessionRepository,
+)
 from app.shared.exceptions import (
     SessionAlreadyRevokedError,
     SessionNotFoundError,
@@ -13,7 +15,7 @@ from app.shared.exceptions import (
 
 @dataclass(slots=True)
 class LogoutUseCase:
-    session_repository: SessionRepository
+    session_repository: PostgresSessionRepository
     now: Callable[[], datetime] = field(default=utc_now)
 
     def execute(self, input_dto: LogoutInput) -> None:

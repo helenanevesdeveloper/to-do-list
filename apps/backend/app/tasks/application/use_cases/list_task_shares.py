@@ -2,7 +2,9 @@ from dataclasses import dataclass
 
 from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
 from app.tasks.application.dto.list_task_shares_output import ListedTaskShares
-from app.tasks.application.ports.task_query_repository import TaskQueryRepository
+from app.tasks.infrastructure.repositories.task_query_repository import (
+    TaskQueryRepository,
+)
 
 
 @dataclass(slots=True)

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from app.tasks.application.dto.create_task_category_input import CreateTaskCategoryInput
 from app.tasks.application.dto.create_task_category_output import CreatedTaskCategory
-from app.tasks.application.ports.task_category_command_repository import (
+from app.tasks.infrastructure.repositories.task_category_command_repository import (
     TaskCategoryCommandRepository,
 )
 

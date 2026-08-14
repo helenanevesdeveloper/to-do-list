@@ -27,7 +27,6 @@ from app.tasks.application.dto.list_tasks_output import (
     TaskSharingSummary,
 )
 from app.tasks.application.dto.update_task_input import UpdateTaskInput
-from app.tasks.application.ports.task_command_repository import TaskCommandRepository
 from app.tasks.domain import (
     InvalidTaskPayloadError,
     InvalidTaskSharePayloadError,
@@ -43,7 +42,7 @@ from app.tasks.infrastructure.orm.models import TaskSharePermission
 
 
 @dataclass(slots=True)
-class DjangoOrmTaskCommandRepository(TaskCommandRepository):
+class TaskCommandRepository:
     """Persist task-creation requests and return the created collection view."""
 
     generate_task_id: Callable[[], str] = field(default=generate_uuid)

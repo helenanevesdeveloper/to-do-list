@@ -17,9 +17,6 @@ from app.tasks.application.dto.delete_task_categories_input import (
 from app.tasks.application.dto.update_task_category_input import (
     UpdateTaskCategoryInput,
 )
-from app.tasks.application.ports.task_category_command_repository import (
-    TaskCategoryCommandRepository,
-)
 from app.tasks.domain import (
     InvalidTaskCategoryPayloadError,
     TaskCategoryNotFoundError,
@@ -28,7 +25,7 @@ from app.tasks.models import TaskCategoryModel
 
 
 @dataclass(slots=True)
-class DjangoOrmTaskCategoryCommandRepository(TaskCategoryCommandRepository):
+class TaskCategoryCommandRepository:
     """Persist task-category commands for the tasks feature."""
 
     generate_category_id: Callable[[], str] = field(default=generate_uuid)

@@ -2,7 +2,9 @@ from dataclasses import dataclass
 
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
 from app.tasks.application.dto.list_tasks_output import PaginatedTasks
-from app.tasks.application.ports.task_query_repository import TaskQueryRepository
+from app.tasks.infrastructure.repositories.task_query_repository import (
+    TaskQueryRepository,
+)
 
 
 @dataclass(slots=True)

@@ -2,7 +2,9 @@ from dataclasses import dataclass
 
 from app.tasks.application.dto.list_tasks_output import TaskListItem
 from app.tasks.application.dto.update_task_input import UpdateTaskInput
-from app.tasks.application.ports.task_command_repository import TaskCommandRepository
+from app.tasks.infrastructure.repositories.task_command_repository import (
+    TaskCommandRepository,
+)
 
 
 @dataclass(slots=True)

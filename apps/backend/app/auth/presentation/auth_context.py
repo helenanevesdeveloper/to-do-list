@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import jwt
 from rest_framework.exceptions import APIException
 
-from app.auth.application.ports import AccessTokenDecoder
+from app.auth.application.contracts import AccessTokenDecoder
 from app.container import build_container
 
 

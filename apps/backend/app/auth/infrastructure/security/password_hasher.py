@@ -3,7 +3,7 @@ import hmac
 import secrets
 from dataclasses import dataclass
 
-from app.auth.application.ports.password_hasher import PasswordHasher
+from app.auth.application.contracts import PasswordHasher
 from app.shared.validation import require_non_empty_string
 
 

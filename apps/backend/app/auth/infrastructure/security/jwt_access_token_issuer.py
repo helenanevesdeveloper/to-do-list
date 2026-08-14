@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
-from app.auth.application.ports.access_token_issuer import AccessTokenIssuer
+from app.auth.application.contracts import AccessTokenIssuer
 
 
 def _default_now() -> datetime:

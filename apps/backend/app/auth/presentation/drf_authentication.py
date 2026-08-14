@@ -4,8 +4,11 @@ import jwt
 from rest_framework.authentication import BaseAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
-from app.auth.application.ports import AccessTokenDecoder, UserRepository
+from app.auth.application.contracts import AccessTokenDecoder
 from app.auth.domain.entities import User
+from app.auth.infrastructure.repositories.postgres_user_repository import (
+    PostgresUserRepository,
+)
 
 from .dependencies import get_access_token_decoder, get_user_repository
 
@@ -56,7 +59,7 @@ class JwtAuthentication(BaseAuthentication):
         self,
         *,
         decoder: AccessTokenDecoder | None = None,
-        user_repository: UserRepository | None = None,
+        user_repository: PostgresUserRepository | None = None,
     ) -> None:
         self._decoder = decoder
         self._user_repository = user_repository

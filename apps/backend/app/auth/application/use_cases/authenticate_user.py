@@ -9,19 +9,22 @@ from app.auth.application.dto.authenticate_user_input import (
 from app.auth.application.dto.authenticate_user_output import (
     AuthenticateUserOutput,
 )
-from app.auth.application.ports.access_token_issuer import AccessTokenIssuer
-from app.auth.application.ports.password_hasher import PasswordHasher
-from app.auth.application.ports.session_repository import SessionRepository
-from app.auth.application.ports.user_repository import UserRepository
+from app.auth.application.contracts import AccessTokenIssuer, PasswordHasher
 from app.auth.domain.entities import AuthSession
 from app.auth.domain.value_objects import Email
+from app.auth.infrastructure.repositories.postgres_session_repository import (
+    PostgresSessionRepository,
+)
+from app.auth.infrastructure.repositories.postgres_user_repository import (
+    PostgresUserRepository,
+)
 from app.shared.exceptions import InactiveUserError, InvalidCredentialsError
 
 
 @dataclass(slots=True)
 class AuthenticateUserUseCase:
-    user_repository: UserRepository
-    session_repository: SessionRepository
+    user_repository: PostgresUserRepository
+    session_repository: PostgresSessionRepository
     password_hasher: PasswordHasher
     access_token_issuer: AccessTokenIssuer
     access_token_expires_seconds: int = 900

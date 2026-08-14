@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 
-from app.auth.application.ports import AccessTokenDecoder, UserRepository
+from app.auth.application.contracts import AccessTokenDecoder
 from app.auth.application.use_cases import (
     AuthenticateUserUseCase,
     LogoutUseCase,
@@ -35,17 +35,17 @@ from app.tasks.application.use_cases.update_task_category import (
     UpdateTaskCategoryUseCase,
 )
 from app.tasks.application.use_cases.update_task import UpdateTaskUseCase
-from app.tasks.infrastructure.repositories.django_orm_task_category_command_repository import (
-    DjangoOrmTaskCategoryCommandRepository,
+from app.tasks.infrastructure.repositories.task_category_command_repository import (
+    TaskCategoryCommandRepository,
 )
-from app.tasks.infrastructure.repositories.django_orm_task_category_query_repository import (
-    DjangoOrmTaskCategoryQueryRepository,
+from app.tasks.infrastructure.repositories.task_category_query_repository import (
+    TaskCategoryQueryRepository,
 )
-from app.tasks.infrastructure.repositories.django_orm_task_command_repository import (
-    DjangoOrmTaskCommandRepository,
+from app.tasks.infrastructure.repositories.task_command_repository import (
+    TaskCommandRepository,
 )
-from app.tasks.infrastructure.repositories.django_orm_task_query_repository import (
-    DjangoOrmTaskQueryRepository,
+from app.tasks.infrastructure.repositories.task_query_repository import (
+    TaskQueryRepository,
 )
 
 
@@ -55,7 +55,7 @@ class AppContainer:
     authenticate_user_use_case: AuthenticateUserUseCase
     logout_use_case: LogoutUseCase
     access_token_decoder: AccessTokenDecoder
-    user_repository: UserRepository
+    user_repository: PostgresUserRepository
     create_task_category_use_case: CreateTaskCategoryUseCase
     create_task_share_use_case: CreateTaskShareUseCase
     delete_task_categories_use_case: DeleteTaskCategoriesUseCase
@@ -114,10 +114,10 @@ def build_container() -> AppContainer:
         audience=jwt_audience,
     )
 
-    task_category_command_repository = DjangoOrmTaskCategoryCommandRepository()
-    task_category_query_repository = DjangoOrmTaskCategoryQueryRepository()
-    task_command_repository = DjangoOrmTaskCommandRepository()
-    task_query_repository = DjangoOrmTaskQueryRepository()
+    task_category_command_repository = TaskCategoryCommandRepository()
+    task_category_query_repository = TaskCategoryQueryRepository()
+    task_command_repository = TaskCommandRepository()
+    task_query_repository = TaskQueryRepository()
 
     return AppContainer(
         register_user_use_case=RegisterUserUseCase(

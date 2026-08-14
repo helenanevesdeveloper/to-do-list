@@ -9,14 +9,11 @@ from app.tasks.application.dto.list_task_categories_output import (
     ListedTaskCategories,
     TaskCategoryItem,
 )
-from app.tasks.application.ports.task_category_query_repository import (
-    TaskCategoryQueryRepository,
-)
 from app.tasks.models import TaskCategoryModel
 
 
 @dataclass(slots=True)
-class DjangoOrmTaskCategoryQueryRepository(TaskCategoryQueryRepository):
+class TaskCategoryQueryRepository:
     """List task categories owned by the authenticated user."""
 
     def list_categories(
