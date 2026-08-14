@@ -13,6 +13,7 @@ import TaskShareAccessRows from './TaskShareAccessRows';
 export interface TaskShareAccessListProps {
   canManageShares: boolean;
   currentUserEmail: string | null;
+  deletingShareId?: string | null;
   errorMessage?: string | null;
   isLoading?: boolean;
   onRemoveShare?: (shareId: string) => void;
@@ -25,6 +26,7 @@ export default function TaskShareAccessList(
   {
     canManageShares,
     currentUserEmail,
+    deletingShareId = null,
     errorMessage = null,
     isLoading = false,
     onRemoveShare,
@@ -53,6 +55,7 @@ export default function TaskShareAccessList(
       <TaskShareAccessRows
         canManageShares={canManageShares}
         currentUserEmail={currentUserEmail}
+        deletingShareId={deletingShareId}
         onRemoveShare={onRemoveShare}
         shares={shares}
       />

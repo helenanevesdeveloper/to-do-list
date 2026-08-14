@@ -21,6 +21,7 @@ export default function TaskShareModal() {
     composerEmail,
     composerPermission,
     currentUserEmail,
+    deletingShareId,
     errorMessage,
     isOpen,
     isLoadingShares,
@@ -60,6 +61,7 @@ export default function TaskShareModal() {
             <TaskShareAccessList
               canManageShares={canManageShares}
               currentUserEmail={currentUserEmail}
+              deletingShareId={deletingShareId}
               errorMessage={shareListErrorMessage}
               isLoading={isLoadingShares}
               onRemoveShare={removeTaskShare}

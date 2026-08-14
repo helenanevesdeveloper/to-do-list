@@ -1,12 +1,16 @@
+import { taskApiClient } from '../../shared/infrastructure/taskApiClient';
+
 /** Input contract for deleting a task-sharing entry. */
 export interface DeleteTaskShareApiInput {
   taskId: string;
   shareId: string;
 }
 
-/** Placeholder API client for future task-share removal. */
+/** Deletes one task-sharing entry in the backend. */
 export async function deleteTaskShareApi(
-  _input: DeleteTaskShareApiInput,
+  input: DeleteTaskShareApiInput,
 ): Promise<void> {
-  throw new Error('TODO: implement deleteTaskShareApi.');
+  await taskApiClient.delete(
+    `/api/tasks/${encodeURIComponent(input.taskId)}/shares/${encodeURIComponent(input.shareId)}/`
+  );
 }

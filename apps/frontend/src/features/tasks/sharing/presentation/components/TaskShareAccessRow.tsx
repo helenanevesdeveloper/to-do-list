@@ -5,6 +5,7 @@ import TaskSharePermissionMenu from './TaskSharePermissionMenu';
 
 /** Props for one access row rendered inside the sharing modal. */
 export interface TaskShareAccessRowProps {
+  deletingShareId?: string | null;
   currentUserEmail: string | null;
   onRemoveShare?: (shareId: string) => void;
   share: TaskShare;
@@ -18,6 +19,7 @@ function buildInitial(value: string): string {
 /** Renders one person with access inside the local task-sharing modal. */
 export default function TaskShareAccessRow(
   {
+    deletingShareId = null,
     currentUserEmail,
     onRemoveShare,
     share,
@@ -25,6 +27,7 @@ export default function TaskShareAccessRow(
   }: TaskShareAccessRowProps
 ) {
   const isCurrentUser = currentUserEmail?.toLowerCase() === share.email.toLowerCase();
+  const isRemovingShare = deletingShareId === share.id;
   const labelSuffix = isCurrentUser ? ' (você)' : '';
 
   return (
@@ -52,6 +55,7 @@ export default function TaskShareAccessRow(
         ) : (
           <TaskSharePermissionMenu
             canManageShare={canManageShare}
+            isRemovingShare={isRemovingShare}
             onRemoveShare={
               onRemoveShare
                 ? () => {

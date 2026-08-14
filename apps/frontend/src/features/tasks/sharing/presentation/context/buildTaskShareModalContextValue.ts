@@ -2,6 +2,7 @@ import type { TaskShare } from '../../domain/taskShare';
 import type { TaskShareModalContextValue } from './TaskShareModalContext';
 import type { UseTaskShareComposerResult } from '../hooks/useTaskShareComposer';
 import type { UseTaskShareCreateActionResult } from '../hooks/useTaskShareCreateAction';
+import type { UseTaskShareDeleteActionResult } from '../hooks/useTaskShareDeleteAction';
 import type { UseTaskShareListQueryResult } from '../hooks/useTaskShareListQuery';
 import type { UseTaskShareModalResult } from '../hooks/useTaskShareModal';
 import type { UseTaskShareModalControllerResult } from '../hooks/useTaskShareModalController';
@@ -11,6 +12,7 @@ export interface BuildTaskShareModalContextValueInput {
   controller: UseTaskShareModalControllerResult;
   currentUserEmail: string | null;
   createAction: UseTaskShareCreateActionResult;
+  deleteAction: UseTaskShareDeleteActionResult;
   modalSession: UseTaskShareModalResult;
   retryTaskShares: () => void;
   shareListQuery: UseTaskShareListQueryResult;
@@ -23,6 +25,7 @@ export function buildTaskShareModalContextValue({
   controller,
   currentUserEmail,
   createAction,
+  deleteAction,
   modalSession,
   retryTaskShares,
   shareListQuery,
@@ -34,6 +37,7 @@ export function buildTaskShareModalContextValue({
     composerEmail: composer.composerEmail,
     composerPermission: composer.composerPermission,
     currentUserEmail,
+    deletingShareId: deleteAction.deletingShareId,
     errorMessage: composer.errorMessage,
     isOpen: modalSession.isOpen,
     isLoadingShares: shareListQuery.isLoadingShares,

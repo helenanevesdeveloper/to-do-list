@@ -12,6 +12,7 @@ import { getTaskSharePermissionLabel } from '../mappers/getTaskSharePermissionLa
 
 /** Props for the future permission menu shown per shared user. */
 export interface TaskSharePermissionMenuProps {
+  isRemovingShare?: boolean;
   onRemoveShare?: () => void;
   permission: TaskSharePermission;
   canManageShare: boolean;
@@ -20,6 +21,7 @@ export interface TaskSharePermissionMenuProps {
 /** Renders the permission box shown beside each shared user in the modal. */
 export default function TaskSharePermissionMenu(
   {
+    isRemovingShare = false,
     onRemoveShare,
     permission,
     canManageShare
@@ -37,7 +39,14 @@ export default function TaskSharePermissionMenu(
 
   return (
     <Menu placement="bottom-end">
-      <MenuButton as={Button} rightIcon={<FiChevronDown />} size="sm" variant="outline">
+      <MenuButton
+        as={Button}
+        rightIcon={<FiChevronDown />}
+        size="sm"
+        variant="outline"
+        isDisabled={isRemovingShare}
+        isLoading={isRemovingShare}
+      >
         {label}
       </MenuButton>
       <MenuList>
@@ -47,6 +56,7 @@ export default function TaskSharePermissionMenu(
         <MenuItem
           color="red.600"
           icon={<FiTrash2 />}
+          isDisabled={isRemovingShare}
           onClick={() => {
             onRemoveShare?.();
           }}

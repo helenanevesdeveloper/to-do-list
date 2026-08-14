@@ -10,6 +10,7 @@ import type { TaskShare } from '../../domain/taskShare';
 import { useTaskShareAccessList } from '../hooks/useTaskShareAccessList';
 import { useTaskShareComposer } from '../hooks/useTaskShareComposer';
 import { useTaskShareCreateAction } from '../hooks/useTaskShareCreateAction';
+import { useTaskShareDeleteAction } from '../hooks/useTaskShareDeleteAction';
 import { useTaskShareListQuery } from '../hooks/useTaskShareListQuery';
 import {
   useTaskShareModalController
@@ -24,6 +25,7 @@ export interface TaskShareModalContextValue {
   composerEmail: string;
   composerPermission: ShareComposerPermission;
   currentUserEmail: string | null;
+  deletingShareId: string | null;
   errorMessage: string | null;
   isOpen: boolean;
   isLoadingShares: boolean;
@@ -57,16 +59,17 @@ export function TaskShareModalProvider({
   const accessList = useTaskShareAccessList();
   const composer = useTaskShareComposer();
   const createAction = useTaskShareCreateAction();
+  const deleteAction = useTaskShareDeleteAction();
   const modalSession = useTaskShareModal();
   const shareListQuery = useTaskShareListQuery({
     replaceShares: accessList.replaceShares
   });
   const shares = accessList.getShares(modalSession.activeTask?.taskId ?? null);
   const controller = useTaskShareModalController({
-    accessList,
     composer,
     createAction,
     currentUserEmail,
+    deleteAction,
     modalSession,
     reloadTasks,
     shareListQuery,
@@ -89,6 +92,7 @@ export function TaskShareModalProvider({
         controller,
         createAction,
         currentUserEmail,
+        deleteAction,
         modalSession,
         retryTaskShares,
         shareListQuery,
@@ -101,6 +105,7 @@ export function TaskShareModalProvider({
       composer.composerPermission,
       composer.errorMessage,
       currentUserEmail,
+      deleteAction.deletingShareId,
       modalSession.activeTask,
       modalSession.isOpen,
       retryTaskShares,

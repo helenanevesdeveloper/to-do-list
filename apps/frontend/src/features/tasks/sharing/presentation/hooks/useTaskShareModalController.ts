@@ -10,19 +10,21 @@ import type {
   UseTaskShareCreateActionResult
 } from './useTaskShareCreateAction';
 import type {
+  UseTaskShareDeleteActionResult
+} from './useTaskShareDeleteAction';
+import type {
   UseTaskShareModalResult
 } from './useTaskShareModal';
-import { createLocalTaskShare } from '../state/createLocalTaskShare';
 import { readManageableTaskShareModal } from '../state/readManageableTaskShareModal';
 import { readTaskShareOwnerEmail } from '../state/readTaskShareOwnerEmail';
 import { validateTaskShareSubmission } from '../state/validateTaskShareSubmission';
 import type { UseTaskShareListQueryResult } from './useTaskShareListQuery';
 
 export interface UseTaskShareModalControllerInput {
-  accessList: UseTaskShareAccessListResult;
   composer: UseTaskShareComposerResult;
   createAction: UseTaskShareCreateActionResult;
   currentUserEmail: string | null;
+  deleteAction: UseTaskShareDeleteActionResult;
   modalSession: UseTaskShareModalResult;
   reloadTasks: () => void;
   shareListQuery: UseTaskShareListQueryResult;
@@ -32,16 +34,16 @@ export interface UseTaskShareModalControllerInput {
 export interface UseTaskShareModalControllerResult {
   closeTaskShareModal: () => void;
   openTaskShareModal: (task: TaskListItem) => void;
-  removeTaskShare: (shareId: string) => void;
+  removeTaskShare: (shareId: string) => Promise<void>;
   submitTaskShare: () => Promise<void>;
 }
 
 /** Orchestrates the local-only share modal workflows from smaller state hooks. */
 export function useTaskShareModalController({
-  accessList,
   composer,
   createAction,
   currentUserEmail,
+  deleteAction,
   modalSession,
   reloadTasks,
   shareListQuery,
@@ -101,14 +103,24 @@ export function useTaskShareModalController({
     modalSession.markTaskListForReload();
   }
 
-  function removeTaskShare(shareId: string): void {
-    const activeTask = readManageableTaskShareModal(modalSession.activeTask);
+  async function removeTaskShare(shareId: string): Promise<void> {
+    const activeTask = modalSession.activeTask;
 
     if (!activeTask) {
       return;
     }
 
-    accessList.removeShare(activeTask.taskId, shareId);
+    const errorMessage = await deleteAction.requestTaskShareDelete({
+      shareId,
+      taskId: activeTask.taskId
+    });
+
+    if (errorMessage) {
+      composer.setComposerError(errorMessage);
+      return;
+    }
+
+    await shareListQuery.loadTaskShares(activeTask.taskId);
     modalSession.markTaskListForReload();
     composer.clearError();
   }
