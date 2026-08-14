@@ -5,6 +5,7 @@ import {
   TaskInlineCategoryFieldProvider
 } from '../context/TaskInlineCategoryFieldContext';
 import { useTaskInlineCategoryField } from '../hooks/useTaskInlineCategoryField';
+import TaskInlineCategoryOptionActionsPopover from './TaskInlineCategoryOptionActionsPopover';
 import TaskInlineCategoryPopover from './TaskInlineCategoryPopover';
 import TaskInlineCategoryTrigger from './TaskInlineCategoryTrigger';
 
@@ -25,14 +26,21 @@ export default function TaskInlineCategoryField({
   value
 }: TaskInlineCategoryFieldProps) {
   const {
+    actionsDraftName,
+    actionsPopoverPosition,
+    actionsPopoverRef,
+    activeCategoryAction,
     categoryErrorMessage,
     canCreateCategory,
+    closeCategoryActions,
     createLabel,
     filteredCategoryOptions,
+    handleActionsDraftNameChange,
     inputRef,
     isCreatingCategory,
     isOpen,
     listboxId,
+    openCategoryActions,
     popoverPosition,
     popoverRef,
     query,
@@ -50,13 +58,20 @@ export default function TaskInlineCategoryField({
     onSelectCategory,
     value
   });
+  const isAnyPopoverOpen = isOpen || actionsPopoverPosition !== null;
   const contextValue = useMemo(
     () => ({
+      actionsDraftName,
+      actionsPopoverPosition,
+      actionsPopoverRef,
+      activeCategoryAction,
       categoryErrorMessage,
       canCreateCategory,
+      closeCategoryActions,
       createCategory,
       createLabel,
       filteredCategoryOptions,
+      handleActionsDraftNameChange,
       inputRef,
       isCreatingCategory,
       isOpen,
@@ -71,14 +86,21 @@ export default function TaskInlineCategoryField({
       clearSelectedCategory,
       handleFieldClick,
       handleInputChange,
+      openCategoryActions,
       selectCategory
     }),
     [
+      actionsDraftName,
+      actionsPopoverPosition,
+      actionsPopoverRef,
+      activeCategoryAction,
       categoryErrorMessage,
       canCreateCategory,
+      closeCategoryActions,
       createCategory,
       createLabel,
       filteredCategoryOptions,
+      handleActionsDraftNameChange,
       inputRef,
       isCreatingCategory,
       isOpen,
@@ -93,13 +115,14 @@ export default function TaskInlineCategoryField({
       clearSelectedCategory,
       handleFieldClick,
       handleInputChange,
+      openCategoryActions,
       selectCategory
     ]
   );
 
   useEffect(() => {
-    onOpenChange?.(isOpen);
-  }, [isOpen, onOpenChange]);
+    onOpenChange?.(isAnyPopoverOpen);
+  }, [isAnyPopoverOpen, onOpenChange]);
 
   return (
     <TaskInlineCategoryFieldProvider value={contextValue}>
@@ -107,6 +130,9 @@ export default function TaskInlineCategoryField({
         <Box ref={rootRef}>
           <TaskInlineCategoryTrigger />
           {isOpen ? <TaskInlineCategoryPopover /> : null}
+          {actionsPopoverPosition ? (
+            <TaskInlineCategoryOptionActionsPopover />
+          ) : null}
         </Box>
       </FormControl>
     </TaskInlineCategoryFieldProvider>

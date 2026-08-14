@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { usePointerDownOutside } from '../../../create/presentation/hooks/usePointerDownOutside';
 
 export type UseTaskInlineCategoryFieldEffectsArgs = {
+  actionsPopoverRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
   isOpen: boolean;
   onPointerDownOutside: () => void;
@@ -11,6 +12,7 @@ export type UseTaskInlineCategoryFieldEffectsArgs = {
 
 /** Applies focus and outside-click effects required by the inline category picker. */
 export function useTaskInlineCategoryFieldEffects({
+  actionsPopoverRef,
   inputRef,
   isOpen,
   onPointerDownOutside,
@@ -26,7 +28,7 @@ export function useTaskInlineCategoryFieldEffects({
   }, [isOpen, onPointerDownOutside]);
 
   usePointerDownOutside({
-    additionalRefs: [popoverRef],
+    additionalRefs: [actionsPopoverRef, popoverRef],
     onPointerDownOutside: handlePointerDownOutside,
     rootRef
   });

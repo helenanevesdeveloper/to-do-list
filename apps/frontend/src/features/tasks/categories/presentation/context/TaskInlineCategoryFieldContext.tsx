@@ -1,6 +1,10 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import type { TaskCategoryOption } from '../../../shared/types';
 import type {
+  ActiveTaskInlineCategoryAction,
+  TaskInlineCategoryActionsPopoverPosition
+} from '../hooks/useTaskInlineCategoryActionsPopoverState';
+import type {
   TaskInlineCategoryPopoverPosition
 } from '../hooks/useTaskInlineCategoryPopoverState';
 
@@ -20,10 +24,21 @@ export interface TaskInlineCategoryFieldContextValue {
   selectedCategory: TaskCategoryOption | null;
   selectedCategoryId: string;
   triggerLabel: string;
+  actionsDraftName: string;
+  actionsPopoverPosition: TaskInlineCategoryActionsPopoverPosition | null;
+  actionsPopoverRef: React.RefObject<HTMLDivElement | null>;
+  activeCategoryAction: ActiveTaskInlineCategoryAction | null;
   clearSelectedCategory: () => void;
+  closeCategoryActions: () => void;
   createCategory: () => Promise<void>;
+  handleActionsDraftNameChange: (value: string) => void;
   handleFieldClick: () => void;
   handleInputChange: (value: string) => void;
+  openCategoryActions: (args: {
+    anchorElement: HTMLElement;
+    categoryId: string;
+    categoryName: string;
+  }) => void;
   selectCategory: (categoryId: string) => void;
 }
 

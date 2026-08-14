@@ -12,7 +12,6 @@ export default function TaskInlineCategoryPopover() {
   const {
     canCreateCategory,
     createLabel,
-    isCreatingCategory,
     popoverPosition,
     popoverRef
   } = useTaskInlineCategoryFieldContext();
