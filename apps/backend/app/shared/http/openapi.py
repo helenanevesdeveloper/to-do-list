@@ -1,6 +1,7 @@
 """OpenAPI helpers shared across DRF presentation modules."""
 
 import itertools
+from typing import Any
 
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import build_media_type_object
@@ -47,7 +48,7 @@ class DeleteRequestBodyAutoSchema(AutoSchema):
         if not content:
             return None
 
-        request_body = {
+        request_body: dict[str, Any] = {
             "content": {
                 media_type: build_media_type_object(schema, examples, encoding)
                 for media_type, schema, examples, encoding in content
