@@ -31,7 +31,23 @@ class PasswordPolicy:
         if errors:
             raise WeakPasswordError(
                 [
-                    ValidationIssue(field="password", message=message)
+                    ValidationIssue(
+                        field="password",
+                        message=message,
+                        code=_resolve_password_error_code(message),
+                    )
                     for message in errors
                 ]
             )
+
+
+def _resolve_password_error_code(message: str) -> str:
+    if "at least" in message and "characters long" in message:
+        return "password_too_short"
+    if "uppercase" in message:
+        return "password_missing_uppercase"
+    if "lowercase" in message:
+        return "password_missing_lowercase"
+    if "digit" in message:
+        return "password_missing_digit"
+    return "weak_password"

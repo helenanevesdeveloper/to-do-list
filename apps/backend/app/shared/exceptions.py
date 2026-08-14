@@ -7,6 +7,7 @@ from dataclasses import dataclass
 class ValidationIssue:
     field: str
     message: str
+    code: str = "validation_error"
 
 
 class DomainError(Exception):

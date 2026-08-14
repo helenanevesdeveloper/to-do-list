@@ -62,6 +62,7 @@ class DjangoOrmTaskCategoryCommandRepository(TaskCategoryCommandRepository):
                     ValidationIssue(
                         field="name",
                         message="category name already exists for the authenticated user",
+                        code="task_category_name_already_exists",
                     )
                 ]
             ) from exc
@@ -126,6 +127,7 @@ class DjangoOrmTaskCategoryCommandRepository(TaskCategoryCommandRepository):
                             message=(
                                 "category name already exists for the authenticated user"
                             ),
+                            code="task_category_name_already_exists",
                         )
                     ]
                 ) from exc
@@ -159,6 +161,7 @@ class DjangoOrmTaskCategoryCommandRepository(TaskCategoryCommandRepository):
                 ValidationIssue(
                     field="name",
                     message="category name already exists for the authenticated user",
+                    code="task_category_name_already_exists",
                 )
             ]
         )

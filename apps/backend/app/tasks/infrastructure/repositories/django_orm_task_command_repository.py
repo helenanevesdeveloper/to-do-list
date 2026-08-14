@@ -139,6 +139,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                     ValidationIssue(
                         field="shared_with_user_email",
                         message="task is already shared with the provided user",
+                        code="task_share_already_exists",
                     )
                 ]
             ) from exc
@@ -216,6 +217,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                 message=(
                     "category does not exist or is not owned by the authenticated user"
                 ),
+                code="task_category_not_owned",
             )
             for index, item in enumerate(input_dto.items)
             if item.category_id is not None and item.category_id not in categories
@@ -277,6 +279,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                         message=(
                             "category does not exist or is not owned by the authenticated user"
                         ),
+                        code="task_category_not_owned",
                     )
                 ]
             )
@@ -293,6 +296,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                     ValidationIssue(
                         field="shared_with_user_email",
                         message="shared user does not exist",
+                        code="shared_user_not_found",
                     )
                 ]
             )
@@ -303,6 +307,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                     ValidationIssue(
                         field="shared_with_user_email",
                         message="task owner cannot be added as a share recipient",
+                        code="task_share_recipient_is_owner",
                     )
                 ]
             )
