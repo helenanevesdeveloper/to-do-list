@@ -25,7 +25,11 @@ class TaskListQuerySerializer(serializers.Serializer):
     page_size = serializers.IntegerField(
         required=False, default=20, min_value=1, max_value=100
     )
-    is_completed = serializers.BooleanField(required=False)
+    is_completed = serializers.BooleanField(
+        required=False,
+        allow_null=True,
+        default=None,
+    )
     category_id = serializers.CharField(required=False)
     scope = serializers.ChoiceField(
         required=False, default="owned", choices=["owned", "shared", "all"]
