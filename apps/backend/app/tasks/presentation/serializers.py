@@ -282,9 +282,17 @@ class TaskShareResponseSerializer(serializers.Serializer):
     created_at = serializers.CharField()
 
 
+class TaskShareListItemResponseSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    permission = serializers.CharField()
+    created_at = serializers.CharField()
+
+
 class TaskShareListResponseSerializer(serializers.Serializer):
+    is_owner = serializers.BooleanField()
+    owner_email = serializers.CharField()
     count = serializers.IntegerField()
-    results = TaskShareResponseSerializer(many=True)
+    results = TaskShareListItemResponseSerializer(many=True)
 
 
 class TaskDetailResponseSerializer(TaskItemResponseSerializer):

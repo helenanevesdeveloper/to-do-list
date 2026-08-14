@@ -14,9 +14,11 @@ from django.db.models import (
     When,
 )
 
-from app.tasks.application.dto.create_task_share_output import CreatedTaskShare
 from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
-from app.tasks.application.dto.list_task_shares_output import ListedTaskShares
+from app.tasks.application.dto.list_task_shares_output import (
+    ListedTaskShareItem,
+    ListedTaskShares,
+)
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
 from app.tasks.application.dto.list_tasks_output import (
     PaginatedTasks,
@@ -84,24 +86,28 @@ class DjangoOrmTaskQueryRepository(TaskQueryRepository):
         )
 
     def list_task_shares(self, input_dto: ListTaskSharesInput) -> ListedTaskShares:
-        if not TaskModel.objects.filter(
-            id=input_dto.task_id,
-            owner_user_id=input_dto.user_id,
-        ).exists():
+        task = (
+            TaskModel.objects.select_related("owner_user").filter(id=input_dto.task_id)
+            .filter(
+                Q(owner_user_id=input_dto.user_id)
+                | Q(shares__shared_with_user_id=input_dto.user_id)
+            )
+            .distinct()
+            .first()
+        )
+        if task is None:
             raise TaskNotFoundError("task was not found")
 
         return ListedTaskShares(
+            is_owner=task.owner_user.id == input_dto.user_id,
+            owner_email=task.owner_user.email,
             items=[
-                CreatedTaskShare(
+                ListedTaskShareItem(
                     id=share.id,
-                    shared_with_user_id=share.shared_with_user.id,
                     permission=share.permission,
                     created_at=share.created_at.isoformat(),
                 )
-                for share in TaskShareModel.objects.select_related(
-                    "shared_with_user"
-                )
-                .filter(task_id=input_dto.task_id)
+                for share in TaskShareModel.objects.filter(task_id=input_dto.task_id)
                 .order_by("created_at")
             ]
         )

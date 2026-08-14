@@ -1,8 +1,15 @@
 from dataclasses import dataclass
 
-from app.tasks.application.dto.create_task_share_output import CreatedTaskShare
+
+@dataclass(slots=True)
+class ListedTaskShareItem:
+    id: str
+    permission: str
+    created_at: str
 
 
 @dataclass(slots=True)
 class ListedTaskShares:
-    items: list[CreatedTaskShare]
+    is_owner: bool
+    owner_email: str
+    items: list[ListedTaskShareItem]

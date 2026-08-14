@@ -286,6 +286,8 @@ class TaskShareListView(AuthenticatedAPIView):
         return Response(
             TaskShareListResponseSerializer(
                 {
+                    "is_owner": result.is_owner,
+                    "owner_email": result.owner_email,
                     "count": len(result.items),
                     "results": [asdict(item) for item in result.items],
                 }
