@@ -6,6 +6,7 @@ import type { TaskInlineEditDraft } from '../state/taskInlineEditTypes';
 export type TaskEditInlineFieldsProps = {
   categoryOptions: TaskCategoryOption[];
   draft: TaskInlineEditDraft;
+  interactionBoundaryRef: React.RefObject<HTMLDivElement | null>;
   isSubmitting: boolean;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteCategory: (categoryId: string) => Promise<void>;
@@ -21,6 +22,7 @@ export type TaskEditInlineFieldsProps = {
 export default function TaskEditInlineFields({
   categoryOptions,
   draft,
+  interactionBoundaryRef,
   isSubmitting,
   onCreateCategory,
   onDeleteCategory,
@@ -60,6 +62,7 @@ export default function TaskEditInlineFields({
 
       <TaskInlineCategoryField
         categoryOptions={categoryOptions}
+        interactionBoundaryRef={interactionBoundaryRef}
         onOpenChange={onCategoryFieldOpenChange}
         value={draft.categoryId}
         onSelectCategory={onSelectCategory}

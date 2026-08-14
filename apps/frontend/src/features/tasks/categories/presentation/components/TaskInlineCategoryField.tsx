@@ -11,6 +11,7 @@ import TaskInlineCategoryTrigger from './TaskInlineCategoryTrigger';
 
 export type TaskInlineCategoryFieldProps = {
   categoryOptions: TaskCategoryOption[];
+  interactionBoundaryRef?: React.RefObject<HTMLElement | null>;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteCategory: (categoryId: string) => Promise<void>;
   onOpenChange?: (isOpen: boolean) => void;
@@ -23,6 +24,7 @@ export type TaskInlineCategoryFieldProps = {
 /** Composes the clickable category trigger and its anchored local picker popover. */
 export default function TaskInlineCategoryField({
   categoryOptions,
+  interactionBoundaryRef,
   onCreateCategory,
   onDeleteCategory,
   onOpenChange,
@@ -33,6 +35,7 @@ export default function TaskInlineCategoryField({
 }: TaskInlineCategoryFieldProps) {
   const field = useTaskInlineCategoryField({
     categoryOptions,
+    interactionBoundaryRef,
     onCreateCategory,
     onDeleteCategory,
     onSelectCategory,

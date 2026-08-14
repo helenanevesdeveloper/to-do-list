@@ -36,6 +36,7 @@ export function useTaskInlineCreate({
   const [isCategoryFieldOpen, setIsCategoryFieldOpen] = useState(false);
   const {
     draft,
+    draftRef,
     errorMessage,
     resetDraft,
     setCategoryId,
@@ -43,7 +44,6 @@ export function useTaskInlineCreate({
     setErrorMessage,
     setTitle
   } = useTaskInlineCreateDraftState();
-  const draftRef = useLatestRef(draft);
   const onCreateTaskRef = useLatestRef(onCreateTask);
   const handleCategoryFieldOpenChange = (value: boolean): void => {
     isCategoryFieldOpenRef.current = value;

@@ -1,24 +1,27 @@
 import { useCallback, useState } from 'react';
 import { mapUpdateTaskError } from '../../application/mapUpdateTaskError';
-import { resolveTaskInlineEditAttempt } from '../state/taskInlineEditState';
+import {
+  normalizeTaskInlineEditDraft,
+  validateTaskInlineEditDraft
+} from '../state/taskInlineEditState';
 import type {
   TaskInlineEditDraft,
   TaskInlineEditInput
 } from '../state/taskInlineEditTypes';
 
 export type UseTaskInlineEditSubmissionArgs = {
-  draftRef: React.RefObject<TaskInlineEditDraft>;
-  initialDraftRef: React.RefObject<TaskInlineEditDraft>;
+  draft: TaskInlineEditDraft;
   isCategoryFieldOpenRef: React.RefObject<boolean>;
-  onCancelRef: React.RefObject<() => void>;
-  onUpdateTaskRef: React.RefObject<(input: TaskInlineEditInput) => Promise<void>>;
+  onCancel: () => void;
+  onUpdateTask: (input: TaskInlineEditInput) => Promise<void>;
   setErrorMessage: (value: string | null) => void;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
 export type UseTaskInlineEditSubmissionResult = {
-  handlePointerDownOutside: () => Promise<void>;
+  handlePointerDownOutside: () => void;
   isSubmitting: boolean;
+  submitUpdate: () => Promise<void>;
 };
 
 function focusTitleInput(
@@ -29,46 +32,33 @@ function focusTitleInput(
 
 /** Owns the async submit lifecycle triggered when the inline edit row loses focus. */
 export function useTaskInlineEditSubmission({
-  draftRef,
-  initialDraftRef,
+  draft,
   isCategoryFieldOpenRef,
-  onCancelRef,
-  onUpdateTaskRef,
+  onCancel,
+  onUpdateTask,
   setErrorMessage,
   titleInputRef
 }: UseTaskInlineEditSubmissionArgs): UseTaskInlineEditSubmissionResult {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handlePointerDownOutside = useCallback(async (): Promise<void> => {
+  const submitUpdate = useCallback(async (): Promise<void> => {
     if (isSubmitting) {
       return;
     }
 
-    if (isCategoryFieldOpenRef.current) {
-      return;
-    }
+    const validationError = validateTaskInlineEditDraft(draft);
 
-    const attempt = resolveTaskInlineEditAttempt({
-      draft: draftRef.current,
-      initialDraft: initialDraftRef.current
-    });
-
-    if (attempt.type === 'ignore') {
-      setErrorMessage(null);
-      onCancelRef.current();
-      return;
-    }
-
-    if (attempt.type === 'invalid') {
-      setErrorMessage(attempt.errorMessage);
+    if (validationError) {
+      setErrorMessage(validationError);
       focusTitleInput(titleInputRef);
       return;
     }
 
+    const input = normalizeTaskInlineEditDraft(draft);
     setIsSubmitting(true);
 
     try {
-      await onUpdateTaskRef.current(attempt.input);
+      await onUpdateTask(input);
       setErrorMessage(null);
     } catch (error) {
       setErrorMessage(mapUpdateTaskError(error));
@@ -77,18 +67,25 @@ export function useTaskInlineEditSubmission({
       setIsSubmitting(false);
     }
   }, [
-    draftRef,
-    initialDraftRef,
-    isCategoryFieldOpenRef,
+    draft,
     isSubmitting,
-    onCancelRef,
-    onUpdateTaskRef,
+    onUpdateTask,
     setErrorMessage,
     titleInputRef
   ]);
 
+  const handlePointerDownOutside = useCallback((): void => {
+    if (isCategoryFieldOpenRef.current) {
+      return;
+    }
+
+    setErrorMessage(null);
+    onCancel();
+  }, [isCategoryFieldOpenRef, onCancel, setErrorMessage]);
+
   return {
     handlePointerDownOutside,
-    isSubmitting
+    isSubmitting,
+    submitUpdate
   };
 }

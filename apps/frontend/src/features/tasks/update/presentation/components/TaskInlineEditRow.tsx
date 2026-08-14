@@ -34,6 +34,7 @@ export default function TaskInlineEditRow({
     rootRef,
     titleInputRef,
     setIsCategoryFieldOpen,
+    submitUpdate,
     setCategoryId,
     setDescription,
     setTitle
@@ -55,6 +56,7 @@ export default function TaskInlineEditRow({
         <TaskEditInlineFields
           categoryOptions={categoryOptions}
           draft={draft}
+          interactionBoundaryRef={rootRef}
           isSubmitting={isSubmitting}
           onCreateCategory={onCreateCategory}
           onDeleteCategory={onDeleteCategory}
@@ -69,6 +71,7 @@ export default function TaskInlineEditRow({
         <TaskEditInlineFeedback
           errorMessage={errorMessage}
           isSubmitting={isSubmitting}
+          onSubmit={submitUpdate}
         />
       </Stack>
     </Box>

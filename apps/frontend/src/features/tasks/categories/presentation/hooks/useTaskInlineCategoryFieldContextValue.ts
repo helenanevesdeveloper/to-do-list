@@ -45,6 +45,11 @@ export function useTaskInlineCategoryFieldContextValue({
     [field, onOpenChange, showCategoryActions]
   );
 
+  const selectCategoryWithOpenChange = useCallback((categoryId: string): void => {
+    onOpenChange?.(false);
+    field.selectCategory(categoryId);
+  }, [field, onOpenChange]);
+
   const contextValue = useMemo<TaskInlineCategoryFieldContextValue>(
     () => ({
       actionsErrorMessage: field.actionsErrorMessage,
@@ -79,9 +84,16 @@ export function useTaskInlineCategoryFieldContextValue({
       submitCategoryUpdateIfNeeded: field.submitCategoryUpdateIfNeeded,
       triggerLabel: field.triggerLabel,
       clearSelectedCategory: field.clearSelectedCategory,
-      selectCategory: field.selectCategory
+      selectCategory: selectCategoryWithOpenChange
     }),
-    [field, handleFieldClickWithOpenChange, openCategoryActionsWithOpenChange, showCategoryActions, value]
+    [
+      field,
+      handleFieldClickWithOpenChange,
+      openCategoryActionsWithOpenChange,
+      selectCategoryWithOpenChange,
+      showCategoryActions,
+      value
+    ]
   );
 
   useEffect(() => {

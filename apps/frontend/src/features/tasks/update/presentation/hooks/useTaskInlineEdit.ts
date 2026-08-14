@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { useLatestRef } from '../../../create/presentation/hooks/useLatestRef';
 import type { TaskListItem } from '../../../shared/types';
 import { useTaskInlineEditDraftState } from './useTaskInlineEditDraftState';
 import { useTaskInlineEditEffects } from './useTaskInlineEditEffects';
@@ -23,6 +22,7 @@ export type UseTaskInlineEditResult = {
   isSubmitting: boolean;
   rootRef: React.RefObject<HTMLDivElement | null>;
   setIsCategoryFieldOpen: (value: boolean) => void;
+  submitUpdate: () => Promise<void>;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
   setCategoryId: (value: string) => void;
   setDescription: (value: string) => void;
@@ -42,26 +42,20 @@ export function useTaskInlineEdit({
   const {
     draft,
     errorMessage,
-    initialDraft,
     setCategoryId,
     setDescription,
     setErrorMessage,
     setTitle
   } = useTaskInlineEditDraftState(task);
-  const draftRef = useLatestRef(draft);
-  const initialDraftRef = useLatestRef(initialDraft);
-  const onCancelRef = useLatestRef(onCancel);
-  const onUpdateTaskRef = useLatestRef(onUpdateTask);
   const handleCategoryFieldOpenChange = (value: boolean): void => {
     isCategoryFieldOpenRef.current = value;
     setIsCategoryFieldOpen(value);
   };
-  const { handlePointerDownOutside, isSubmitting } = useTaskInlineEditSubmission({
-    draftRef,
-    initialDraftRef,
+  const { handlePointerDownOutside, isSubmitting, submitUpdate } = useTaskInlineEditSubmission({
+    draft,
     isCategoryFieldOpenRef,
-    onCancelRef,
-    onUpdateTaskRef,
+    onCancel,
+    onUpdateTask,
     setErrorMessage,
     titleInputRef
   });
@@ -78,6 +72,7 @@ export function useTaskInlineEdit({
     isSubmitting,
     rootRef,
     setIsCategoryFieldOpen: handleCategoryFieldOpenChange,
+    submitUpdate,
     titleInputRef,
     setCategoryId,
     setDescription,

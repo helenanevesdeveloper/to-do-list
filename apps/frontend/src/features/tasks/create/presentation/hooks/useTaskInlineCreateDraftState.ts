@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { EMPTY_TASK_INLINE_CREATE_DRAFT } from '../state/taskInlineCreateState';
 import type { TaskInlineCreateDraft } from '../state/taskInlineCreateTypes';
 
 export type UseTaskInlineCreateDraftStateResult = {
   draft: TaskInlineCreateDraft;
+  draftRef: React.RefObject<TaskInlineCreateDraft>;
   errorMessage: string | null;
   resetDraft: () => void;
   setCategoryId: (value: string) => void;
@@ -17,27 +18,45 @@ export function useTaskInlineCreateDraftState(): UseTaskInlineCreateDraftStateRe
   const [draft, setDraft] = useState<TaskInlineCreateDraft>(
     EMPTY_TASK_INLINE_CREATE_DRAFT
   );
+  const draftRef = useRef<TaskInlineCreateDraft>(EMPTY_TASK_INLINE_CREATE_DRAFT);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const resetDraft = useCallback((): void => {
+    draftRef.current = EMPTY_TASK_INLINE_CREATE_DRAFT;
     setDraft(EMPTY_TASK_INLINE_CREATE_DRAFT);
   }, []);
 
   const setTitle = useCallback((value: string): void => {
-    setDraft((current) => ({ ...current, title: value }));
+    const nextDraft = {
+      ...draftRef.current,
+      title: value
+    };
+    draftRef.current = nextDraft;
+    setDraft(nextDraft);
     setErrorMessage(null);
   }, []);
 
   const setDescription = useCallback((value: string): void => {
-    setDraft((current) => ({ ...current, description: value }));
+    const nextDraft = {
+      ...draftRef.current,
+      description: value
+    };
+    draftRef.current = nextDraft;
+    setDraft(nextDraft);
   }, []);
 
   const setCategoryId = useCallback((value: string): void => {
-    setDraft((current) => ({ ...current, categoryId: value }));
+    const nextDraft = {
+      ...draftRef.current,
+      categoryId: value
+    };
+    draftRef.current = nextDraft;
+    setDraft(nextDraft);
   }, []);
 
   return {
     draft,
+    draftRef,
     errorMessage,
     resetDraft,
     setCategoryId,

@@ -1,22 +1,28 @@
-import { Stack, Text } from '@chakra-ui/react';
+import { Button, Stack, Text } from '@chakra-ui/react';
 
 export type TaskEditInlineFeedbackProps = {
   errorMessage: string | null;
   isSubmitting: boolean;
+  onSubmit: () => Promise<void>;
 };
+
+function shouldHandleKeyboardClick(detail: number): boolean {
+  return detail === 0;
+}
 
 function buildTaskEditInlineHelperText(isSubmitting: boolean): string {
   if (isSubmitting) {
     return 'Salvando tarefa...';
   }
 
-  return 'Edite os dados da tarefa e clique fora da linha para salvar.';
+  return 'Edite os dados da tarefa e clique em Atualizar para salvar.';
 }
 
 /** Renders helper and error feedback for the inline task-edit row. */
 export default function TaskEditInlineFeedback({
   errorMessage,
-  isSubmitting
+  isSubmitting,
+  onSubmit
 }: TaskEditInlineFeedbackProps) {
   return (
     <Stack
@@ -28,11 +34,41 @@ export default function TaskEditInlineFeedback({
       <Text fontSize="sm" color="gray.600">
         {buildTaskEditInlineHelperText(isSubmitting)}
       </Text>
-      {errorMessage ? (
-        <Text fontSize="sm" color="red.500">
-          {errorMessage}
-        </Text>
-      ) : null}
+      <Stack
+        direction={{ base: 'column', md: 'row' }}
+        spacing={2}
+        align={{ base: 'stretch', md: 'center' }}
+      >
+        {errorMessage ? (
+          <Text fontSize="sm" color="red.500">
+            {errorMessage}
+          </Text>
+        ) : null}
+        <Button
+          type="button"
+          alignSelf={{ base: 'stretch', md: 'center' }}
+          colorScheme="blue"
+          isLoading={isSubmitting}
+          onMouseDown={(event) => {
+            if (event.button !== 0) {
+              return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            void onSubmit();
+          }}
+          onClick={(event) => {
+            if (!shouldHandleKeyboardClick(event.detail)) {
+              return;
+            }
+
+            void onSubmit();
+          }}
+        >
+          Atualizar
+        </Button>
+      </Stack>
     </Stack>
   );
 }
