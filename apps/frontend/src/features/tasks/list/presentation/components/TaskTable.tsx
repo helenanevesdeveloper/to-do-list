@@ -11,6 +11,7 @@ export type TaskTableProps = {
   editingTaskId?: string | null;
   items: TaskListItem[];
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   onTaskCancelEdit: () => void;
   onTaskDelete: (task: TaskListItem) => Promise<void> | void;
   onTaskClick: (task: TaskListItem) => void;
@@ -24,6 +25,7 @@ export default function TaskTable({
   editingTaskId = null,
   items,
   onCreateCategory,
+  onUpdateCategory,
   onTaskCancelEdit,
   onTaskDelete,
   onTaskClick,
@@ -33,6 +35,7 @@ export default function TaskTable({
     <TaskListEditingProvider
       categoryOptions={categoryOptions}
       createCategory={onCreateCategory}
+      updateCategory={onUpdateCategory}
       editingTaskId={editingTaskId}
       onCancelTaskEdit={onTaskCancelEdit}
       onStartTaskEdit={onTaskClick}

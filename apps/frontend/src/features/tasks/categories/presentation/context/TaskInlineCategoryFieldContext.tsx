@@ -9,6 +9,7 @@ import type {
 } from '../hooks/useTaskInlineCategoryPopoverState';
 
 export interface TaskInlineCategoryFieldContextValue {
+  actionsErrorMessage: string | null;
   categoryErrorMessage: string | null;
   canCreateCategory: boolean;
   createLabel: string | null;
@@ -16,6 +17,7 @@ export interface TaskInlineCategoryFieldContextValue {
   inputRef: React.RefObject<HTMLInputElement | null>;
   isCreatingCategory: boolean;
   isOpen: boolean;
+  isUpdatingCategory: boolean;
   listboxId: string;
   popoverPosition: TaskInlineCategoryPopoverPosition | null;
   popoverRef: React.RefObject<HTMLDivElement | null>;
@@ -23,6 +25,7 @@ export interface TaskInlineCategoryFieldContextValue {
   rootRef: React.RefObject<HTMLDivElement | null>;
   selectedCategory: TaskCategoryOption | null;
   selectedCategoryId: string;
+  showCategoryActions: boolean;
   triggerLabel: string;
   actionsDraftName: string;
   actionsPopoverPosition: TaskInlineCategoryActionsPopoverPosition | null;
@@ -39,6 +42,7 @@ export interface TaskInlineCategoryFieldContextValue {
     categoryId: string;
     categoryName: string;
   }) => void;
+  submitCategoryUpdateIfNeeded: () => Promise<boolean>;
   selectCategory: (categoryId: string) => void;
 }
 

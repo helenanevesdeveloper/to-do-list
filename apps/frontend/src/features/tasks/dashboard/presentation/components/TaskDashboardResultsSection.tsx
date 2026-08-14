@@ -12,6 +12,7 @@ export interface TaskDashboardResultsSectionProps {
   onNextPage: () => void;
   onPreviousPage: () => void;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   onRetry?: () => void;
   onTaskCancelEdit: () => void;
   onTaskClick: (task: TaskListItem) => void;
@@ -30,6 +31,7 @@ export default function TaskDashboardResultsSection({
   onNextPage,
   onPreviousPage,
   onCreateCategory,
+  onUpdateCategory,
   onRetry,
   onTaskCancelEdit,
   onTaskClick,
@@ -47,6 +49,7 @@ export default function TaskDashboardResultsSection({
         items={page.items}
         isLoading={isLoading}
         onCreateCategory={onCreateCategory}
+        onUpdateCategory={onUpdateCategory}
         onTaskCancelEdit={onTaskCancelEdit}
         onTaskDelete={onTaskDelete}
         onTaskClick={onTaskClick}

@@ -1,4 +1,5 @@
-import { HStack, IconButton, Tag, Text } from '@chakra-ui/react';
+import { Button, Tag, Text } from '@chakra-ui/react';
+import { HStack, IconButton } from '@chakra-ui/react';
 import type { MouseEvent } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import {
@@ -22,7 +23,8 @@ export default function TaskInlineCategoryOptionButton({
   const {
     activeCategoryAction,
     closeCategoryActions,
-    openCategoryActions
+    openCategoryActions,
+    showCategoryActions
   } = useTaskInlineCategoryFieldContext();
   const isActionMenuOpen = activeCategoryAction?.categoryId === id;
 
@@ -44,6 +46,25 @@ export default function TaskInlineCategoryOptionButton({
       categoryId: id,
       categoryName: label
     });
+  }
+
+  if (!showCategoryActions) {
+    return (
+      <Button
+        role="option"
+        aria-selected={isSelected}
+        justifyContent="space-between"
+        variant="ghost"
+        onClick={() => onSelect(id)}
+      >
+        <Text>{label}</Text>
+        {isSelected ? (
+          <Tag size="sm" colorScheme="green">
+            Selecionada
+          </Tag>
+        ) : null}
+      </Button>
+    );
   }
 
   return (

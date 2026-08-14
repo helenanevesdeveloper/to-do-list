@@ -10,6 +10,7 @@ import type { TaskInlineEditInput } from '../../../update/presentation/hooks/use
 export interface TaskListEditingContextValue {
   categoryOptions: TaskCategoryOption[];
   createCategory: (name: string) => Promise<TaskCategoryOption>;
+  updateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   editingTaskId: string | null;
   cancelTaskEdit: () => void;
   startTaskEdit: (task: TaskListItem) => void;
@@ -22,6 +23,7 @@ export interface TaskListEditingProviderProps {
   categoryOptions: TaskCategoryOption[];
   children: ReactNode;
   createCategory: (name: string) => Promise<TaskCategoryOption>;
+  updateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   editingTaskId: string | null;
   onCancelTaskEdit: () => void;
   onStartTaskEdit: (task: TaskListItem) => void;
@@ -33,6 +35,7 @@ export function TaskListEditingProvider({
   categoryOptions,
   children,
   createCategory,
+  updateCategory,
   editingTaskId,
   onCancelTaskEdit,
   onStartTaskEdit,
@@ -42,6 +45,7 @@ export function TaskListEditingProvider({
     () => ({
       categoryOptions,
       createCategory,
+      updateCategory,
       editingTaskId,
       cancelTaskEdit: onCancelTaskEdit,
       startTaskEdit: onStartTaskEdit,
@@ -50,6 +54,7 @@ export function TaskListEditingProvider({
     [
       categoryOptions,
       createCategory,
+      updateCategory,
       editingTaskId,
       onCancelTaskEdit,
       onStartTaskEdit,

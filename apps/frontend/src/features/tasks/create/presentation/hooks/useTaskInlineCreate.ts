@@ -32,6 +32,7 @@ export function useTaskInlineCreate({
 }: UseTaskInlineCreateArgs): UseTaskInlineCreateResult {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const isCategoryFieldOpenRef = useRef(false);
   const [isCategoryFieldOpen, setIsCategoryFieldOpen] = useState(false);
   const {
     draft,
@@ -43,8 +44,11 @@ export function useTaskInlineCreate({
     setTitle
   } = useTaskInlineCreateDraftState();
   const draftRef = useLatestRef(draft);
-  const isCategoryFieldOpenRef = useLatestRef(isCategoryFieldOpen);
   const onCreateTaskRef = useLatestRef(onCreateTask);
+  const handleCategoryFieldOpenChange = (value: boolean): void => {
+    isCategoryFieldOpenRef.current = value;
+    setIsCategoryFieldOpen(value);
+  };
   const { handlePointerDownOutside, isSubmitting } = useTaskInlineCreateSubmission({
     draftRef,
     isCategoryFieldOpenRef,
@@ -65,7 +69,7 @@ export function useTaskInlineCreate({
     errorMessage,
     isSubmitting,
     rootRef,
-    setIsCategoryFieldOpen,
+    setIsCategoryFieldOpen: handleCategoryFieldOpenChange,
     titleInputRef,
     setCategoryId,
     setDescription,

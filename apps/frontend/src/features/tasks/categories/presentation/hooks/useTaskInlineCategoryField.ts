@@ -23,15 +23,20 @@ import type {
 import {
   useTaskInlineCategorySelectionActions
 } from './useTaskInlineCategorySelectionActions';
+import {
+  useTaskInlineCategoryUpdateActions
+} from './useTaskInlineCategoryUpdateActions';
 
 export type UseTaskInlineCategoryFieldArgs = {
   categoryOptions: TaskCategoryOption[];
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onSelectCategory: (categoryId: string) => void;
+  onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   value: string;
 };
 
 export type UseTaskInlineCategoryFieldResult = {
+  actionsErrorMessage: string | null;
   categoryErrorMessage: string | null;
   canCreateCategory: boolean;
   createLabel: string | null;
@@ -39,6 +44,7 @@ export type UseTaskInlineCategoryFieldResult = {
   inputRef: React.RefObject<HTMLInputElement | null>;
   isCreatingCategory: boolean;
   isOpen: boolean;
+  isUpdatingCategory: boolean;
   listboxId: string;
   actionsDraftName: string;
   actionsPopoverPosition: TaskInlineCategoryActionsPopoverPosition | null;
@@ -59,6 +65,7 @@ export type UseTaskInlineCategoryFieldResult = {
   handleInputChange: (value: string) => void;
   openCategoryActions: (args: OpenTaskInlineCategoryActionsArgs) => void;
   openField: () => void;
+  submitCategoryUpdateIfNeeded: () => Promise<boolean>;
   selectCategory: (categoryId: string) => void;
 };
 
@@ -67,6 +74,7 @@ export function useTaskInlineCategoryField({
   categoryOptions,
   onCreateCategory,
   onSelectCategory,
+  onUpdateCategory,
   value
 }: UseTaskInlineCategoryFieldArgs): UseTaskInlineCategoryFieldResult {
   const {
@@ -92,6 +100,7 @@ export function useTaskInlineCategoryField({
     state: {
       activeAction: activeCategoryAction,
       draftName: actionsDraftName,
+      isOpen: isActionsPopoverOpen,
       popoverPosition: actionsPopoverPosition,
       popoverRef: actionsPopoverRef
     }
@@ -121,22 +130,45 @@ export function useTaskInlineCategoryField({
       query,
       resetField
     });
+  const {
+    actionErrorMessage,
+    handleDraftNameChange,
+    isUpdatingCategory,
+    submitCategoryUpdateIfNeeded
+  } = useTaskInlineCategoryUpdateActions({
+    activeCategoryAction,
+    closeCategoryActions,
+    draftName: actionsDraftName,
+    onUpdateCategory,
+    setDraftName: handleActionsDraftNameChange
+  });
 
-  const handlePointerDownOutside = useCallback((): void => {
-    closeCategoryActions();
+  const handleActionsPointerDownOutside = useCallback(async (): Promise<void> => {
+    await submitCategoryUpdateIfNeeded();
+  }, [submitCategoryUpdateIfNeeded]);
+
+  const handlePointerDownOutside = useCallback(async (): Promise<void> => {
+    const didCloseCategoryActions = await submitCategoryUpdateIfNeeded();
+
+    if (!didCloseCategoryActions) {
+      return;
+    }
+
     resetField();
-  }, [closeCategoryActions, resetField]);
+  }, [resetField, submitCategoryUpdateIfNeeded]);
 
   useTaskInlineCategoryFieldEffects({
     actionsPopoverRef,
     inputRef,
     isOpen,
+    onActionsPointerDownOutside: handleActionsPointerDownOutside,
     onPointerDownOutside: handlePointerDownOutside,
     popoverRef,
     rootRef
   });
 
   return {
+    actionsErrorMessage: actionErrorMessage,
     actionsDraftName,
     actionsPopoverPosition,
     actionsPopoverRef,
@@ -148,6 +180,7 @@ export function useTaskInlineCategoryField({
     inputRef,
     isCreatingCategory,
     isOpen,
+    isUpdatingCategory,
     listboxId,
     popoverPosition,
     popoverRef,
@@ -159,11 +192,12 @@ export function useTaskInlineCategoryField({
     closeCategoryActions,
     closeField,
     createCategory,
-    handleActionsDraftNameChange,
+    handleActionsDraftNameChange: handleDraftNameChange,
     handleFieldClick,
     handleInputChange,
     openCategoryActions,
     openField,
+    submitCategoryUpdateIfNeeded,
     selectCategory
   };
 }

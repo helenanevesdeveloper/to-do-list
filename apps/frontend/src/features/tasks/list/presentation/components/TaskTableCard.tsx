@@ -23,6 +23,7 @@ export default function TaskTableCard({
   const {
     categoryOptions,
     createCategory,
+    updateCategory,
     editingTaskId,
     cancelTaskEdit,
     startTaskEdit,
@@ -38,6 +39,7 @@ export default function TaskTableCard({
         categoryOptions={categoryOptions}
         onCancel={cancelTaskEdit}
         onCreateCategory={createCategory}
+        onUpdateCategory={updateCategory}
         onUpdateTask={(input) => submitTaskEdit(task.id, input)}
         task={task}
       />

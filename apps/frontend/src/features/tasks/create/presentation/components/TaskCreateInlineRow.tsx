@@ -11,13 +11,15 @@ export type TaskCreateInlineRowProps = {
   categoryOptions: TaskCategoryOption[];
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onCreateTask: (input: TaskInlineCreateInput) => Promise<void>;
+  onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
 };
 
 /** Renders the inline task-create row that saves a local task on outside click. */
 export default function TaskCreateInlineRow({
   categoryOptions,
   onCreateCategory,
-  onCreateTask
+  onCreateTask,
+  onUpdateCategory
 }: TaskCreateInlineRowProps) {
   const {
     draft,
@@ -49,6 +51,7 @@ export default function TaskCreateInlineRow({
           onDescriptionChange={setDescription}
           onSelectCategory={setCategoryId}
           onTitleChange={setTitle}
+          onUpdateCategory={onUpdateCategory}
           titleInputRef={titleInputRef}
         />
 

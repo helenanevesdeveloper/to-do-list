@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { usePointerDownOutside } from '../../../create/presentation/hooks/usePointerDownOutside';
 
 export type TaskInlineCategoryActionsPopoverPosition = {
   left: number;
@@ -92,17 +91,6 @@ export function useTaskInlineCategoryActionsPopoverState(): UseTaskInlineCategor
     },
     [activeCategoryAction, actionsPopoverPosition, closeCategoryActions]
   );
-
-  usePointerDownOutside({
-    onPointerDownOutside: () => {
-      if (!activeCategoryAction) {
-        return;
-      }
-
-      closeCategoryActions();
-    },
-    rootRef: actionsPopoverRef
-  });
 
   useEffect(() => {
     if (!actionsPopoverPosition) {

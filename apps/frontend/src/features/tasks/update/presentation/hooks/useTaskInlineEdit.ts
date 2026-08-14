@@ -37,6 +37,7 @@ export function useTaskInlineEdit({
 }: UseTaskInlineEditArgs): UseTaskInlineEditResult {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const isCategoryFieldOpenRef = useRef(false);
   const [isCategoryFieldOpen, setIsCategoryFieldOpen] = useState(false);
   const {
     draft,
@@ -49,9 +50,12 @@ export function useTaskInlineEdit({
   } = useTaskInlineEditDraftState(task);
   const draftRef = useLatestRef(draft);
   const initialDraftRef = useLatestRef(initialDraft);
-  const isCategoryFieldOpenRef = useLatestRef(isCategoryFieldOpen);
   const onCancelRef = useLatestRef(onCancel);
   const onUpdateTaskRef = useLatestRef(onUpdateTask);
+  const handleCategoryFieldOpenChange = (value: boolean): void => {
+    isCategoryFieldOpenRef.current = value;
+    setIsCategoryFieldOpen(value);
+  };
   const { handlePointerDownOutside, isSubmitting } = useTaskInlineEditSubmission({
     draftRef,
     initialDraftRef,
@@ -73,7 +77,7 @@ export function useTaskInlineEdit({
     errorMessage,
     isSubmitting,
     rootRef,
-    setIsCategoryFieldOpen,
+    setIsCategoryFieldOpen: handleCategoryFieldOpenChange,
     titleInputRef,
     setCategoryId,
     setDescription,

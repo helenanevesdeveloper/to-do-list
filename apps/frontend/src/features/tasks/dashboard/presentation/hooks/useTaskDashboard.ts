@@ -6,9 +6,11 @@ import { useTaskDashboardTaskActions } from './useTaskDashboardTaskActions';
 
 /** Orchestrates dashboard state while reads and category/task creation use the backend. */
 export function useTaskDashboard() {
-  const categoryState = useTaskDashboardCategories();
   const { filters, actions } = useTaskListFilters();
   const { errorMessage, isLoading, page, reload } = useTaskListQuery(filters);
+  const categoryState = useTaskDashboardCategories({
+    reloadTasks: reload
+  });
   const paginatedTasks = page;
   const taskActionState = useTaskDashboardTaskActions({
     currentPage: filters.page,

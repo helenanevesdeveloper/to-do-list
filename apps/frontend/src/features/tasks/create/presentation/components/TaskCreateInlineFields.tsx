@@ -12,6 +12,7 @@ export type TaskCreateInlineFieldsProps = {
   onDescriptionChange: (value: string) => void;
   onSelectCategory: (value: string) => void;
   onTitleChange: (value: string) => void;
+  onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
@@ -25,6 +26,7 @@ export default function TaskCreateInlineFields({
   onDescriptionChange,
   onSelectCategory,
   onTitleChange,
+  onUpdateCategory,
   titleInputRef
 }: TaskCreateInlineFieldsProps) {
   return (
@@ -60,6 +62,8 @@ export default function TaskCreateInlineFields({
         value={draft.categoryId}
         onSelectCategory={onSelectCategory}
         onCreateCategory={onCreateCategory}
+        onUpdateCategory={onUpdateCategory}
+        showCategoryActions
       />
     </Stack>
   );

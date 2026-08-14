@@ -29,6 +29,7 @@ export default function DashboardPage() {
     handleTaskClick,
     handleTaskDelete,
     handleTaskUpdate,
+    handleUpdateCategory,
     isLoading,
     isLoadingCategories,
     paginatedTasks,
@@ -68,6 +69,7 @@ export default function DashboardPage() {
             categoryOptions={categoryOptions}
             onCreateCategory={handleCreateCategory}
             onCreateTask={handleCreateTask}
+            onUpdateCategory={handleUpdateCategory}
           />
 
           <TaskDashboardResultsSection
@@ -84,6 +86,7 @@ export default function DashboardPage() {
             onTaskDelete={handleTaskDelete}
             onTaskClick={handleTaskClick}
             onTaskUpdate={handleTaskUpdate}
+            onUpdateCategory={handleUpdateCategory}
             page={paginatedTasks}
           />
         </Stack>
