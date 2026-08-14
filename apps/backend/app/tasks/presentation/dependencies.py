@@ -14,6 +14,7 @@ from app.tasks.application.use_cases import (
     CreateTaskShareUseCase,
     CreateTasksUseCase,
     DeleteTaskCategoriesUseCase,
+    DeleteTaskShareUseCase,
     DeleteTasksUseCase,
     ListTaskCategoriesUseCase,
     ListTaskSharesUseCase,
@@ -67,6 +68,15 @@ def get_create_task_share_use_case() -> CreateTaskShareUseCase:
     return _resolve(
         "create_task_share_use_case",
         lambda: build_container().create_task_share_use_case,
+    )
+
+
+def get_delete_task_share_use_case() -> DeleteTaskShareUseCase:
+    """Resolve the delete-task-share use case for the current request path."""
+
+    return _resolve(
+        "delete_task_share_use_case",
+        lambda: build_container().delete_task_share_use_case,
     )
 
 

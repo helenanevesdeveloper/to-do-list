@@ -4,6 +4,7 @@ from app.tasks.application.dto.create_task_share_input import CreateTaskShareInp
 from app.tasks.application.dto.create_task_share_output import CreatedTaskShare
 from app.tasks.application.dto.create_tasks_input import CreateTasksInput
 from app.tasks.application.dto.create_tasks_output import CreatedTasks
+from app.tasks.application.dto.delete_task_share_input import DeleteTaskShareInput
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.delete_tasks_output import DeletedTasks
 from app.tasks.application.dto.list_tasks_output import TaskListItem
@@ -15,6 +16,9 @@ class TaskCommandRepository(Protocol):
         raise NotImplementedError
 
     def create_task_share(self, input_dto: CreateTaskShareInput) -> CreatedTaskShare:
+        raise NotImplementedError
+
+    def delete_task_share(self, input_dto: DeleteTaskShareInput) -> None:
         raise NotImplementedError
 
     def delete_tasks(self, input_dto: DeleteTasksInput) -> DeletedTasks:

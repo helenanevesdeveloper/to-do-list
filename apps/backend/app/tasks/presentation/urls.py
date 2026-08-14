@@ -4,6 +4,7 @@ from .views import (
     TaskCategoryDetailView,
     TaskCategoryListView,
     TaskDetailView,
+    TaskShareDetailView,
     TaskListView,
     TaskShareListView,
 )
@@ -16,6 +17,11 @@ urlpatterns = [
         name="task-category-detail",
     ),
     path("<str:task_id>/shares/", TaskShareListView.as_view(), name="task-shares"),
+    path(
+        "<str:task_id>/shares/<str:share_id>/",
+        TaskShareDetailView.as_view(),
+        name="task-share-detail",
+    ),
     path("<str:task_id>/", TaskDetailView.as_view(), name="task-detail"),
     path("", TaskListView.as_view(), name="list-tasks"),
 ]

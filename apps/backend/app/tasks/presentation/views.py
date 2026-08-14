@@ -11,12 +11,14 @@ from app.tasks.application.dto.list_task_categories_input import (
     ListTaskCategoriesInput,
 )
 from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
+from app.tasks.application.dto.delete_task_share_input import DeleteTaskShareInput
 
 from .dependencies import (
     get_create_task_category_use_case,
     get_create_task_share_use_case,
     get_create_tasks_use_case,
     get_delete_task_categories_use_case,
+    get_delete_task_share_use_case,
     get_delete_tasks_use_case,
     get_list_task_shares_use_case,
     get_list_task_categories_use_case,
@@ -319,3 +321,23 @@ class TaskShareListView(AuthenticatedAPIView):
             TaskShareResponseSerializer(asdict(result)).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class TaskShareDetailView(AuthenticatedAPIView):
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_delete_task_share_delete",
+        responses={204: None},
+        description="Remove a user from the task access list",
+    )
+    def delete(self, request, task_id: str, share_id: str):
+        use_case = get_delete_task_share_use_case()
+        use_case.execute(
+            DeleteTaskShareInput(
+                user_id=request.user.id,
+                task_id=task_id,
+                share_id=share_id,
+            )
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

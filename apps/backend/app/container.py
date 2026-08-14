@@ -26,6 +26,7 @@ from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
 from app.tasks.application.use_cases.delete_task_categories import (
     DeleteTaskCategoriesUseCase,
 )
+from app.tasks.application.use_cases.delete_task_share import DeleteTaskShareUseCase
 from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_task_shares import ListTaskSharesUseCase
@@ -58,6 +59,7 @@ class AppContainer:
     create_task_category_use_case: CreateTaskCategoryUseCase
     create_task_share_use_case: CreateTaskShareUseCase
     delete_task_categories_use_case: DeleteTaskCategoriesUseCase
+    delete_task_share_use_case: DeleteTaskShareUseCase
     update_task_category_use_case: UpdateTaskCategoryUseCase
     create_tasks_use_case: CreateTasksUseCase
     delete_tasks_use_case: DeleteTasksUseCase
@@ -143,6 +145,9 @@ def build_container() -> AppContainer:
         ),
         delete_task_categories_use_case=DeleteTaskCategoriesUseCase(
             task_category_command_repository=task_category_command_repository
+        ),
+        delete_task_share_use_case=DeleteTaskShareUseCase(
+            task_command_repository=task_command_repository
         ),
         update_task_category_use_case=UpdateTaskCategoryUseCase(
             task_category_command_repository=task_category_command_repository

@@ -6,6 +6,7 @@ from app.tasks.domain.errors import (
     InvalidTaskSharePayloadError,
     TaskCategoryNotFoundError,
     TaskNotFoundError,
+    TaskShareNotFoundError,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "InvalidTaskSharePayloadError",
     "TaskCategoryNotFoundError",
     "TaskNotFoundError",
+    "TaskShareNotFoundError",
 ]

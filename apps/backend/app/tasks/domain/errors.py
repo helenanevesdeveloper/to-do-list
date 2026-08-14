@@ -45,3 +45,7 @@ class TaskCategoryNotFoundError(DomainError):
 
 class TaskNotFoundError(DomainError):
     pass
+
+
+class TaskShareNotFoundError(DomainError):
+    pass

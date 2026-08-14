@@ -14,7 +14,11 @@ from app.shared.exceptions import (
     UserAlreadyExistsError,
     ValidationError,
 )
-from app.tasks.domain import TaskCategoryNotFoundError, TaskNotFoundError
+from app.tasks.domain import (
+    TaskCategoryNotFoundError,
+    TaskNotFoundError,
+    TaskShareNotFoundError,
+)
 
 EXCEPTION_STATUS_MAP = {
     ValidationError: status.HTTP_400_BAD_REQUEST,
@@ -25,6 +29,7 @@ EXCEPTION_STATUS_MAP = {
     SessionAlreadyRevokedError: status.HTTP_409_CONFLICT,
     TaskCategoryNotFoundError: status.HTTP_404_NOT_FOUND,
     TaskNotFoundError: status.HTTP_404_NOT_FOUND,
+    TaskShareNotFoundError: status.HTTP_404_NOT_FOUND,
 }
 
 

@@ -6,6 +6,7 @@ from app.tasks.application.use_cases.create_tasks import CreateTasksUseCase
 from app.tasks.application.use_cases.delete_task_categories import (
     DeleteTaskCategoriesUseCase,
 )
+from app.tasks.application.use_cases.delete_task_share import DeleteTaskShareUseCase
 from app.tasks.application.use_cases.delete_tasks import DeleteTasksUseCase
 from app.tasks.application.use_cases.list_task_categories import ListTaskCategoriesUseCase
 from app.tasks.application.use_cases.list_task_shares import ListTaskSharesUseCase
@@ -20,6 +21,7 @@ __all__ = [
     "CreateTaskShareUseCase",
     "CreateTasksUseCase",
     "DeleteTaskCategoriesUseCase",
+    "DeleteTaskShareUseCase",
     "DeleteTasksUseCase",
     "ListTaskCategoriesUseCase",
     "ListTaskSharesUseCase",

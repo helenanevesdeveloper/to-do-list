@@ -17,6 +17,7 @@ from app.tasks.application.dto.create_tasks_input import (
     CreateTasksInput,
 )
 from app.tasks.application.dto.create_tasks_output import CreatedTasks
+from app.tasks.application.dto.delete_task_share_input import DeleteTaskShareInput
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.delete_tasks_output import DeletedTasks
 from app.tasks.application.dto.list_tasks_output import (
@@ -30,6 +31,7 @@ from app.tasks.domain import (
     InvalidTaskPayloadError,
     InvalidTaskSharePayloadError,
     TaskNotFoundError,
+    TaskShareNotFoundError,
 )
 from app.tasks.models import (
     TaskCategoryModel,
@@ -98,6 +100,15 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             deleted=deleted_count,
             failed=requested_count - deleted_count,
         )
+
+    def delete_task_share(self, input_dto: DeleteTaskShareInput) -> None:
+        deleted_count, _ = TaskShareModel.objects.filter(
+            id=input_dto.share_id,
+            task_id=input_dto.task_id,
+            task__owner_user_id=input_dto.user_id,
+        ).delete()
+        if deleted_count == 0:
+            raise TaskShareNotFoundError("task share was not found")
 
     def create_task_share(self, input_dto: CreateTaskShareInput) -> CreatedTaskShare:
         task = TaskModel.objects.filter(
