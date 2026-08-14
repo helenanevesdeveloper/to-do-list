@@ -24,6 +24,7 @@ export default function TaskShareModal() {
     errorMessage,
     isOpen,
     isLoadingShares,
+    isSubmittingShare,
     removeTaskShare,
     retryTaskShares,
     selectedTaskId,
@@ -47,6 +48,7 @@ export default function TaskShareModal() {
               canManageShares={canManageShares}
               email={composerEmail}
               errorMessage={errorMessage}
+              isSubmitting={isSubmittingShare}
               onEmailChange={setComposerEmail}
               onPermissionChange={setComposerPermission}
               onSubmit={submitTaskShare}

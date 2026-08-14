@@ -6,6 +6,7 @@ import TaskSharePermissionField from './TaskSharePermissionField';
 export interface TaskShareComposerActionsProps {
   canManageShares: boolean;
   email: string;
+  isSubmitting?: boolean;
   onEmailChange: (value: string) => void;
   onPermissionChange: (value: Exclude<TaskSharePermission, 'owner'>) => void;
   onSubmit: () => void;
@@ -16,6 +17,7 @@ export interface TaskShareComposerActionsProps {
 export default function TaskShareComposerActions({
   canManageShares,
   email,
+  isSubmitting = false,
   onEmailChange,
   onPermissionChange,
   onSubmit,
@@ -28,11 +30,11 @@ export default function TaskShareComposerActions({
         placeholder="Digite o email da pessoa"
         value={email}
         onChange={(event) => onEmailChange(event.target.value)}
-        isDisabled={!canManageShares}
+        isDisabled={!canManageShares || isSubmitting}
       />
 
       <TaskSharePermissionField
-        canManageShares={canManageShares}
+        canManageShares={canManageShares && !isSubmitting}
         onChange={onPermissionChange}
         permission={permission}
       />
@@ -41,7 +43,8 @@ export default function TaskShareComposerActions({
         aria-label="Adicionar acesso"
         leftIcon={<FiPlus />}
         onClick={onSubmit}
-        isDisabled={!canManageShares}
+        isDisabled={!canManageShares || isSubmitting}
+        isLoading={isSubmitting}
         colorScheme="blue"
       >
         Adicionar

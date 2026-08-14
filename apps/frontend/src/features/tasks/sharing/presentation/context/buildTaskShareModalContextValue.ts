@@ -1,6 +1,7 @@
 import type { TaskShare } from '../../domain/taskShare';
 import type { TaskShareModalContextValue } from './TaskShareModalContext';
 import type { UseTaskShareComposerResult } from '../hooks/useTaskShareComposer';
+import type { UseTaskShareCreateActionResult } from '../hooks/useTaskShareCreateAction';
 import type { UseTaskShareListQueryResult } from '../hooks/useTaskShareListQuery';
 import type { UseTaskShareModalResult } from '../hooks/useTaskShareModal';
 import type { UseTaskShareModalControllerResult } from '../hooks/useTaskShareModalController';
@@ -9,6 +10,7 @@ export interface BuildTaskShareModalContextValueInput {
   composer: UseTaskShareComposerResult;
   controller: UseTaskShareModalControllerResult;
   currentUserEmail: string | null;
+  createAction: UseTaskShareCreateActionResult;
   modalSession: UseTaskShareModalResult;
   retryTaskShares: () => void;
   shareListQuery: UseTaskShareListQueryResult;
@@ -20,6 +22,7 @@ export function buildTaskShareModalContextValue({
   composer,
   controller,
   currentUserEmail,
+  createAction,
   modalSession,
   retryTaskShares,
   shareListQuery,
@@ -34,6 +37,7 @@ export function buildTaskShareModalContextValue({
     errorMessage: composer.errorMessage,
     isOpen: modalSession.isOpen,
     isLoadingShares: shareListQuery.isLoadingShares,
+    isSubmittingShare: createAction.isSubmittingShare,
     openTaskShareModal: controller.openTaskShareModal,
     removeTaskShare: controller.removeTaskShare,
     retryTaskShares,

@@ -7,6 +7,9 @@ import type {
   UseTaskShareComposerResult
 } from './useTaskShareComposer';
 import type {
+  UseTaskShareCreateActionResult
+} from './useTaskShareCreateAction';
+import type {
   UseTaskShareModalResult
 } from './useTaskShareModal';
 import { createLocalTaskShare } from '../state/createLocalTaskShare';
@@ -18,6 +21,7 @@ import type { UseTaskShareListQueryResult } from './useTaskShareListQuery';
 export interface UseTaskShareModalControllerInput {
   accessList: UseTaskShareAccessListResult;
   composer: UseTaskShareComposerResult;
+  createAction: UseTaskShareCreateActionResult;
   currentUserEmail: string | null;
   modalSession: UseTaskShareModalResult;
   shareListQuery: UseTaskShareListQueryResult;
@@ -28,13 +32,14 @@ export interface UseTaskShareModalControllerResult {
   closeTaskShareModal: () => void;
   openTaskShareModal: (task: TaskListItem) => void;
   removeTaskShare: (shareId: string) => void;
-  submitTaskShare: () => void;
+  submitTaskShare: () => Promise<void>;
 }
 
 /** Orchestrates the local-only share modal workflows from smaller state hooks. */
 export function useTaskShareModalController({
   accessList,
   composer,
+  createAction,
   currentUserEmail,
   modalSession,
   shareListQuery,
@@ -52,7 +57,7 @@ export function useTaskShareModalController({
     shareListQuery.resetError();
   }
 
-  function submitTaskShare(): void {
+  async function submitTaskShare(): Promise<void> {
     const activeTask = readManageableTaskShareModal(modalSession.activeTask);
 
     if (!activeTask) {
@@ -74,15 +79,19 @@ export function useTaskShareModalController({
       return;
     }
 
-    accessList.addShare(
-      activeTask.taskId,
-      createLocalTaskShare({
-        email: composer.composerEmail,
-        permission: composer.composerPermission,
-        taskId: activeTask.taskId
-      })
-    );
+    const errorMessage = await createAction.requestTaskShareCreate({
+      email: composer.composerEmail,
+      permission: composer.composerPermission,
+      taskId: activeTask.taskId
+    });
+
+    if (errorMessage) {
+      composer.setComposerError(errorMessage);
+      return;
+    }
+
     composer.resetComposer();
+    await shareListQuery.loadTaskShares(activeTask.taskId);
   }
 
   function removeTaskShare(shareId: string): void {

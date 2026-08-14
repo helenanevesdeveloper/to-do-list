@@ -11,6 +11,7 @@ import TaskShareComposerActions from './TaskShareComposerActions';
 export interface TaskShareComposerProps {
   email: string;
   errorMessage?: string | null;
+  isSubmitting?: boolean;
   onEmailChange: (value: string) => void;
   onPermissionChange: (value: Exclude<TaskSharePermission, 'owner'>) => void;
   onSubmit: () => void;
@@ -23,6 +24,7 @@ export default function TaskShareComposer(
   {
     email,
     errorMessage = null,
+    isSubmitting = false,
     onEmailChange,
     onPermissionChange,
     onSubmit,
@@ -36,6 +38,7 @@ export default function TaskShareComposer(
         <TaskShareComposerActions
           canManageShares={canManageShares}
           email={email}
+          isSubmitting={isSubmitting}
           onEmailChange={onEmailChange}
           onPermissionChange={onPermissionChange}
           onSubmit={onSubmit}
