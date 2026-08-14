@@ -5,9 +5,6 @@ from app.tasks.application.dto.create_task_category_output import CreatedTaskCat
 from app.tasks.application.dto.delete_task_categories_input import (
     DeleteTaskCategoriesInput,
 )
-from app.tasks.application.dto.delete_task_categories_output import (
-    DeletedTaskCategories,
-)
 from app.tasks.application.dto.update_task_category_input import (
     UpdateTaskCategoryInput,
 )
@@ -19,9 +16,9 @@ class TaskCategoryCommandRepository(Protocol):
     ) -> CreatedTaskCategory:
         raise NotImplementedError
 
-    def delete_categories(
+    def delete_category(
         self, input_dto: DeleteTaskCategoriesInput
-    ) -> DeletedTaskCategories:
+    ) -> None:
         raise NotImplementedError
 
     def update_category(

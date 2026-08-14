@@ -12,9 +12,6 @@ from app.tasks.application.dto.create_tasks_output import CreatedTasks
 from app.tasks.application.dto.delete_task_categories_input import (
     DeleteTaskCategoriesInput,
 )
-from app.tasks.application.dto.delete_task_categories_output import (
-    DeletedTaskCategories,
-)
 from app.tasks.application.dto.delete_task_share_input import DeleteTaskShareInput
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.delete_tasks_output import DeletedTasks
@@ -46,7 +43,6 @@ __all__ = [
     "CreateTasksInput",
     "CreatedTasks",
     "DeleteTaskCategoriesInput",
-    "DeletedTaskCategories",
     "DeleteTaskShareInput",
     "DeletedTasks",
     "DeleteTasksInput",

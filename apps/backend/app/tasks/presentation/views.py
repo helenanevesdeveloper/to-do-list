@@ -10,6 +10,9 @@ from app.shared.http import AuthenticatedAPIView
 from app.tasks.application.dto.list_task_categories_input import (
     ListTaskCategoriesInput,
 )
+from app.tasks.application.dto.delete_task_categories_input import (
+    DeleteTaskCategoriesInput,
+)
 from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
 from app.tasks.application.dto.delete_task_share_input import DeleteTaskShareInput
 
@@ -28,8 +31,6 @@ from .dependencies import (
 )
 from .serializers import (
     TaskCategoryCreateRequestSerializer,
-    TaskCategoryDeleteRequestSerializer,
-    TaskCategoryDeleteResponseSerializer,
     TaskCategoryItemResponseSerializer,
     TaskCategoryListResponseSerializer,
     TaskCategoryUpdateRequestSerializer,
@@ -190,32 +191,6 @@ class TaskCategoryListView(AuthenticatedAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-    @extend_schema(
-        tags=["tasks"],
-        operation_id="tasks_delete_task_categories_delete",
-        request=TaskCategoryDeleteRequestSerializer,
-        responses={200: TaskCategoryDeleteResponseSerializer},
-        description="Delete task categories in batch",
-    )
-    def delete(self, request):
-        payload = cast(
-            TaskCategoryDeleteRequestSerializer,
-            TaskCategoryDeleteRequestSerializer(data=request.data),
-        )
-        payload.is_valid(raise_exception=True)
-
-        use_case = get_delete_task_categories_use_case()
-        result = use_case.execute(payload.to_dto(user_id=request.user.id))
-        return Response(
-            TaskCategoryDeleteResponseSerializer(
-                {
-                    "requested": result.requested,
-                    "deleted": result.deleted,
-                    "failed": result.failed,
-                }
-            ).data
-        )
-
 
 class TaskDetailView(AuthenticatedAPIView):
 
@@ -267,6 +242,23 @@ class TaskCategoryDetailView(AuthenticatedAPIView):
             )
         )
         return Response(TaskCategoryItemResponseSerializer(asdict(result)).data)
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_delete_task_category_delete",
+        responses={204: None},
+        description="Delete one task category",
+    )
+    def delete(self, request, category_id: str):
+        use_case = get_delete_task_categories_use_case()
+        use_case.execute(
+            DeleteTaskCategoriesInput(
+                user_id=request.user.id,
+                category_id=category_id,
+            )
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TaskShareListView(AuthenticatedAPIView):

@@ -14,9 +14,6 @@ from app.tasks.application.dto.create_task_category_output import CreatedTaskCat
 from app.tasks.application.dto.delete_task_categories_input import (
     DeleteTaskCategoriesInput,
 )
-from app.tasks.application.dto.delete_task_categories_output import (
-    DeletedTaskCategories,
-)
 from app.tasks.application.dto.update_task_category_input import (
     UpdateTaskCategoryInput,
 )
@@ -75,20 +72,17 @@ class DjangoOrmTaskCategoryCommandRepository(TaskCategoryCommandRepository):
             updated_at=timestamp.isoformat(),
         )
 
-    def delete_categories(
+    def delete_category(
         self,
         input_dto: DeleteTaskCategoriesInput,
-    ) -> DeletedTaskCategories:
+    ) -> None:
         deleted_count, _ = TaskCategoryModel.objects.filter(
             owner_user_id=input_dto.user_id,
-            id__in=input_dto.ids,
+            id=input_dto.category_id,
         ).delete()
-        requested_count = len(input_dto.ids)
-        return DeletedTaskCategories(
-            requested=requested_count,
-            deleted=deleted_count,
-            failed=requested_count - deleted_count,
-        )
+
+        if deleted_count == 0:
+            raise TaskCategoryNotFoundError("task category was not found")
 
     def update_category(
         self,
