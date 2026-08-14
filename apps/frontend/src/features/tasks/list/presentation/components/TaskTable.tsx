@@ -3,6 +3,7 @@ import type { TaskCategoryOption, TaskListItem } from '../../../shared/types';
 import TaskTableDesktop from './TaskTableDesktop';
 import TaskTableMobileList from './TaskTableMobileList';
 import type { TaskInlineEditInput } from '../../../update/presentation/hooks/useTaskInlineEdit';
+import { TaskListEditingProvider } from '../context/TaskListEditingContext';
 
 export type TaskTableProps = {
   categoryOptions: TaskCategoryOption[];
@@ -29,31 +30,28 @@ export default function TaskTable({
   onTaskUpdate,
 }: TaskTableProps) {
   return (
-    <Box borderWidth="1px" borderRadius="lg" overflow="visible" position="relative">
-      <TaskTableDesktop
-        categoryOptions={categoryOptions}
-        deletingTaskId={deletingTaskId}
-        editingTaskId={editingTaskId}
-        items={items}
-        onCreateCategory={onCreateCategory}
-        onTaskCancelEdit={onTaskCancelEdit}
-        onTaskDelete={onTaskDelete}
-        onTaskClick={onTaskClick}
-        onTaskUpdate={onTaskUpdate}
-      />
-      <Box p={{ base: 4, md: 0 }}>
-        <TaskTableMobileList
-          categoryOptions={categoryOptions}
+    <TaskListEditingProvider
+      categoryOptions={categoryOptions}
+      createCategory={onCreateCategory}
+      editingTaskId={editingTaskId}
+      onCancelTaskEdit={onTaskCancelEdit}
+      onStartTaskEdit={onTaskClick}
+      onSubmitTaskEdit={onTaskUpdate}
+    >
+      <Box borderWidth="1px" borderRadius="lg" overflow="visible" position="relative">
+        <TaskTableDesktop
           deletingTaskId={deletingTaskId}
-          editingTaskId={editingTaskId}
           items={items}
-          onCreateCategory={onCreateCategory}
-          onTaskCancelEdit={onTaskCancelEdit}
           onTaskDelete={onTaskDelete}
-          onTaskClick={onTaskClick}
-          onTaskUpdate={onTaskUpdate}
         />
+        <Box p={{ base: 4, md: 0 }}>
+          <TaskTableMobileList
+            deletingTaskId={deletingTaskId}
+            items={items}
+            onTaskDelete={onTaskDelete}
+          />
+        </Box>
       </Box>
-    </Box>
+    </TaskListEditingProvider>
   );
 }

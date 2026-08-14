@@ -1,48 +1,44 @@
 import { Box, Flex } from '@chakra-ui/react';
-import type { TaskCategoryOption, TaskListItem } from '../../../shared/types';
+import type { TaskListItem } from '../../../shared/types';
 import { useTaskShareModalContext } from '../../../sharing/presentation/context/TaskShareModalContext';
+import { useTaskListEditingContext } from '../context/TaskListEditingContext';
 import TaskInlineEditRow from '../../../update/presentation/components/TaskInlineEditRow';
-import type { TaskInlineEditInput } from '../../../update/presentation/hooks/useTaskInlineEdit';
 import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
 import TaskItemActionsMenu from './TaskItemActionsMenu';
 import TaskTableCardContent from './TaskTableCardContent';
 
 export type TaskTableCardProps = {
-  categoryOptions: TaskCategoryOption[];
-  isEditing?: boolean;
   isDeleting?: boolean;
-  onCancelEdit: () => void;
-  task: TaskListItem;
-  onClick: (task: TaskListItem) => void;
-  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteTask: (task: TaskListItem) => Promise<void> | void;
-  onUpdateTask: (taskId: string, input: TaskInlineEditInput) => Promise<void>;
+  task: TaskListItem;
 };
 
 /** Renders a single mobile card inside the task results list. */
 export default function TaskTableCard({
-  categoryOptions,
-  isEditing = false,
   isDeleting = false,
-  onCancelEdit,
   task,
-  onClick,
-  onCreateCategory,
-  onDeleteTask,
-  onUpdateTask,
+  onDeleteTask
 }: TaskTableCardProps) {
   const { openTaskShareModal } = useTaskShareModalContext();
+  const {
+    categoryOptions,
+    createCategory,
+    editingTaskId,
+    cancelTaskEdit,
+    startTaskEdit,
+    submitTaskEdit
+  } = useTaskListEditingContext();
   const display = buildTaskListItemDisplay(task);
   const canDeleteTask = task.sharing.isOwner;
   const canEditTask = task.sharing.isOwner;
 
-  if (isEditing) {
+  if (editingTaskId === task.id) {
     return (
       <TaskInlineEditRow
         categoryOptions={categoryOptions}
-        onCancel={onCancelEdit}
-        onCreateCategory={onCreateCategory}
-        onUpdateTask={(input) => onUpdateTask(task.id, input)}
+        onCancel={cancelTaskEdit}
+        onCreateCategory={createCategory}
+        onUpdateTask={(input) => submitTaskEdit(task.id, input)}
         task={task}
       />
     );
@@ -54,7 +50,7 @@ export default function TaskTableCard({
       borderRadius="lg"
       cursor={canEditTask ? 'pointer' : 'default'}
       p={4}
-      onClick={() => onClick(task)}
+      onClick={() => startTaskEdit(task)}
       role="group"
     >
       <Flex align="flex-start" gap={3}>

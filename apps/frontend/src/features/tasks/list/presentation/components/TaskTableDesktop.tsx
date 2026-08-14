@@ -6,33 +6,20 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react';
-import type { TaskCategoryOption, TaskListItem } from '../../../shared/types';
+import type { TaskListItem } from '../../../shared/types';
 import TaskTableRow from './TaskTableRow';
-import type { TaskInlineEditInput } from '../../../update/presentation/hooks/useTaskInlineEdit';
 
 export type TaskTableDesktopProps = {
-  categoryOptions: TaskCategoryOption[];
   deletingTaskId?: string | null;
-  editingTaskId?: string | null;
   items: TaskListItem[];
-  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
-  onTaskCancelEdit: () => void;
   onTaskDelete: (task: TaskListItem) => Promise<void> | void;
-  onTaskClick: (task: TaskListItem) => void;
-  onTaskUpdate: (taskId: string, input: TaskInlineEditInput) => Promise<void>;
 };
 
 /** Renders the desktop table variant of the task results area. */
 export default function TaskTableDesktop({
-  categoryOptions,
   deletingTaskId = null,
-  editingTaskId = null,
   items,
-  onCreateCategory,
-  onTaskCancelEdit,
-  onTaskDelete,
-  onTaskClick,
-  onTaskUpdate,
+  onTaskDelete
 }: TaskTableDesktopProps) {
   return (
     <TableContainer
@@ -56,15 +43,9 @@ export default function TaskTableDesktop({
         <Tbody>
           {items.map((task) => (
             <TaskTableRow
-              categoryOptions={categoryOptions}
-              isEditing={editingTaskId === task.id}
               key={task.id}
               isDeleting={deletingTaskId === task.id}
-              onCancelEdit={onTaskCancelEdit}
-              onClick={onTaskClick}
-              onCreateCategory={onCreateCategory}
               onDeleteTask={onTaskDelete}
-              onUpdateTask={onTaskUpdate}
               task={task}
             />
           ))}
