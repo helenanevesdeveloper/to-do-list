@@ -61,7 +61,7 @@ export type TaskListFilters = {
 /** Default filter state for the initial dashboard render. */
 export const DEFAULT_TASK_LIST_FILTERS: TaskListFilters = {
   page: 1,
-  scope: 'owned',
+  scope: 'all',
   status: 'all',
   categoryId: '',
   pageSize: 20
