@@ -1,19 +1,14 @@
 import { Box, HStack, Icon, Text } from '@chakra-ui/react';
 import type { MouseEvent } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
-
-export type TaskInlineCategoryTriggerProps = {
-  isOpen: boolean;
-  label: string;
-  onClick: () => void;
-};
+import {
+  useTaskInlineCategoryFieldContext
+} from '../context/TaskInlineCategoryFieldContext';
 
 /** Renders the stable clickable trigger that opens the inline category picker. */
-export default function TaskInlineCategoryTrigger({
-  isOpen,
-  label,
-  onClick
-}: TaskInlineCategoryTriggerProps) {
+export default function TaskInlineCategoryTrigger() {
+  const { handleFieldClick, isOpen, triggerLabel } = useTaskInlineCategoryFieldContext();
+
   function handleMouseDown(event: MouseEvent<HTMLButtonElement>): void {
     event.stopPropagation();
   }
@@ -31,7 +26,7 @@ export default function TaskInlineCategoryTrigger({
       py={2.5}
       textAlign="left"
       onMouseDown={handleMouseDown}
-      onClick={onClick}
+      onClick={handleFieldClick}
       _hover={{ borderColor: 'gray.300' }}
       _focusVisible={{
         borderColor: 'blue.400',
@@ -40,10 +35,10 @@ export default function TaskInlineCategoryTrigger({
     >
       <HStack justify="space-between" spacing={3}>
         <Text
-          color={label === 'Categoria' ? 'gray.500' : 'gray.800'}
+          color={triggerLabel === 'Categoria' ? 'gray.500' : 'gray.800'}
           noOfLines={1}
         >
-          {label}
+          {triggerLabel}
         </Text>
         <Icon
           as={FiChevronDown}

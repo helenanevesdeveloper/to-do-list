@@ -1,6 +1,9 @@
 import { Box, FormControl } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { TaskCategoryOption } from '../../../shared/types';
+import {
+  TaskInlineCategoryFieldProvider
+} from '../context/TaskInlineCategoryFieldContext';
 import { useTaskInlineCategoryField } from '../hooks/useTaskInlineCategoryField';
 import TaskInlineCategoryPopover from './TaskInlineCategoryPopover';
 import TaskInlineCategoryTrigger from './TaskInlineCategoryTrigger';
@@ -47,47 +50,65 @@ export default function TaskInlineCategoryField({
     onSelectCategory,
     value
   });
+  const contextValue = useMemo(
+    () => ({
+      categoryErrorMessage,
+      canCreateCategory,
+      createCategory,
+      createLabel,
+      filteredCategoryOptions,
+      inputRef,
+      isCreatingCategory,
+      isOpen,
+      listboxId,
+      popoverPosition,
+      popoverRef,
+      query,
+      rootRef,
+      selectedCategory,
+      selectedCategoryId: value,
+      triggerLabel,
+      clearSelectedCategory,
+      handleFieldClick,
+      handleInputChange,
+      selectCategory
+    }),
+    [
+      categoryErrorMessage,
+      canCreateCategory,
+      createCategory,
+      createLabel,
+      filteredCategoryOptions,
+      inputRef,
+      isCreatingCategory,
+      isOpen,
+      listboxId,
+      popoverPosition,
+      popoverRef,
+      query,
+      rootRef,
+      selectedCategory,
+      value,
+      triggerLabel,
+      clearSelectedCategory,
+      handleFieldClick,
+      handleInputChange,
+      selectCategory
+    ]
+  );
 
   useEffect(() => {
     onOpenChange?.(isOpen);
   }, [isOpen, onOpenChange]);
 
   return (
-    <FormControl flex={{ md: '1.2' }} position="relative">
-      <Box ref={rootRef}>
-        <TaskInlineCategoryTrigger
-          isOpen={isOpen}
-          label={triggerLabel}
-          onClick={handleFieldClick}
-        />
-
-        {isOpen ? (
-          <TaskInlineCategoryPopover
-            create={{
-              categoryErrorMessage,
-              canCreateCategory,
-              createLabel,
-              isCreatingCategory,
-              onCreateCategory: createCategory
-            }}
-            list={{
-              categoryOptions: filteredCategoryOptions,
-              listboxId,
-              selectedCategoryId: value,
-              onSelectCategory: selectCategory
-            }}
-            popoverRef={popoverRef}
-            position={popoverPosition}
-            search={{
-              inputRef,
-              query,
-              selectedCategory,
-              onClearSelectedCategory: clearSelectedCategory,
-              onQueryChange: handleInputChange
-            }}
-          />
-        ) : null}
-      </Box>
-    </FormControl>
+    <TaskInlineCategoryFieldProvider value={contextValue}>
+      <FormControl flex={{ md: '1.2' }} position="relative">
+        <Box ref={rootRef}>
+          <TaskInlineCategoryTrigger />
+          {isOpen ? <TaskInlineCategoryPopover /> : null}
+        </Box>
+      </FormControl>
+    </TaskInlineCategoryFieldProvider>
   );
 }

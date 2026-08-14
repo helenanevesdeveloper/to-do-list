@@ -1,24 +1,16 @@
 import { Stack, Text } from '@chakra-ui/react';
-import type { TaskCategoryOption } from '../../../shared/types';
 import { buildTaskInlineCategoryOptionListState } from '../state/taskInlineCategoryFieldState';
+import {
+  useTaskInlineCategoryFieldContext
+} from '../context/TaskInlineCategoryFieldContext';
 import TaskInlineCategoryOptionButton from './TaskInlineCategoryOptionButton';
 
-export type TaskInlineCategoryOptionListProps = {
-  categoryOptions: TaskCategoryOption[];
-  listboxId: string;
-  selectedCategoryId: string;
-  onSelectCategory: (categoryId: string) => void;
-};
-
 /** Renders the scrollable list of existing categories inside the picker popover. */
-export default function TaskInlineCategoryOptionList({
-  categoryOptions,
-  listboxId,
-  selectedCategoryId,
-  onSelectCategory
-}: TaskInlineCategoryOptionListProps) {
+export default function TaskInlineCategoryOptionList() {
+  const { filteredCategoryOptions, listboxId, selectedCategoryId, selectCategory } =
+    useTaskInlineCategoryFieldContext();
   const { hasResults, optionItems } = buildTaskInlineCategoryOptionListState({
-    categoryOptions,
+    categoryOptions: filteredCategoryOptions,
     selectedCategoryId
   });
 
@@ -30,7 +22,7 @@ export default function TaskInlineCategoryOptionList({
           id={optionItem.id}
           isSelected={optionItem.isSelected}
           label={optionItem.name}
-          onSelect={onSelectCategory}
+          onSelect={selectCategory}
         />
       ))}
 

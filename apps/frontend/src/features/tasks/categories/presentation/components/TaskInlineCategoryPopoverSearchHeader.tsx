@@ -8,24 +8,20 @@ import {
   Text
 } from '@chakra-ui/react';
 import type { MouseEvent } from 'react';
-import type { TaskCategoryOption } from '../../../shared/types';
-
-export type TaskInlineCategoryPopoverSearchHeaderProps = {
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  query: string;
-  selectedCategory: TaskCategoryOption | null;
-  onClearSelectedCategory: () => void;
-  onQueryChange: (value: string) => void;
-};
+import {
+  useTaskInlineCategoryFieldContext
+} from '../context/TaskInlineCategoryFieldContext';
 
 /** Renders the fixed search area shown at the top of the category picker popover. */
-export default function TaskInlineCategoryPopoverSearchHeader({
-  inputRef,
-  query,
-  selectedCategory,
-  onClearSelectedCategory,
-  onQueryChange
-}: TaskInlineCategoryPopoverSearchHeaderProps) {
+export default function TaskInlineCategoryPopoverSearchHeader() {
+  const {
+    inputRef,
+    query,
+    selectedCategory,
+    clearSelectedCategory,
+    handleInputChange
+  } = useTaskInlineCategoryFieldContext();
+
   function handleClearMouseDown(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
   }
@@ -49,7 +45,7 @@ export default function TaskInlineCategoryPopoverSearchHeader({
             <TagLabel>{selectedCategory.name}</TagLabel>
             <TagCloseButton
               onMouseDown={handleClearMouseDown}
-              onClick={onClearSelectedCategory}
+              onClick={clearSelectedCategory}
             />
           </Tag>
         ) : null}
@@ -60,7 +56,7 @@ export default function TaskInlineCategoryPopoverSearchHeader({
           variant="unstyled"
           placeholder="Digite para filtrar categorias"
           value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
+          onChange={(event) => handleInputChange(event.target.value)}
         />
       </HStack>
     </Box>

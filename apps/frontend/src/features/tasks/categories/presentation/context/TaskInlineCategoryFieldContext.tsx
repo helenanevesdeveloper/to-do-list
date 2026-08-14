@@ -1,0 +1,61 @@
+import { createContext, useContext, type ReactNode } from 'react';
+import type { TaskCategoryOption } from '../../../shared/types';
+import type {
+  TaskInlineCategoryPopoverPosition
+} from '../hooks/useTaskInlineCategoryPopoverState';
+
+export interface TaskInlineCategoryFieldContextValue {
+  categoryErrorMessage: string | null;
+  canCreateCategory: boolean;
+  createLabel: string | null;
+  filteredCategoryOptions: TaskCategoryOption[];
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  isCreatingCategory: boolean;
+  isOpen: boolean;
+  listboxId: string;
+  popoverPosition: TaskInlineCategoryPopoverPosition | null;
+  popoverRef: React.RefObject<HTMLDivElement | null>;
+  query: string;
+  rootRef: React.RefObject<HTMLDivElement | null>;
+  selectedCategory: TaskCategoryOption | null;
+  selectedCategoryId: string;
+  triggerLabel: string;
+  clearSelectedCategory: () => void;
+  createCategory: () => Promise<void>;
+  handleFieldClick: () => void;
+  handleInputChange: (value: string) => void;
+  selectCategory: (categoryId: string) => void;
+}
+
+const TaskInlineCategoryFieldContext =
+  createContext<TaskInlineCategoryFieldContextValue | null>(null);
+
+export interface TaskInlineCategoryFieldProviderProps {
+  children: ReactNode;
+  value: TaskInlineCategoryFieldContextValue;
+}
+
+/** Provides the local category-picker contract for the inline task form subtree. */
+export function TaskInlineCategoryFieldProvider({
+  children,
+  value
+}: TaskInlineCategoryFieldProviderProps) {
+  return (
+    <TaskInlineCategoryFieldContext.Provider value={value}>
+      {children}
+    </TaskInlineCategoryFieldContext.Provider>
+  );
+}
+
+/** Reads the local category-picker contract from context. */
+export function useTaskInlineCategoryFieldContext(): TaskInlineCategoryFieldContextValue {
+  const context = useContext(TaskInlineCategoryFieldContext);
+
+  if (!context) {
+    throw new Error(
+      'useTaskInlineCategoryFieldContext must be used within TaskInlineCategoryFieldProvider.'
+    );
+  }
+
+  return context;
+}
