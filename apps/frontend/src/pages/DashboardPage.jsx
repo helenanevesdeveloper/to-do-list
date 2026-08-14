@@ -33,7 +33,10 @@ export default function DashboardPage() {
   } = useTaskDashboard();
 
   return (
-    <TaskShareModalProvider currentUserEmail={currentUserEmail}>
+    <TaskShareModalProvider
+      currentUserEmail={currentUserEmail}
+      reloadTasks={reloadTasks}
+    >
       <Container maxW="6xl" py={{ base: 10, md: 14 }}>
         <Stack spacing={6}>
           <TaskDashboardHeader

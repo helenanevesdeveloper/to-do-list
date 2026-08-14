@@ -24,6 +24,7 @@ export interface UseTaskShareModalControllerInput {
   createAction: UseTaskShareCreateActionResult;
   currentUserEmail: string | null;
   modalSession: UseTaskShareModalResult;
+  reloadTasks: () => void;
   shareListQuery: UseTaskShareListQueryResult;
   shares: readonly TaskShare[];
 }
@@ -42,6 +43,7 @@ export function useTaskShareModalController({
   createAction,
   currentUserEmail,
   modalSession,
+  reloadTasks,
   shareListQuery,
   shares
 }: UseTaskShareModalControllerInput): UseTaskShareModalControllerResult {
@@ -52,9 +54,13 @@ export function useTaskShareModalController({
   }
 
   function closeTaskShareModal(): void {
-    modalSession.closeModal();
+    const shouldReloadTasks = modalSession.closeModal();
     composer.resetComposer();
     shareListQuery.resetError();
+
+    if (shouldReloadTasks) {
+      reloadTasks();
+    }
   }
 
   async function submitTaskShare(): Promise<void> {
@@ -92,6 +98,7 @@ export function useTaskShareModalController({
 
     composer.resetComposer();
     await shareListQuery.loadTaskShares(activeTask.taskId);
+    modalSession.markTaskListForReload();
   }
 
   function removeTaskShare(shareId: string): void {
@@ -102,6 +109,7 @@ export function useTaskShareModalController({
     }
 
     accessList.removeShare(activeTask.taskId, shareId);
+    modalSession.markTaskListForReload();
     composer.clearError();
   }
 

@@ -7,6 +7,7 @@ export type ShareComposerPermission = Exclude<TaskSharePermission, 'owner'>;
 export interface ActiveTaskShareModal {
   canManageShares: boolean;
   ownerEmail: string;
+  shouldReloadTasksOnClose: boolean;
   taskId: string;
   taskTitle: string | null;
 }

@@ -45,12 +45,14 @@ const TaskShareModalContext = createContext<TaskShareModalContextValue | null>(n
 export interface TaskShareModalProviderProps {
   children: ReactNode;
   currentUserEmail: string | null;
+  reloadTasks: () => void;
 }
 
 /** Provides the dashboard share modal state, including server-loaded access lists. */
 export function TaskShareModalProvider({
   children,
-  currentUserEmail
+  currentUserEmail,
+  reloadTasks
 }: TaskShareModalProviderProps) {
   const accessList = useTaskShareAccessList();
   const composer = useTaskShareComposer();
@@ -66,6 +68,7 @@ export function TaskShareModalProvider({
     createAction,
     currentUserEmail,
     modalSession,
+    reloadTasks,
     shareListQuery,
     shares
   });

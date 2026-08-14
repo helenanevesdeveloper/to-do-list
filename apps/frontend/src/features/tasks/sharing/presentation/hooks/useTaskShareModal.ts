@@ -6,8 +6,9 @@ import type { ActiveTaskShareModal } from '../state/taskShareDraft';
 /** State returned by the hook that owns the active task selected for the share modal. */
 export interface UseTaskShareModalResult {
   activeTask: ActiveTaskShareModal | null;
-  closeModal: () => void;
+  closeModal: () => boolean;
   isOpen: boolean;
+  markTaskListForReload: () => void;
   openModal: (task: TaskListItem, currentUserEmail: string | null) => void;
 }
 
@@ -15,8 +16,23 @@ export interface UseTaskShareModalResult {
 export function useTaskShareModal(): UseTaskShareModalResult {
   const [activeTask, setActiveTask] = useState<ActiveTaskShareModal | null>(null);
 
-  const closeModal = useCallback((): void => {
+  const closeModal = useCallback((): boolean => {
+    const shouldReloadTasks = activeTask?.shouldReloadTasksOnClose ?? false;
     setActiveTask(null);
+    return shouldReloadTasks;
+  }, [activeTask]);
+
+  const markTaskListForReload = useCallback((): void => {
+    setActiveTask((current) => {
+      if (!current || current.shouldReloadTasksOnClose) {
+        return current;
+      }
+
+      return {
+        ...current,
+        shouldReloadTasksOnClose: true
+      };
+    });
   }, []);
 
   const openModal = useCallback(
@@ -24,6 +40,7 @@ export function useTaskShareModal(): UseTaskShareModalResult {
       setActiveTask({
         canManageShares: task.sharing.isOwner,
         ownerEmail: buildTaskShareOwnerEmail(task, currentUserEmail),
+        shouldReloadTasksOnClose: false,
         taskId: task.id,
         taskTitle: task.title
       });
@@ -35,6 +52,7 @@ export function useTaskShareModal(): UseTaskShareModalResult {
     activeTask,
     closeModal,
     isOpen: activeTask !== null,
+    markTaskListForReload,
     openModal
   };
 }
