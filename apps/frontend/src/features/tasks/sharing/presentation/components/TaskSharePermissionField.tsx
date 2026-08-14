@@ -5,6 +5,7 @@ import { getTaskSharePermissionLabel } from '../mappers/getTaskSharePermissionLa
 
 export interface TaskSharePermissionFieldProps {
   canManageShares: boolean;
+  isFullWidth?: boolean;
   onChange: (value: Exclude<TaskSharePermission, 'owner'>) => void;
   permission: Exclude<TaskSharePermission, 'owner'>;
 }
@@ -12,9 +13,12 @@ export interface TaskSharePermissionFieldProps {
 /** Renders the permission selector used by the local share composer. */
 export default function TaskSharePermissionField({
   canManageShares,
+  isFullWidth = false,
   onChange,
   permission
 }: TaskSharePermissionFieldProps) {
+  const width = isFullWidth ? { base: 'full', md: 'auto' } : undefined;
+
   return (
     <Menu placement="bottom-end">
       <MenuButton
@@ -23,6 +27,7 @@ export default function TaskSharePermissionField({
         variant="outline"
         isDisabled={!canManageShares}
         minW="140px"
+        w={width}
       >
         {getTaskSharePermissionLabel(permission)}
       </MenuButton>

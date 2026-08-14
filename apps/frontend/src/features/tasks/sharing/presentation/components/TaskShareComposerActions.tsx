@@ -1,4 +1,4 @@
-import { Button, HStack, Input } from '@chakra-ui/react';
+import { Button, Input, Stack } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 import type { TaskSharePermission } from '../../domain/taskSharePermission';
 import TaskSharePermissionField from './TaskSharePermissionField';
@@ -24,9 +24,13 @@ export default function TaskShareComposerActions({
   permission
 }: TaskShareComposerActionsProps) {
   return (
-    <HStack align="start" spacing={3}>
+    <Stack
+      direction={{ base: 'column', md: 'row' }}
+      align={{ base: 'stretch', md: 'start' }}
+      spacing={3}
+    >
       <Input
-        flex="1"
+        flex={{ md: '1' }}
         placeholder="Digite o email da pessoa"
         value={email}
         onChange={(event) => onEmailChange(event.target.value)}
@@ -35,6 +39,7 @@ export default function TaskShareComposerActions({
 
       <TaskSharePermissionField
         canManageShares={canManageShares && !isSubmitting}
+        isFullWidth
         onChange={onPermissionChange}
         permission={permission}
       />
@@ -46,9 +51,10 @@ export default function TaskShareComposerActions({
         isDisabled={!canManageShares || isSubmitting}
         isLoading={isSubmitting}
         colorScheme="blue"
+        w={{ base: 'full', md: 'auto' }}
       >
         Adicionar
       </Button>
-    </HStack>
+    </Stack>
   );
 }
