@@ -23,11 +23,14 @@ export default function TaskShareModal() {
     currentUserEmail,
     errorMessage,
     isOpen,
+    isLoadingShares,
     removeTaskShare,
+    retryTaskShares,
     selectedTaskId,
     selectedTaskTitle,
     setComposerEmail,
     setComposerPermission,
+    shareListErrorMessage,
     shares,
     submitTaskShare
   } = useTaskShareModalContext();
@@ -55,7 +58,10 @@ export default function TaskShareModal() {
             <TaskShareAccessList
               canManageShares={canManageShares}
               currentUserEmail={currentUserEmail}
+              errorMessage={shareListErrorMessage}
+              isLoading={isLoadingShares}
               onRemoveShare={removeTaskShare}
+              onRetry={retryTaskShares}
               shares={shares}
             />
 

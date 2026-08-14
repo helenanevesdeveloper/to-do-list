@@ -1,6 +1,7 @@
 import type { TaskShare } from '../../domain/taskShare';
 import type { TaskShareModalContextValue } from './TaskShareModalContext';
 import type { UseTaskShareComposerResult } from '../hooks/useTaskShareComposer';
+import type { UseTaskShareListQueryResult } from '../hooks/useTaskShareListQuery';
 import type { UseTaskShareModalResult } from '../hooks/useTaskShareModal';
 import type { UseTaskShareModalControllerResult } from '../hooks/useTaskShareModalController';
 
@@ -9,6 +10,8 @@ export interface BuildTaskShareModalContextValueInput {
   controller: UseTaskShareModalControllerResult;
   currentUserEmail: string | null;
   modalSession: UseTaskShareModalResult;
+  retryTaskShares: () => void;
+  shareListQuery: UseTaskShareListQueryResult;
   shares: readonly TaskShare[];
 }
 
@@ -18,6 +21,8 @@ export function buildTaskShareModalContextValue({
   controller,
   currentUserEmail,
   modalSession,
+  retryTaskShares,
+  shareListQuery,
   shares
 }: BuildTaskShareModalContextValueInput): TaskShareModalContextValue {
   return {
@@ -28,12 +33,15 @@ export function buildTaskShareModalContextValue({
     currentUserEmail,
     errorMessage: composer.errorMessage,
     isOpen: modalSession.isOpen,
+    isLoadingShares: shareListQuery.isLoadingShares,
     openTaskShareModal: controller.openTaskShareModal,
     removeTaskShare: controller.removeTaskShare,
+    retryTaskShares,
     selectedTaskId: modalSession.activeTask?.taskId ?? null,
     selectedTaskTitle: modalSession.activeTask?.taskTitle ?? null,
     setComposerEmail: composer.setComposerEmail,
     setComposerPermission: composer.setComposerPermission,
+    shareListErrorMessage: shareListQuery.errorMessage,
     shares,
     submitTaskShare: controller.submitTaskShare
   };

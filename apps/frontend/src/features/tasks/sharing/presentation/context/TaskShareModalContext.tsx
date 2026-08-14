@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   type ReactNode
@@ -8,6 +9,7 @@ import type { TaskListItem } from '../../../shared/types';
 import type { TaskShare } from '../../domain/taskShare';
 import { useTaskShareAccessList } from '../hooks/useTaskShareAccessList';
 import { useTaskShareComposer } from '../hooks/useTaskShareComposer';
+import { useTaskShareListQuery } from '../hooks/useTaskShareListQuery';
 import {
   useTaskShareModalController
 } from '../hooks/useTaskShareModalController';
@@ -23,12 +25,15 @@ export interface TaskShareModalContextValue {
   currentUserEmail: string | null;
   errorMessage: string | null;
   isOpen: boolean;
+  isLoadingShares: boolean;
   openTaskShareModal: (task: TaskListItem) => void;
   removeTaskShare: (shareId: string) => void;
+  retryTaskShares: () => void;
   selectedTaskId: string | null;
   selectedTaskTitle: string | null;
   setComposerEmail: (value: string) => void;
   setComposerPermission: (value: ShareComposerPermission) => void;
+  shareListErrorMessage: string | null;
   shares: readonly TaskShare[];
   submitTaskShare: () => void;
 }
@@ -40,7 +45,7 @@ export interface TaskShareModalProviderProps {
   currentUserEmail: string | null;
 }
 
-/** Provides the local-only dashboard share modal state before API integration. */
+/** Provides the dashboard share modal state, including server-loaded access lists. */
 export function TaskShareModalProvider({
   children,
   currentUserEmail
@@ -48,14 +53,27 @@ export function TaskShareModalProvider({
   const accessList = useTaskShareAccessList();
   const composer = useTaskShareComposer();
   const modalSession = useTaskShareModal();
+  const shareListQuery = useTaskShareListQuery({
+    replaceShares: accessList.replaceShares
+  });
   const shares = accessList.getShares(modalSession.activeTask?.taskId ?? null);
   const controller = useTaskShareModalController({
     accessList,
     composer,
     currentUserEmail,
     modalSession,
+    shareListQuery,
     shares
   });
+  const retryTaskShares = useCallback((): void => {
+    const taskId = modalSession.activeTask?.taskId;
+
+    if (!taskId) {
+      return;
+    }
+
+    void shareListQuery.loadTaskShares(taskId);
+  }, [modalSession.activeTask?.taskId, shareListQuery]);
 
   const value = useMemo<TaskShareModalContextValue>(
     () =>
@@ -64,6 +82,8 @@ export function TaskShareModalProvider({
         controller,
         currentUserEmail,
         modalSession,
+        retryTaskShares,
+        shareListQuery,
         shares
       }),
     [
@@ -74,6 +94,9 @@ export function TaskShareModalProvider({
       currentUserEmail,
       modalSession.activeTask,
       modalSession.isOpen,
+      retryTaskShares,
+      shareListQuery.errorMessage,
+      shareListQuery.isLoadingShares,
       shares
     ]
   );

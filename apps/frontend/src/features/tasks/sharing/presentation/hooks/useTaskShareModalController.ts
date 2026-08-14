@@ -10,14 +10,17 @@ import type {
   UseTaskShareModalResult
 } from './useTaskShareModal';
 import { createLocalTaskShare } from '../state/createLocalTaskShare';
-import { TASK_SHARE_EDITOR_UNAVAILABLE_MESSAGE } from '../state/taskShareDraft';
-import { validateTaskShareDraft } from '../state/validateTaskShareDraft';
+import { readManageableTaskShareModal } from '../state/readManageableTaskShareModal';
+import { readTaskShareOwnerEmail } from '../state/readTaskShareOwnerEmail';
+import { validateTaskShareSubmission } from '../state/validateTaskShareSubmission';
+import type { UseTaskShareListQueryResult } from './useTaskShareListQuery';
 
 export interface UseTaskShareModalControllerInput {
   accessList: UseTaskShareAccessListResult;
   composer: UseTaskShareComposerResult;
   currentUserEmail: string | null;
   modalSession: UseTaskShareModalResult;
+  shareListQuery: UseTaskShareListQueryResult;
   shares: readonly TaskShare[];
 }
 
@@ -34,34 +37,35 @@ export function useTaskShareModalController({
   composer,
   currentUserEmail,
   modalSession,
+  shareListQuery,
   shares
 }: UseTaskShareModalControllerInput): UseTaskShareModalControllerResult {
   function openTaskShareModal(task: TaskListItem): void {
-    accessList.ensureTaskShares(task, currentUserEmail);
     modalSession.openModal(task, currentUserEmail);
     composer.resetComposer();
+    void shareListQuery.loadTaskShares(task.id);
   }
 
   function closeTaskShareModal(): void {
     modalSession.closeModal();
     composer.resetComposer();
+    shareListQuery.resetError();
   }
 
   function submitTaskShare(): void {
-    const activeTask = modalSession.activeTask;
+    const activeTask = readManageableTaskShareModal(modalSession.activeTask);
 
-    if (!activeTask || !activeTask.canManageShares) {
+    if (!activeTask) {
       return;
     }
 
-    if (composer.composerPermission === 'editor') {
-      composer.setComposerError(TASK_SHARE_EDITOR_UNAVAILABLE_MESSAGE);
-      return;
-    }
-
-    const validationMessage = validateTaskShareDraft({
+    const validationMessage = validateTaskShareSubmission({
       email: composer.composerEmail,
-      ownerEmail: activeTask.ownerEmail,
+      ownerEmail: readTaskShareOwnerEmail({
+        fallbackOwnerEmail: activeTask.ownerEmail,
+        shares
+      }),
+      permission: composer.composerPermission,
       shares
     });
 
@@ -82,9 +86,9 @@ export function useTaskShareModalController({
   }
 
   function removeTaskShare(shareId: string): void {
-    const activeTask = modalSession.activeTask;
+    const activeTask = readManageableTaskShareModal(modalSession.activeTask);
 
-    if (!activeTask || !activeTask.canManageShares) {
+    if (!activeTask) {
       return;
     }
 

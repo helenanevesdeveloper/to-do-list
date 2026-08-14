@@ -1,21 +1,20 @@
 import { useCallback, useState } from 'react';
-import type { TaskListItem } from '../../../shared/types';
 import type { TaskShare } from '../../domain/taskShare';
 import { addTaskShareToStore } from '../state/addTaskShareToStore';
-import { ensureTaskSharesInStore } from '../state/ensureTaskSharesInStore';
 import { readTaskSharesFromStore } from '../state/readTaskSharesFromStore';
 import { removeTaskShareFromStore } from '../state/removeTaskShareFromStore';
+import { replaceTaskSharesInStore } from '../state/replaceTaskSharesInStore';
 import type { TaskShareStore } from '../state/taskShareStore';
 
-/** State returned by the hook that owns the local share store keyed by task. */
+/** State returned by the hook that owns the share store keyed by task. */
 export interface UseTaskShareAccessListResult {
   addShare: (taskId: string, share: TaskShare) => void;
-  ensureTaskShares: (task: TaskListItem, currentUserEmail: string | null) => void;
   getShares: (taskId: string | null) => readonly TaskShare[];
   removeShare: (taskId: string, shareId: string) => void;
+  replaceShares: (taskId: string, shares: readonly TaskShare[]) => void;
 }
 
-/** Owns the local-only share collections used before the real API integration. */
+/** Owns the in-memory task share collections consumed by the dashboard modal. */
 export function useTaskShareAccessList(): UseTaskShareAccessListResult {
   const [shareStore, setShareStore] = useState<TaskShareStore>({});
 
@@ -28,19 +27,6 @@ export function useTaskShareAccessList(): UseTaskShareAccessListResult {
       })
     );
   }, []);
-
-  const ensureTaskShares = useCallback(
-    (task: TaskListItem, currentUserEmail: string | null): void => {
-      setShareStore((current) =>
-        ensureTaskSharesInStore({
-          currentUserEmail,
-          store: current,
-          task
-        })
-      );
-    },
-    []
-  );
 
   const getShares = useCallback(
     (taskId: string | null): readonly TaskShare[] =>
@@ -58,10 +44,23 @@ export function useTaskShareAccessList(): UseTaskShareAccessListResult {
     );
   }, []);
 
+  const replaceShares = useCallback(
+    (taskId: string, shares: readonly TaskShare[]): void => {
+      setShareStore((current) =>
+        replaceTaskSharesInStore({
+          shares,
+          store: current,
+          taskId
+        })
+      );
+    },
+    []
+  );
+
   return {
     addShare,
-    ensureTaskShares,
     getShares,
-    removeShare
+    removeShare,
+    replaceShares
   };
 }

@@ -1,41 +1,79 @@
-import { Stack, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Stack,
+  Text
+} from '@chakra-ui/react';
 import type { TaskShare } from '../../domain/taskShare';
-import TaskShareAccessRow from './TaskShareAccessRow';
+import TaskShareAccessErrorState from './TaskShareAccessErrorState';
+import TaskShareAccessLoadingState from './TaskShareAccessLoadingState';
+import TaskShareAccessRows from './TaskShareAccessRows';
 
 /** Props for the future access-list section inside the sharing modal. */
 export interface TaskShareAccessListProps {
-  currentUserEmail: string | null;
-  onRemoveShare?: (shareId: string) => void;
-  shares: readonly TaskShare[];
   canManageShares: boolean;
+  currentUserEmail: string | null;
+  errorMessage?: string | null;
+  isLoading?: boolean;
+  onRemoveShare?: (shareId: string) => void;
+  onRetry?: () => void;
+  shares: readonly TaskShare[];
 }
 
-/** Renders the people-with-access section inside the local share modal. */
+/** Renders the people-with-access section inside the task share modal. */
 export default function TaskShareAccessList(
   {
+    canManageShares,
     currentUserEmail,
+    errorMessage = null,
+    isLoading = false,
     onRemoveShare,
-    shares,
-    canManageShares
+    onRetry,
+    shares
   }: TaskShareAccessListProps
 ) {
+  const shouldShowBlockingError = Boolean(errorMessage) && shares.length === 0 && !isLoading;
+  const shouldShowWarning = Boolean(errorMessage) && shares.length > 0;
+
+  function renderContent() {
+    if (shouldShowBlockingError && errorMessage) {
+      return (
+        <TaskShareAccessErrorState
+          errorMessage={errorMessage}
+          onRetry={onRetry}
+        />
+      );
+    }
+
+    if (isLoading && shares.length === 0) {
+      return <TaskShareAccessLoadingState />;
+    }
+
+    return (
+      <TaskShareAccessRows
+        canManageShares={canManageShares}
+        currentUserEmail={currentUserEmail}
+        onRemoveShare={onRemoveShare}
+        shares={shares}
+      />
+    );
+  }
+
   return (
     <Stack spacing={4}>
       <Text fontSize="lg" fontWeight="semibold">
         Pessoas com acesso
       </Text>
 
-      <Stack spacing={4}>
-        {shares.map((share) => (
-          <TaskShareAccessRow
-            key={share.id}
-            canManageShare={canManageShares && !share.isOwner}
-            currentUserEmail={currentUserEmail}
-            onRemoveShare={onRemoveShare}
-            share={share}
-          />
-        ))}
-      </Stack>
+      {shouldShowWarning ? (
+        <Alert status="warning" borderRadius="lg">
+          <AlertIcon />
+          Nao foi possivel atualizar a lista de compartilhamentos. Exibindo os dados
+          anteriores.
+        </Alert>
+      ) : null}
+
+      {renderContent()}
     </Stack>
   );
 }
