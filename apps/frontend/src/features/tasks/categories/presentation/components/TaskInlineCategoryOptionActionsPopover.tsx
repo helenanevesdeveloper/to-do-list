@@ -2,6 +2,9 @@ import { Box, Button, Input, Portal, Stack, Text } from '@chakra-ui/react';
 import type { MouseEvent } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
 import {
+  TASK_INLINE_OVERLAY_ATTRIBUTE
+} from '../../../shared/presentation/constants/taskInlineOverlay';
+import {
   useTaskInlineCategoryFieldContext
 } from '../context/TaskInlineCategoryFieldContext';
 import {
@@ -103,6 +106,7 @@ export default function TaskInlineCategoryOptionActionsPopover() {
     <Portal>
       <Box
         ref={actionsPopoverRef}
+        {...{ [TASK_INLINE_OVERLAY_ATTRIBUTE]: '' }}
         position="fixed"
         top={`${actionsPopoverPosition.top}px`}
         left={`${actionsPopoverPosition.left}px`}

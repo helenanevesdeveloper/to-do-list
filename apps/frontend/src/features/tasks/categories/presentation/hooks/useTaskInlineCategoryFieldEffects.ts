@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 export type UseTaskInlineCategoryFieldEffectsArgs = {
   actionsPopoverRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  interactionBoundaryRef?: React.RefObject<HTMLElement | null>;
   isOpen: boolean;
   onActionsPointerDownOutside: () => void;
   onPointerDownOutside: () => void;
@@ -25,7 +24,6 @@ function isNodeInsideElement(
 
 function resolveTaskInlineCategoryPointerDownArea(args: {
   actionsPopoverElement: HTMLDivElement | null;
-  interactionBoundaryElement: HTMLElement | null;
   popoverElement: HTMLDivElement | null;
   rootElement: HTMLDivElement | null;
   targetNode: Node;
@@ -35,7 +33,6 @@ function resolveTaskInlineCategoryPointerDownArea(args: {
   }
 
   if (
-    isNodeInsideElement(args.interactionBoundaryElement, args.targetNode) ||
     isNodeInsideElement(args.rootElement, args.targetNode) ||
     isNodeInsideElement(args.popoverElement, args.targetNode)
   ) {
@@ -74,7 +71,6 @@ function handleTaskInlineCategoryPointerDown(args: {
 export function useTaskInlineCategoryFieldEffects({
   actionsPopoverRef,
   inputRef,
-  interactionBoundaryRef,
   isOpen,
   onActionsPointerDownOutside,
   onPointerDownOutside,
@@ -91,7 +87,6 @@ export function useTaskInlineCategoryFieldEffects({
       const actionsPopoverElement = actionsPopoverRef.current;
       const pointerDownArea = resolveTaskInlineCategoryPointerDownArea({
         actionsPopoverElement,
-        interactionBoundaryElement: interactionBoundaryRef?.current ?? null,
         popoverElement: popoverRef.current,
         rootElement: rootRef.current,
         targetNode
@@ -113,7 +108,6 @@ export function useTaskInlineCategoryFieldEffects({
   }, [
     actionsPopoverRef,
     isOpen,
-    interactionBoundaryRef,
     onActionsPointerDownOutside,
     onPointerDownOutside,
     popoverRef,

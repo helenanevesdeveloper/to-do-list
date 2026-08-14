@@ -26,7 +26,6 @@ export default function TaskTableCard({
     deleteCategory,
     updateCategory,
     editingTaskId,
-    cancelTaskEdit,
     startTaskEdit,
     submitTaskEdit
   } = useTaskListEditingContext();
@@ -38,7 +37,6 @@ export default function TaskTableCard({
     return (
       <TaskInlineEditRow
         categoryOptions={categoryOptions}
-        onCancel={cancelTaskEdit}
         onCreateCategory={createCategory}
         onDeleteCategory={deleteCategory}
         onUpdateCategory={updateCategory}

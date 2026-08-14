@@ -11,15 +11,12 @@ import type {
 
 export type UseTaskInlineEditSubmissionArgs = {
   draft: TaskInlineEditDraft;
-  isCategoryFieldOpenRef: React.RefObject<boolean>;
-  onCancel: () => void;
   onUpdateTask: (input: TaskInlineEditInput) => Promise<void>;
   setErrorMessage: (value: string | null) => void;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
 export type UseTaskInlineEditSubmissionResult = {
-  handlePointerDownOutside: () => void;
   isSubmitting: boolean;
   submitUpdate: () => Promise<void>;
 };
@@ -33,8 +30,6 @@ function focusTitleInput(
 /** Owns the async submit lifecycle triggered when the inline edit row loses focus. */
 export function useTaskInlineEditSubmission({
   draft,
-  isCategoryFieldOpenRef,
-  onCancel,
   onUpdateTask,
   setErrorMessage,
   titleInputRef
@@ -74,17 +69,7 @@ export function useTaskInlineEditSubmission({
     titleInputRef
   ]);
 
-  const handlePointerDownOutside = useCallback((): void => {
-    if (isCategoryFieldOpenRef.current) {
-      return;
-    }
-
-    setErrorMessage(null);
-    onCancel();
-  }, [isCategoryFieldOpenRef, onCancel, setErrorMessage]);
-
   return {
-    handlePointerDownOutside,
     isSubmitting,
     submitUpdate
   };

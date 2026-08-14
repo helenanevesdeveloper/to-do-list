@@ -4,6 +4,9 @@ export type TaskScopeFilter = 'owned' | 'shared' | 'all';
 /** Supported completion-status filters for the task list. */
 export type TaskStatusFilter = 'all' | 'pending' | 'completed';
 
+/** Editable completion status for one concrete task. */
+export type TaskCompletionStatus = 'pending' | 'completed';
+
 /** Minimal category shape required by the dashboard filter controls. */
 export type TaskCategoryOption = {
   id: string;

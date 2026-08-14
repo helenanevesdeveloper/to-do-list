@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { TaskListItem } from '../../../shared/types';
+import type {
+  TaskCompletionStatus,
+  TaskListItem
+} from '../../../shared/types';
 import { buildTaskInlineEditDraft } from '../state/taskInlineEditState';
 import type { TaskInlineEditDraft } from '../state/taskInlineEditTypes';
 
@@ -11,6 +14,7 @@ export type UseTaskInlineEditDraftStateResult = {
   setCategoryId: (value: string) => void;
   setDescription: (value: string) => void;
   setErrorMessage: (value: string | null) => void;
+  setStatus: (value: TaskCompletionStatus) => void;
   setTitle: (value: string) => void;
 };
 
@@ -60,6 +64,15 @@ export function useTaskInlineEditDraftState(
     setDraft(nextDraft);
   }, []);
 
+  const setStatus = useCallback((value: TaskCompletionStatus): void => {
+    const nextDraft = {
+      ...draftRef.current,
+      status: value
+    };
+    draftRef.current = nextDraft;
+    setDraft(nextDraft);
+  }, []);
+
   return {
     draft,
     draftRef,
@@ -68,6 +81,7 @@ export function useTaskInlineEditDraftState(
     setCategoryId,
     setDescription,
     setErrorMessage,
+    setStatus,
     setTitle
   };
 }

@@ -98,7 +98,9 @@ export function useTaskInlineCategoryFieldContextValue({
 
   useEffect(() => {
     if (!isAnyPopoverOpen) {
-      onOpenChange?.(false);
+      queueMicrotask(() => {
+        onOpenChange?.(false);
+      });
     }
   }, [isAnyPopoverOpen, onOpenChange]);
 

@@ -1,7 +1,10 @@
+import type { TaskCompletionStatus } from '../../../shared/types';
+
 /** Draft state captured by the inline task-edit row before submission. */
 export type TaskInlineEditDraft = {
   categoryId: string;
   description: string;
+  status: TaskCompletionStatus;
   title: string;
 };
 
@@ -9,5 +12,6 @@ export type TaskInlineEditDraft = {
 export type TaskInlineEditInput = {
   categoryId: string | null;
   description: string | null;
+  isCompleted: boolean;
   title: string;
 };

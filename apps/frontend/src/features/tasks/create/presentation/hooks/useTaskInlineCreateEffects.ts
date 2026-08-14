@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 import { usePointerDownOutside } from './usePointerDownOutside';
+import {
+  TASK_INLINE_OVERLAY_SELECTOR
+} from '../../../shared/presentation/constants/taskInlineOverlay';
 
 export type UseTaskInlineCreateEffectsArgs = {
   onPointerDownOutside: (event: MouseEvent) => void;
@@ -18,6 +21,7 @@ export function useTaskInlineCreateEffects({
   }, [titleInputRef]);
 
   usePointerDownOutside({
+    insideSelector: TASK_INLINE_OVERLAY_SELECTOR,
     onPointerDownOutside,
     rootRef
   });

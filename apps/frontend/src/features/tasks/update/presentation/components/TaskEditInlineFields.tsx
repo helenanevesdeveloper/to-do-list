@@ -1,18 +1,21 @@
 import { FormControl, Input, Stack } from '@chakra-ui/react';
 import TaskInlineCategoryField from '../../../categories/presentation/components/TaskInlineCategoryField';
-import type { TaskCategoryOption } from '../../../shared/types';
+import type {
+  TaskCategoryOption,
+  TaskCompletionStatus
+} from '../../../shared/types';
+import TaskEditStatusField from './TaskEditStatusField';
 import type { TaskInlineEditDraft } from '../state/taskInlineEditTypes';
 
 export type TaskEditInlineFieldsProps = {
   categoryOptions: TaskCategoryOption[];
   draft: TaskInlineEditDraft;
-  interactionBoundaryRef: React.RefObject<HTMLDivElement | null>;
   isSubmitting: boolean;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteCategory: (categoryId: string) => Promise<void>;
-  onCategoryFieldOpenChange: (isOpen: boolean) => void;
   onDescriptionChange: (value: string) => void;
   onSelectCategory: (value: string) => void;
+  onStatusChange: (value: TaskCompletionStatus) => void;
   onTitleChange: (value: string) => void;
   onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
@@ -22,13 +25,12 @@ export type TaskEditInlineFieldsProps = {
 export default function TaskEditInlineFields({
   categoryOptions,
   draft,
-  interactionBoundaryRef,
   isSubmitting,
   onCreateCategory,
   onDeleteCategory,
-  onCategoryFieldOpenChange,
   onDescriptionChange,
   onSelectCategory,
+  onStatusChange,
   onTitleChange,
   onUpdateCategory,
   titleInputRef
@@ -62,13 +64,17 @@ export default function TaskEditInlineFields({
 
       <TaskInlineCategoryField
         categoryOptions={categoryOptions}
-        interactionBoundaryRef={interactionBoundaryRef}
-        onOpenChange={onCategoryFieldOpenChange}
         value={draft.categoryId}
         onSelectCategory={onSelectCategory}
         onCreateCategory={onCreateCategory}
         onDeleteCategory={onDeleteCategory}
         onUpdateCategory={onUpdateCategory}
+      />
+
+      <TaskEditStatusField
+        isDisabled={isSubmitting}
+        value={draft.status}
+        onChange={onStatusChange}
       />
     </Stack>
   );

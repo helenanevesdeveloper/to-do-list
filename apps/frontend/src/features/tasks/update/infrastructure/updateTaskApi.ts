@@ -13,6 +13,7 @@ export interface UpdateTaskApiInput extends TaskInlineEditInput {
 type UpdateTaskApiRequest = {
   category_id: string | null;
   description: string | null;
+  is_completed: boolean;
   title: string;
 };
 
@@ -22,6 +23,7 @@ function buildUpdateTaskApiRequest(
   return {
     category_id: input.categoryId,
     description: input.description,
+    is_completed: input.isCompleted,
     title: input.title
   };
 }

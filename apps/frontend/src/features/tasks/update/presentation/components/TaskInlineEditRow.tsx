@@ -9,7 +9,6 @@ import TaskEditInlineFields from './TaskEditInlineFields';
 
 export type TaskInlineEditRowProps = {
   categoryOptions: TaskCategoryOption[];
-  onCancel: () => void;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteCategory: (categoryId: string) => Promise<void>;
   onUpdateTask: (input: TaskInlineEditInput) => Promise<void>;
@@ -17,10 +16,9 @@ export type TaskInlineEditRowProps = {
   task: TaskListItem;
 };
 
-/** Renders the inline task-edit row that saves on outside click. */
+/** Renders the inline task-edit row with explicit save action. */
 export default function TaskInlineEditRow({
   categoryOptions,
-  onCancel,
   onCreateCategory,
   onDeleteCategory,
   onUpdateTask,
@@ -31,22 +29,19 @@ export default function TaskInlineEditRow({
     draft,
     errorMessage,
     isSubmitting,
-    rootRef,
     titleInputRef,
-    setIsCategoryFieldOpen,
     submitUpdate,
     setCategoryId,
     setDescription,
+    setStatus,
     setTitle
   } = useTaskInlineEdit({
-    onCancel,
     onUpdateTask,
     task
   });
 
   return (
     <Box
-      ref={rootRef}
       borderWidth="1px"
       borderRadius="lg"
       p={{ base: 4, md: 5 }}
@@ -56,13 +51,12 @@ export default function TaskInlineEditRow({
         <TaskEditInlineFields
           categoryOptions={categoryOptions}
           draft={draft}
-          interactionBoundaryRef={rootRef}
           isSubmitting={isSubmitting}
           onCreateCategory={onCreateCategory}
           onDeleteCategory={onDeleteCategory}
-          onCategoryFieldOpenChange={setIsCategoryFieldOpen}
           onDescriptionChange={setDescription}
           onSelectCategory={setCategoryId}
+          onStatusChange={setStatus}
           onTitleChange={setTitle}
           onUpdateCategory={onUpdateCategory}
           titleInputRef={titleInputRef}

@@ -5,7 +5,6 @@ import type { TaskInlineEditInput } from '../../../update/presentation/hooks/use
 
 export interface TaskTableEditingRowProps {
   categoryOptions: TaskCategoryOption[];
-  onCancelEdit: () => void;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteCategory: (categoryId: string) => Promise<void>;
   onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
@@ -16,7 +15,6 @@ export interface TaskTableEditingRowProps {
 /** Renders the desktop table row while one task is being edited inline. */
 export default function TaskTableEditingRow({
   categoryOptions,
-  onCancelEdit,
   onCreateCategory,
   onDeleteCategory,
   onUpdateCategory,
@@ -28,7 +26,6 @@ export default function TaskTableEditingRow({
       <Td colSpan={7} px={3} py={3}>
         <TaskInlineEditRow
           categoryOptions={categoryOptions}
-          onCancel={onCancelEdit}
           onCreateCategory={onCreateCategory}
           onDeleteCategory={onDeleteCategory}
           onUpdateCategory={onUpdateCategory}

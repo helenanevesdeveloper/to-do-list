@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 type UsePointerDownOutsideArgs = {
   additionalRefs?: Array<React.RefObject<HTMLElement | null>>;
+  insideSelector?: string;
   onPointerDownOutside: (event: MouseEvent) => void;
   rootRef: React.RefObject<HTMLElement | null>;
 };
@@ -9,6 +10,7 @@ type UsePointerDownOutsideArgs = {
 /** Calls the provided callback whenever a pointer down happens outside the root element. */
 export function usePointerDownOutside({
   additionalRefs = [],
+  insideSelector,
   onPointerDownOutside,
   rootRef
 }: UsePointerDownOutsideArgs): void {
@@ -21,6 +23,14 @@ export function usePointerDownOutside({
       }
 
       if (rootElement.contains(event.target as Node)) {
+        return;
+      }
+
+      if (
+        insideSelector &&
+        event.target instanceof Element &&
+        event.target.closest(insideSelector)
+      ) {
         return;
       }
 
@@ -39,7 +49,7 @@ export function usePointerDownOutside({
     document.addEventListener('mousedown', handlePointerDown);
 
     return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-    };
-  }, [additionalRefs, onPointerDownOutside, rootRef]);
+        document.removeEventListener('mousedown', handlePointerDown);
+      };
+  }, [additionalRefs, insideSelector, onPointerDownOutside, rootRef]);
 }

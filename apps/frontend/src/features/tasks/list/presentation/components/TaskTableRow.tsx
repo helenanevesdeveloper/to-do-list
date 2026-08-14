@@ -30,7 +30,6 @@ export default function TaskTableRow({
     return (
       <TaskTableEditingRow
         categoryOptions={categoryOptions}
-        onCancelEdit={cancelTaskEdit}
         onCreateCategory={createCategory}
         onDeleteCategory={deleteCategory}
         onUpdateCategory={updateCategory}

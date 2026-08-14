@@ -32,7 +32,6 @@ import {
 
 export type UseTaskInlineCategoryFieldArgs = {
   categoryOptions: TaskCategoryOption[];
-  interactionBoundaryRef?: React.RefObject<HTMLElement | null>;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteCategory: (categoryId: string) => Promise<void>;
   onSelectCategory: (categoryId: string) => void;
@@ -79,7 +78,6 @@ export type UseTaskInlineCategoryFieldResult = {
 /** Manages local selection and creation state for the inline task-category picker. */
 export function useTaskInlineCategoryField({
   categoryOptions,
-  interactionBoundaryRef,
   onCreateCategory,
   onDeleteCategory,
   onSelectCategory,
@@ -179,7 +177,6 @@ export function useTaskInlineCategoryField({
   }, [resetField, submitCategoryUpdateIfNeeded]);
 
   useTaskInlineCategoryFieldEffects({
-    interactionBoundaryRef,
     actionsPopoverRef,
     inputRef,
     isOpen,

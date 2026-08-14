@@ -16,6 +16,7 @@ export function buildTaskInlineEditDraft(
   return {
     categoryId: task.category?.id ?? '',
     description: task.description ?? '',
+    status: task.isCompleted ? 'completed' : 'pending',
     title: task.title
   };
 }
@@ -41,6 +42,7 @@ export function normalizeTaskInlineEditDraft(
   return {
     categoryId: normalizedCategoryId || null,
     description: normalizedDescription || null,
+    isCompleted: draft.status === 'completed',
     title: draft.title.trim()
   };
 }
@@ -55,7 +57,8 @@ function haveTaskInlineEditInputsChanged(
   return (
     initialInput.title !== input.title ||
     initialInput.description !== input.description ||
-    initialInput.categoryId !== input.categoryId
+    initialInput.categoryId !== input.categoryId ||
+    initialInput.isCompleted !== input.isCompleted
   );
 }
 
