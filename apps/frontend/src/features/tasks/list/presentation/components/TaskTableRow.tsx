@@ -1,33 +1,54 @@
-import { Badge, Td, Text, Tr } from '@chakra-ui/react';
+import { Tr } from '@chakra-ui/react';
 import type { TaskListItem } from '../../../shared/types';
 import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
+import TaskTableRowActionsCell from './TaskTableRowActionsCell';
+import TaskTableRowContentCell from './TaskTableRowContentCell';
+import TaskTableRowMetadataCells from './TaskTableRowMetadataCells';
 
 export type TaskTableRowProps = {
+  isDeleting?: boolean;
   task: TaskListItem;
   onClick: (task: TaskListItem) => void;
+  onDeleteTask: (task: TaskListItem) => Promise<void> | void;
 };
 
 /** Renders a single desktop row inside the task results table. */
-export default function TaskTableRow({ task, onClick }: TaskTableRowProps) {
+export default function TaskTableRow({
+  isDeleting = false,
+  task,
+  onClick,
+  onDeleteTask,
+}: TaskTableRowProps) {
   const display = buildTaskListItemDisplay(task);
+  const canDeleteTask = task.sharing.isOwner;
+
+  function handleRowClick(): void {
+    onClick(task);
+  }
+
+  function handleDeleteTask(): Promise<void> | void {
+    return onDeleteTask(task);
+  }
 
   return (
-    <Tr key={task.id} cursor="pointer" onClick={() => onClick(task)} _hover={{ bg: 'gray.50' }}>
-      <Td>
-        <Text fontWeight="semibold" mb={1}>
-          {task.title}
-        </Text>
-        <Text fontSize="sm" color="gray.600" noOfLines={1}>
-          {display.descriptionLabel}
-        </Text>
-      </Td>
-      <Td>{display.categoryLabel}</Td>
-      <Td>
-        <Badge colorScheme={display.statusColorScheme}>{display.statusLabel}</Badge>
-      </Td>
-      <Td>{display.sharingLabel}</Td>
-      <Td>{display.createdAtLabel}</Td>
-      <Td>{display.updatedAtLabel}</Td>
+    <Tr
+      key={task.id}
+      cursor="pointer"
+      onClick={handleRowClick}
+      role="group"
+      _hover={{ bg: 'gray.50' }}
+    >
+      <TaskTableRowContentCell
+        descriptionLabel={display.descriptionLabel}
+        title={task.title}
+      />
+      <TaskTableRowMetadataCells display={display} />
+      <TaskTableRowActionsCell
+        canDeleteTask={canDeleteTask}
+        isDeleting={isDeleting}
+        onDeleteTask={handleDeleteTask}
+        taskTitle={task.title}
+      />
     </Tr>
   );
 }

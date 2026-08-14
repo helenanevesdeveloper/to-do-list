@@ -1,12 +1,12 @@
-import { Alert, AlertIcon, Container, Stack } from '@chakra-ui/react';
+import { Container, Stack } from '@chakra-ui/react';
 import { useAuth } from '../features/auth/session/presentation/hooks/useAuth';
 import { useDashboardLogout } from '../features/auth/session/presentation/hooks/useDashboardLogout';
+import TaskDashboardFeedbacks from '../features/tasks/dashboard/presentation/components/TaskDashboardFeedbacks';
 import TaskDashboardHeader from '../features/tasks/dashboard/presentation/components/TaskDashboardHeader';
+import TaskDashboardResultsSection from '../features/tasks/dashboard/presentation/components/TaskDashboardResultsSection';
 import { useTaskDashboard } from '../features/tasks/dashboard/presentation/hooks/useTaskDashboard';
 import TaskCreateInlineRow from '../features/tasks/create/presentation/components/TaskCreateInlineRow';
 import TaskListControls from '../features/tasks/list/presentation/components/TaskListControls';
-import TaskPagination from '../features/tasks/list/presentation/components/TaskPagination';
-import TaskResultsPanel from '../features/tasks/list/presentation/components/TaskResultsPanel';
 
 export default function DashboardPage() {
   const { currentUserEmail, logout } = useAuth();
@@ -15,15 +15,19 @@ export default function DashboardPage() {
     actions,
     categoryErrorMessage,
     categoryOptions,
+    clearDeleteTaskError,
+    deleteTaskErrorMessage,
+    deletingTaskId,
     errorMessage,
     handleCreateCategory,
     filters,
     handleCreateTask,
     handleTaskClick,
+    handleTaskDelete,
     isLoading,
     isLoadingCategories,
     paginatedTasks,
-    reloadTasks
+    reloadTasks,
   } = useTaskDashboard();
 
   return (
@@ -43,12 +47,13 @@ export default function DashboardPage() {
           isLoadingCategories={isLoadingCategories}
         />
 
-        {categoryErrorMessage ? (
-          <Alert status="warning" borderRadius="lg">
-            <AlertIcon />
-            Nao foi possivel carregar as categorias. O filtro e a selecao seguem com os dados disponiveis.
-          </Alert>
-        ) : null}
+        <TaskDashboardFeedbacks
+          categoryErrorMessage={categoryErrorMessage}
+          clearDeleteTaskError={clearDeleteTaskError}
+          deleteTaskErrorMessage={deleteTaskErrorMessage}
+          taskListErrorMessage={errorMessage}
+          visibleTaskCount={paginatedTasks.items.length}
+        />
 
         <TaskCreateInlineRow
           categoryOptions={categoryOptions}
@@ -56,31 +61,16 @@ export default function DashboardPage() {
           onCreateTask={handleCreateTask}
         />
 
-        {errorMessage && paginatedTasks.items.length > 0 ? (
-          <Alert status="warning" borderRadius="lg">
-            <AlertIcon />
-            Nao foi possivel atualizar a lista. Exibindo os dados anteriores.
-          </Alert>
-        ) : null}
-
-        <TaskResultsPanel
+        <TaskDashboardResultsSection
+          deletingTaskId={deletingTaskId}
           errorMessage={errorMessage}
-          items={paginatedTasks.items}
           isLoading={isLoading}
-          onTaskClick={handleTaskClick}
-          onRetry={reloadTasks}
-        />
-
-        <TaskPagination
-          currentPage={paginatedTasks.currentPage}
-          endItem={paginatedTasks.endItem}
-          hasNextPage={paginatedTasks.hasNextPage}
-          hasPreviousPage={paginatedTasks.hasPreviousPage}
           onNextPage={actions.goToNextPage}
           onPreviousPage={actions.goToPreviousPage}
-          startItem={paginatedTasks.startItem}
-          totalItems={paginatedTasks.totalItems}
-          totalPages={paginatedTasks.totalPages}
+          onRetry={reloadTasks}
+          onTaskDelete={handleTaskDelete}
+          onTaskClick={handleTaskClick}
+          page={paginatedTasks}
         />
       </Stack>
     </Container>

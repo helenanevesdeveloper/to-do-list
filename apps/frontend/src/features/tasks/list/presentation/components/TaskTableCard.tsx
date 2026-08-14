@@ -1,52 +1,47 @@
-import { Badge, Box, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import type { TaskListItem } from '../../../shared/types';
 import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
+import TaskItemActionsMenu from './TaskItemActionsMenu';
+import TaskTableCardContent from './TaskTableCardContent';
 
 export type TaskTableCardProps = {
+  isDeleting?: boolean;
   task: TaskListItem;
   onClick: (task: TaskListItem) => void;
+  onDeleteTask: (task: TaskListItem) => Promise<void> | void;
 };
 
 /** Renders a single mobile card inside the task results list. */
-export default function TaskTableCard({ task, onClick }: TaskTableCardProps) {
+export default function TaskTableCard({
+  isDeleting = false,
+  task,
+  onClick,
+  onDeleteTask,
+}: TaskTableCardProps) {
   const display = buildTaskListItemDisplay(task);
+  const canDeleteTask = task.sharing.isOwner;
 
   return (
     <Box
-      as="button"
-      type="button"
-      textAlign="left"
-      width="full"
       borderWidth="1px"
       borderRadius="lg"
+      cursor="pointer"
       p={4}
       onClick={() => onClick(task)}
+      role="group"
     >
-      <Stack spacing={3}>
-        <Box>
-          <Text fontWeight="semibold" mb={1}>
-            {task.title}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            {display.descriptionLabel}
-          </Text>
+      <Flex align="flex-start" gap={3}>
+        <TaskTableCardContent display={display} title={task.title} />
+
+        <Box flexShrink={0} onClick={(event) => event.stopPropagation()}>
+          <TaskItemActionsMenu
+            canDeleteTask={canDeleteTask}
+            isDeleting={isDeleting}
+            onDeleteTask={() => onDeleteTask(task)}
+            taskTitle={task.title}
+          />
         </Box>
-
-        <Stack direction="row" spacing={2} flexWrap="wrap">
-          <Badge colorScheme={display.statusColorScheme}>{display.statusLabel}</Badge>
-          <Badge colorScheme="purple">{display.categoryLabel}</Badge>
-        </Stack>
-
-        <Text fontSize="sm" color="gray.600">
-          {display.sharingLabel}
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          Criada em {display.createdAtLabel}
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          Atualizada em {display.updatedAtLabel}
-        </Text>
-      </Stack>
+      </Flex>
     </Box>
   );
 }
