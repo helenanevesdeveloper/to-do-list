@@ -16,6 +16,7 @@ export interface TaskInlineCategoryFieldContextValue {
   filteredCategoryOptions: TaskCategoryOption[];
   inputRef: React.RefObject<HTMLInputElement | null>;
   isCreatingCategory: boolean;
+  isDeletingCategory: boolean;
   isOpen: boolean;
   isUpdatingCategory: boolean;
   listboxId: string;
@@ -34,6 +35,7 @@ export interface TaskInlineCategoryFieldContextValue {
   clearSelectedCategory: () => void;
   closeCategoryActions: () => void;
   createCategory: () => Promise<void>;
+  deleteCategory: () => Promise<void>;
   handleActionsDraftNameChange: (value: string) => void;
   handleFieldClick: () => void;
   handleInputChange: (value: string) => void;

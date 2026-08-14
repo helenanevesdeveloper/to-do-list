@@ -18,6 +18,7 @@ export default function TaskTableRow({
   const {
     categoryOptions,
     createCategory,
+    deleteCategory,
     updateCategory,
     editingTaskId,
     cancelTaskEdit,
@@ -31,6 +32,7 @@ export default function TaskTableRow({
         categoryOptions={categoryOptions}
         onCancelEdit={cancelTaskEdit}
         onCreateCategory={createCategory}
+        onDeleteCategory={deleteCategory}
         onUpdateCategory={updateCategory}
         onUpdateTask={submitTaskEdit}
         task={task}

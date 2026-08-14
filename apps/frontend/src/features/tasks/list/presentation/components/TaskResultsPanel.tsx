@@ -13,6 +13,7 @@ export type TaskResultsPanelProps = {
   items: TaskListItem[];
   isLoading?: boolean;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onDeleteCategory: (categoryId: string) => Promise<void>;
   onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   onTaskCancelEdit: () => void;
   onTaskDelete: (task: TaskListItem) => Promise<void> | void;
@@ -30,6 +31,7 @@ export default function TaskResultsPanel({
   items,
   isLoading = false,
   onCreateCategory,
+  onDeleteCategory,
   onUpdateCategory,
   onTaskCancelEdit,
   onTaskDelete,
@@ -56,6 +58,7 @@ export default function TaskResultsPanel({
       editingTaskId={editingTaskId}
       items={items}
       onCreateCategory={onCreateCategory}
+      onDeleteCategory={onDeleteCategory}
       onUpdateCategory={onUpdateCategory}
       onTaskCancelEdit={onTaskCancelEdit}
       onTaskDelete={onTaskDelete}

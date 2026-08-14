@@ -8,6 +8,7 @@ export type TaskEditInlineFieldsProps = {
   draft: TaskInlineEditDraft;
   isSubmitting: boolean;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onDeleteCategory: (categoryId: string) => Promise<void>;
   onCategoryFieldOpenChange: (isOpen: boolean) => void;
   onDescriptionChange: (value: string) => void;
   onSelectCategory: (value: string) => void;
@@ -22,6 +23,7 @@ export default function TaskEditInlineFields({
   draft,
   isSubmitting,
   onCreateCategory,
+  onDeleteCategory,
   onCategoryFieldOpenChange,
   onDescriptionChange,
   onSelectCategory,
@@ -62,6 +64,7 @@ export default function TaskEditInlineFields({
         value={draft.categoryId}
         onSelectCategory={onSelectCategory}
         onCreateCategory={onCreateCategory}
+        onDeleteCategory={onDeleteCategory}
         onUpdateCategory={onUpdateCategory}
       />
     </Stack>

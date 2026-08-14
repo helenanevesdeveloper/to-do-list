@@ -7,6 +7,7 @@ export interface TaskTableEditingRowProps {
   categoryOptions: TaskCategoryOption[];
   onCancelEdit: () => void;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onDeleteCategory: (categoryId: string) => Promise<void>;
   onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   onUpdateTask: (taskId: string, input: TaskInlineEditInput) => Promise<void>;
   task: TaskListItem;
@@ -17,6 +18,7 @@ export default function TaskTableEditingRow({
   categoryOptions,
   onCancelEdit,
   onCreateCategory,
+  onDeleteCategory,
   onUpdateCategory,
   onUpdateTask,
   task
@@ -28,6 +30,7 @@ export default function TaskTableEditingRow({
           categoryOptions={categoryOptions}
           onCancel={onCancelEdit}
           onCreateCategory={onCreateCategory}
+          onDeleteCategory={onDeleteCategory}
           onUpdateCategory={onUpdateCategory}
           onUpdateTask={(input) => onUpdateTask(task.id, input)}
           task={task}

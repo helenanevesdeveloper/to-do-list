@@ -24,6 +24,7 @@ export default function DashboardPage() {
     editingTaskId,
     errorMessage,
     handleCreateCategory,
+    handleDeleteCategory,
     filters,
     handleCreateTask,
     handleTaskClick,
@@ -69,6 +70,7 @@ export default function DashboardPage() {
             categoryOptions={categoryOptions}
             onCreateCategory={handleCreateCategory}
             onCreateTask={handleCreateTask}
+            onDeleteCategory={handleDeleteCategory}
             onUpdateCategory={handleUpdateCategory}
           />
 
@@ -79,6 +81,7 @@ export default function DashboardPage() {
             errorMessage={errorMessage}
             isLoading={isLoading}
             onCreateCategory={handleCreateCategory}
+            onDeleteCategory={handleDeleteCategory}
             onNextPage={actions.goToNextPage}
             onPreviousPage={actions.goToPreviousPage}
             onRetry={reloadTasks}

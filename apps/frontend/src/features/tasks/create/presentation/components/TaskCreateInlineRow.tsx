@@ -11,6 +11,7 @@ export type TaskCreateInlineRowProps = {
   categoryOptions: TaskCategoryOption[];
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onCreateTask: (input: TaskInlineCreateInput) => Promise<void>;
+  onDeleteCategory: (categoryId: string) => Promise<void>;
   onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
 };
 
@@ -19,6 +20,7 @@ export default function TaskCreateInlineRow({
   categoryOptions,
   onCreateCategory,
   onCreateTask,
+  onDeleteCategory,
   onUpdateCategory
 }: TaskCreateInlineRowProps) {
   const {
@@ -47,6 +49,7 @@ export default function TaskCreateInlineRow({
           draft={draft}
           isSubmitting={isSubmitting}
           onCreateCategory={onCreateCategory}
+          onDeleteCategory={onDeleteCategory}
           onCategoryFieldOpenChange={setIsCategoryFieldOpen}
           onDescriptionChange={setDescription}
           onSelectCategory={setCategoryId}

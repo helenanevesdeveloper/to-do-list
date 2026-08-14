@@ -9,21 +9,27 @@ import {
 } from '../state/taskInlineCategoryOptionActionsPopoverState';
 
 export interface TaskInlineCategoryOptionActionsPopoverContentProps {
+  deleteLabel: string;
   errorMessage: string | null;
   inputPlaceholder: string;
+  isDeleting: boolean;
   isUpdating: boolean;
   statusMessage: string | null;
   value: string;
+  onDelete: () => void;
   onValueChange: (value: string) => void;
 }
 
 /** Renders only the body content of the category-actions secondary popover. */
 function TaskInlineCategoryOptionActionsPopoverContent({
+  deleteLabel,
   errorMessage,
   inputPlaceholder,
+  isDeleting,
   isUpdating,
   statusMessage,
   value,
+  onDelete,
   onValueChange
 }: TaskInlineCategoryOptionActionsPopoverContentProps) {
   return (
@@ -54,9 +60,11 @@ function TaskInlineCategoryOptionActionsPopoverContent({
         variant="ghost"
         colorScheme="red"
         leftIcon={<FiTrash2 />}
-        isDisabled
+        isDisabled={isUpdating || isDeleting}
+        isLoading={isDeleting}
+        onClick={onDelete}
       >
-        Deletar
+        {deleteLabel}
       </Button>
     </Stack>
   );
@@ -70,13 +78,16 @@ export default function TaskInlineCategoryOptionActionsPopover() {
     activeCategoryAction,
     actionsPopoverPosition,
     actionsPopoverRef,
+    deleteCategory,
     handleActionsDraftNameChange,
+    isDeletingCategory,
     isUpdatingCategory
   } = useTaskInlineCategoryFieldContext();
   const state = buildTaskInlineCategoryOptionActionsPopoverState({
     activeCategoryAction,
     draftName: actionsDraftName,
     errorMessage: actionsErrorMessage,
+    isDeleting: isDeletingCategory,
     isUpdating: isUpdatingCategory
   });
 
@@ -105,11 +116,14 @@ export default function TaskInlineCategoryOptionActionsPopover() {
         onMouseDown={handleMouseDown}
       >
         <TaskInlineCategoryOptionActionsPopoverContent
+          deleteLabel={state.deleteLabel}
           errorMessage={state.errorMessage}
           inputPlaceholder={state.inputPlaceholder}
+          isDeleting={state.isDeleting}
           isUpdating={state.isUpdating}
           statusMessage={state.statusMessage}
           value={state.value}
+          onDelete={deleteCategory}
           onValueChange={handleActionsDraftNameChange}
         />
       </Box>

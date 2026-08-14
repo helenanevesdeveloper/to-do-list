@@ -14,6 +14,7 @@ export interface UseTaskInlineCategoryUpdateActionsArgs {
 
 export interface UseTaskInlineCategoryUpdateActionsResult {
   actionErrorMessage: string | null;
+  clearActionErrorMessage: () => void;
   handleDraftNameChange: (value: string) => void;
   isUpdatingCategory: boolean;
   submitCategoryUpdateIfNeeded: () => Promise<boolean>;
@@ -42,13 +43,16 @@ export function useTaskInlineCategoryUpdateActions({
 }: UseTaskInlineCategoryUpdateActionsArgs): UseTaskInlineCategoryUpdateActionsResult {
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [isUpdatingCategory, setIsUpdatingCategory] = useState(false);
+  const clearActionErrorMessage = useCallback((): void => {
+    setActionErrorMessage(null);
+  }, []);
 
   const handleDraftNameChange = useCallback(
     (value: string): void => {
-      setActionErrorMessage(null);
+      clearActionErrorMessage();
       setDraftName(value);
     },
-    [setDraftName]
+    [clearActionErrorMessage, setDraftName]
   );
 
   const submitCategoryUpdateIfNeeded = useCallback(async (): Promise<boolean> => {
@@ -87,6 +91,7 @@ export function useTaskInlineCategoryUpdateActions({
 
   return {
     actionErrorMessage,
+    clearActionErrorMessage,
     handleDraftNameChange,
     isUpdatingCategory,
     submitCategoryUpdateIfNeeded

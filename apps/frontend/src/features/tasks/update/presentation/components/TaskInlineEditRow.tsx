@@ -11,6 +11,7 @@ export type TaskInlineEditRowProps = {
   categoryOptions: TaskCategoryOption[];
   onCancel: () => void;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onDeleteCategory: (categoryId: string) => Promise<void>;
   onUpdateTask: (input: TaskInlineEditInput) => Promise<void>;
   onUpdateCategory: (categoryId: string, name: string) => Promise<TaskCategoryOption>;
   task: TaskListItem;
@@ -21,6 +22,7 @@ export default function TaskInlineEditRow({
   categoryOptions,
   onCancel,
   onCreateCategory,
+  onDeleteCategory,
   onUpdateTask,
   onUpdateCategory,
   task
@@ -55,6 +57,7 @@ export default function TaskInlineEditRow({
           draft={draft}
           isSubmitting={isSubmitting}
           onCreateCategory={onCreateCategory}
+          onDeleteCategory={onDeleteCategory}
           onCategoryFieldOpenChange={setIsCategoryFieldOpen}
           onDescriptionChange={setDescription}
           onSelectCategory={setCategoryId}
