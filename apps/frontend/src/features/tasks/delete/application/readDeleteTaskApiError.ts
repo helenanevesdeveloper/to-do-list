@@ -1,9 +1,6 @@
-type ApiValidationIssue = {
-  message?: string;
-  msg?: string;
-};
+import type { ApiErrorDetail } from '../../../../shared/infrastructure/http/apiErrorDetails';
 
-export type DeleteTaskApiDetail = string | ApiValidationIssue[] | undefined;
+export type DeleteTaskApiDetail = ApiErrorDetail;
 
 type ApiErrorResponse = {
   status?: number;

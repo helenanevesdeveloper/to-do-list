@@ -1,14 +1,12 @@
-type ApiValidationIssue = {
-  field?: unknown;
-  message?: string;
-  loc?: unknown[];
-  msg?: string;
-};
+import {
+  readApiDetailCode,
+  readFirstApiValidationIssue
+} from '../../../../shared/infrastructure/http/apiErrorDetails';
 
 type ApiErrorResponse = {
   status?: number;
   data?: {
-    detail?: string | ApiValidationIssue[];
+    detail?: import('../../../../shared/infrastructure/http/apiErrorDetails').ApiErrorDetail;
   };
 };
 
@@ -27,7 +25,13 @@ export function mapCreateTaskCategoryError(error: unknown): string {
   }
 
   if ((status === 400 || status === 422) && Array.isArray(detail) && detail.length > 0) {
-    const firstIssue = detail[0];
+    const firstIssue = readFirstApiValidationIssue(detail);
+    const code = readApiDetailCode(detail);
+
+    if (code === 'task_category_name_already_exists') {
+      return 'Ja existe uma categoria com esse nome.';
+    }
+
     return (
       firstIssue?.message ||
       firstIssue?.msg ||

@@ -1,14 +1,9 @@
-type ApiValidationIssue = {
-  field?: unknown;
-  message?: string;
-  loc?: unknown[];
-  msg?: string;
-};
+import { readFirstApiValidationIssue } from '../../../../shared/infrastructure/http/apiErrorDetails';
 
 type ApiErrorResponse = {
   status?: number;
   data?: {
-    detail?: string | ApiValidationIssue[];
+    detail?: import('../../../../shared/infrastructure/http/apiErrorDetails').ApiErrorDetail;
   };
 };
 
@@ -27,7 +22,7 @@ export function mapCreateTaskError(error: unknown): string {
   }
 
   if ((status === 400 || status === 422) && Array.isArray(detail) && detail.length > 0) {
-    const firstIssue = detail[0];
+    const firstIssue = readFirstApiValidationIssue(detail);
     return (
       firstIssue?.message ||
       firstIssue?.msg ||

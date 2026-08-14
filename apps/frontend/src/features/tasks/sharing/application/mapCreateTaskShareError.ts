@@ -1,12 +1,13 @@
-type ApiValidationIssue = {
-  message?: string;
-  msg?: string;
-};
+import type { ApiErrorDetail } from '../../../../shared/infrastructure/http/apiErrorDetails';
+import {
+  readApiDetailCode,
+  readApiDetailMessage
+} from '../../../../shared/infrastructure/http/apiErrorDetails';
 
 type ApiErrorResponse = {
   status?: number;
   data?: {
-    detail?: string | ApiValidationIssue[];
+    detail?: ApiErrorDetail;
   };
 };
 
@@ -14,23 +15,29 @@ type CreateTaskShareApiError = {
   response?: ApiErrorResponse;
 };
 
-function readValidationMessage(detail: string | ApiValidationIssue[] | undefined): string | null {
-  if (typeof detail === 'string' && detail.trim()) {
-    return detail;
+function mapCreateTaskShareValidationCode(code: string | null): string | null {
+  if (code === 'shared_user_not_found') {
+    return 'O usuario informado nao existe.';
   }
 
-  if (!Array.isArray(detail) || detail.length === 0) {
-    return null;
+  if (code === 'task_share_already_exists') {
+    return 'Este email ja possui acesso a esta tarefa.';
   }
 
-  return detail[0]?.message || detail[0]?.msg || null;
+  if (code === 'task_share_recipient_is_owner') {
+    return 'O proprietario da tarefa ja aparece na lista de acesso.';
+  }
+
+  return null;
 }
 
 /** Maps backend task-share creation failures into short user-facing messages. */
 export function mapCreateTaskShareError(error: unknown): string {
   const response = (error as CreateTaskShareApiError | undefined)?.response;
   const status = response?.status;
-  const validationMessage = readValidationMessage(response?.data?.detail);
+  const detail = response?.data?.detail;
+  const validationCode = readApiDetailCode(detail);
+  const validationMessage = readApiDetailMessage(detail);
 
   if (!status) {
     return 'Nao foi possivel conectar ao servidor para compartilhar a tarefa.';
@@ -38,6 +45,7 @@ export function mapCreateTaskShareError(error: unknown): string {
 
   if (status === 400 || status === 422) {
     return (
+      mapCreateTaskShareValidationCode(validationCode) ||
       validationMessage ||
       'Nao foi possivel compartilhar a tarefa com os dados informados.'
     );

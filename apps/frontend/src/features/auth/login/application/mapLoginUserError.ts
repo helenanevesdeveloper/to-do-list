@@ -1,14 +1,20 @@
 import type { LoginFormErrors } from '../types.js';
 
 type ApiValidationIssue = {
+  code?: string;
   loc?: unknown[];
+  message?: string;
   msg?: string;
+  type?: string;
 };
 
 type ApiErrorResponse = {
   status?: number;
   data?: {
-    detail?: string | ApiValidationIssue[];
+    detail?:
+      | string
+      | { code?: string; message?: string }
+      | ApiValidationIssue[];
   };
 };
 
@@ -47,7 +53,21 @@ export function mapLoginUserError(error: unknown): MappedLoginUserError {
   }
 
   if (status === 401) {
-    if (detail === 'user is inactive') {
+    const detailCode =
+      typeof detail === 'string'
+        ? null
+        : Array.isArray(detail)
+          ? detail[0]?.code || detail[0]?.type || null
+          : detail?.code || null;
+
+    const detailMessage =
+      typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? detail[0]?.message || detail[0]?.msg || ''
+          : detail?.message || '';
+
+    if (detailCode === 'inactive_user' || detailMessage === 'user is inactive') {
       mapped.formError = 'User is inactive.';
       return mapped;
     }
@@ -59,7 +79,7 @@ export function mapLoginUserError(error: unknown): MappedLoginUserError {
   if (status === 422 && Array.isArray(detail)) {
     for (const issue of detail) {
       const field = issue?.loc?.[1];
-      const message = issue?.msg;
+      const message = issue?.message || issue?.msg;
 
       if (field === 'email') {
         mapped.fieldErrors.email = message || 'Invalid email value.';

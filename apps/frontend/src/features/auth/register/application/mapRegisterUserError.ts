@@ -1,16 +1,21 @@
 import type { RegisterFormErrorMessages } from '../types.js';
 
 type ApiValidationIssue = {
+  code?: string;
   loc?: unknown[];
   msg?: string;
   field?: string;
   message?: string;
+  type?: string;
 };
 
 type ApiErrorResponse = {
   status?: number;
   data?: {
-    detail?: string | ApiValidationIssue[];
+    detail?:
+      | string
+      | { code?: string; message?: string }
+      | ApiValidationIssue[];
   };
 };
 
@@ -48,9 +53,18 @@ export function mapRegisterUserError(error: unknown): MappedRegisterUserError {
   }
 
   if (status === 409) {
-    mapped.fieldErrorMessages.email = ['This email is already registered.'];
-    mapped.formError = '';
-    return mapped;
+    const detailCode =
+      typeof detail === 'string'
+        ? null
+        : Array.isArray(detail)
+          ? detail[0]?.code || detail[0]?.type || null
+          : detail?.code || null;
+
+    if (detailCode === 'user_already_exists') {
+      mapped.fieldErrorMessages.email = ['This email is already registered.'];
+      mapped.formError = '';
+      return mapped;
+    }
   }
 
   if (status === 400 && Array.isArray(detail)) {
@@ -92,7 +106,7 @@ export function mapRegisterUserError(error: unknown): MappedRegisterUserError {
   if (status === 422 && Array.isArray(detail)) {
     for (const issue of detail) {
       const field = issue?.loc?.[1];
-      const message = issue?.msg;
+      const message = issue?.message || issue?.msg;
 
       if (field === 'email') {
         mapped.fieldErrorMessages.email = [

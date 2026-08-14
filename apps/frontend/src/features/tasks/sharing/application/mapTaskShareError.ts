@@ -1,12 +1,10 @@
-type ApiValidationIssue = {
-  message?: string;
-  msg?: string;
-};
+import type { ApiErrorDetail } from '../../../../shared/infrastructure/http/apiErrorDetails';
+import { readApiDetailMessage } from '../../../../shared/infrastructure/http/apiErrorDetails';
 
 type ApiErrorResponse = {
   status?: number;
   data?: {
-    detail?: string | ApiValidationIssue[];
+    detail?: ApiErrorDetail;
   };
 };
 
@@ -14,23 +12,11 @@ type TaskShareApiError = {
   response?: ApiErrorResponse;
 };
 
-function readValidationMessage(detail: string | ApiValidationIssue[] | undefined): string | null {
-  if (typeof detail === 'string' && detail.trim()) {
-    return detail;
-  }
-
-  if (!Array.isArray(detail) || detail.length === 0) {
-    return null;
-  }
-
-  return detail[0]?.message || detail[0]?.msg || null;
-}
-
 /** Maps task-sharing failures into short user-facing messages. */
 export function mapTaskShareError(error: unknown): string {
   const response = (error as TaskShareApiError | undefined)?.response;
   const status = response?.status;
-  const validationMessage = readValidationMessage(response?.data?.detail);
+  const validationMessage = readApiDetailMessage(response?.data?.detail);
 
   if (!status) {
     return 'Nao foi possivel conectar ao servidor para carregar os compartilhamentos.';
