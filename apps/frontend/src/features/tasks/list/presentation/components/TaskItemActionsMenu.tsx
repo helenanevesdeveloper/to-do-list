@@ -7,6 +7,7 @@ export interface TaskItemActionsMenuProps {
   hideUntilHover?: boolean;
   isDeleting?: boolean;
   onDeleteTask: () => Promise<void> | void;
+  onShareTask: () => void;
   taskTitle: string;
 }
 
@@ -16,6 +17,7 @@ export default function TaskItemActionsMenu({
   hideUntilHover = false,
   isDeleting = false,
   onDeleteTask,
+  onShareTask,
   taskTitle
 }: TaskItemActionsMenuProps) {
   return (
@@ -32,6 +34,7 @@ export default function TaskItemActionsMenu({
         canDeleteTask={canDeleteTask}
         isDeleting={isDeleting}
         onDeleteTask={onDeleteTask}
+        onShareTask={onShareTask}
       />
     </Menu>
   );

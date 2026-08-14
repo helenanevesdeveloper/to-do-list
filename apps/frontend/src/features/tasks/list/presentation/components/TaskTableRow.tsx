@@ -1,5 +1,6 @@
 import { Tr } from '@chakra-ui/react';
 import type { TaskListItem } from '../../../shared/types';
+import { useTaskShareModalContext } from '../../../sharing/presentation/context/TaskShareModalContext';
 import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
 import TaskTableRowActionsCell from './TaskTableRowActionsCell';
 import TaskTableRowContentCell from './TaskTableRowContentCell';
@@ -19,6 +20,7 @@ export default function TaskTableRow({
   onClick,
   onDeleteTask,
 }: TaskTableRowProps) {
+  const { openTaskShareModal } = useTaskShareModalContext();
   const display = buildTaskListItemDisplay(task);
   const canDeleteTask = task.sharing.isOwner;
 
@@ -28,6 +30,10 @@ export default function TaskTableRow({
 
   function handleDeleteTask(): Promise<void> | void {
     return onDeleteTask(task);
+  }
+
+  function handleShareTask(): void {
+    openTaskShareModal(task);
   }
 
   return (
@@ -47,6 +53,7 @@ export default function TaskTableRow({
         canDeleteTask={canDeleteTask}
         isDeleting={isDeleting}
         onDeleteTask={handleDeleteTask}
+        onShareTask={handleShareTask}
         taskTitle={task.title}
       />
     </Tr>

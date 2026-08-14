@@ -1,4 +1,5 @@
 import {
+  Divider,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,40 +9,56 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react';
+import { useTaskShareModalContext } from '../context/TaskShareModalContext';
+import TaskShareAccessList from './TaskShareAccessList';
+import TaskShareComposer from './TaskShareComposer';
 
-/** Props for the future task-sharing modal. */
-export interface TaskShareModalProps {
-  isOpen: boolean;
-  taskId: string | null;
-  taskTitle: string | null;
-  onClose: () => void;
-}
+/** Renders the local-only task-sharing modal before API integration. */
+export default function TaskShareModal() {
+  const {
+    canManageShares,
+    closeTaskShareModal,
+    composerEmail,
+    composerPermission,
+    currentUserEmail,
+    errorMessage,
+    isOpen,
+    removeTaskShare,
+    selectedTaskId,
+    selectedTaskTitle,
+    setComposerEmail,
+    setComposerPermission,
+    shares,
+    submitTaskShare
+  } = useTaskShareModalContext();
 
-/** Renders a temporary share modal while the full sharing flow is still pending. */
-export default function TaskShareModal({
-  isOpen,
-  taskId,
-  taskTitle,
-  onClose
-}: TaskShareModalProps) {
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isCentered isOpen={isOpen} onClose={closeTaskShareModal} size="2xl">
       <ModalOverlay bg="blackAlpha.600" />
       <ModalContent>
         <ModalHeader>Compartilhar tarefa</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <Stack spacing={3}>
-            <Text fontWeight="semibold">{taskTitle ?? 'Sem titulo'}</Text>
-            <Text color="gray.600">
-              O fluxo completo de compartilhamento sera implementado na proxima etapa
-              do dashboard.
-            </Text>
-            {taskId ? (
-              <Text color="gray.500" fontSize="sm">
-                Tarefa selecionada: {taskId}
-              </Text>
-            ) : null}
+          <Stack spacing={6}>
+            <TaskShareComposer
+              canManageShares={canManageShares}
+              email={composerEmail}
+              errorMessage={errorMessage}
+              onEmailChange={setComposerEmail}
+              onPermissionChange={setComposerPermission}
+              onSubmit={submitTaskShare}
+              permission={composerPermission}
+            />
+
+            <Divider />
+
+            <TaskShareAccessList
+              canManageShares={canManageShares}
+              currentUserEmail={currentUserEmail}
+              onRemoveShare={removeTaskShare}
+              shares={shares}
+            />
+
           </Stack>
         </ModalBody>
       </ModalContent>

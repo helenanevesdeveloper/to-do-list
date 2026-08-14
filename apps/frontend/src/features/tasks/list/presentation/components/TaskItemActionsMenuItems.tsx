@@ -1,10 +1,11 @@
 import { MenuItem, MenuList, Spinner } from '@chakra-ui/react';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiShare2, FiTrash2 } from 'react-icons/fi';
 
 export interface TaskItemActionsMenuItemsProps {
   canDeleteTask: boolean;
   isDeleting?: boolean;
   onDeleteTask: () => Promise<void> | void;
+  onShareTask: () => void;
 }
 
 function renderDeleteIcon(isDeleting: boolean) {
@@ -20,6 +21,7 @@ export default function TaskItemActionsMenuItems({
   canDeleteTask,
   isDeleting = false,
   onDeleteTask,
+  onShareTask
 }: TaskItemActionsMenuItemsProps) {
   return (
     <MenuList onClick={(event) => event.stopPropagation()}>
@@ -32,6 +34,9 @@ export default function TaskItemActionsMenuItems({
         }}
       >
         {renderDeleteLabel(isDeleting)}
+      </MenuItem>
+      <MenuItem icon={<FiShare2 />} onClick={onShareTask}>
+        Compartilhar
       </MenuItem>
     </MenuList>
   );

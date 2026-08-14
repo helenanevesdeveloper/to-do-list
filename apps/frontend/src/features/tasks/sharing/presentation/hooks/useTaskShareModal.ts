@@ -1,37 +1,40 @@
 import { useCallback, useState } from 'react';
+import type { TaskListItem } from '../../../shared/types';
+import { buildTaskShareOwnerEmail } from '../state/buildTaskShareOwnerEmail';
+import type { ActiveTaskShareModal } from '../state/taskShareDraft';
 
-/** State returned by the future hook that orchestrates the share modal. */
+/** State returned by the hook that owns the active task selected for the share modal. */
 export interface UseTaskShareModalResult {
-  isOpen: boolean;
-  taskId: string | null;
-  taskTitle: string | null;
-  openModal: (taskId: string, taskTitle: string | null) => void;
+  activeTask: ActiveTaskShareModal | null;
   closeModal: () => void;
+  isOpen: boolean;
+  openModal: (task: TaskListItem, currentUserEmail: string | null) => void;
 }
 
-/** Owns the minimal open/close state for the dashboard share modal. */
+/** Owns only the open/close session metadata for the dashboard share modal. */
 export function useTaskShareModal(): UseTaskShareModalResult {
-  const [isOpen, setIsOpen] = useState(false);
-  const [taskId, setTaskId] = useState<string | null>(null);
-  const [taskTitle, setTaskTitle] = useState<string | null>(null);
-
-  const openModal = useCallback((nextTaskId: string, nextTaskTitle: string | null): void => {
-    setTaskId(nextTaskId);
-    setTaskTitle(nextTaskTitle);
-    setIsOpen(true);
-  }, []);
+  const [activeTask, setActiveTask] = useState<ActiveTaskShareModal | null>(null);
 
   const closeModal = useCallback((): void => {
-    setIsOpen(false);
-    setTaskId(null);
-    setTaskTitle(null);
+    setActiveTask(null);
   }, []);
 
+  const openModal = useCallback(
+    (task: TaskListItem, currentUserEmail: string | null): void => {
+      setActiveTask({
+        canManageShares: task.sharing.isOwner,
+        ownerEmail: buildTaskShareOwnerEmail(task, currentUserEmail),
+        taskId: task.id,
+        taskTitle: task.title
+      });
+    },
+    []
+  );
+
   return {
-    isOpen,
-    taskId,
-    taskTitle,
-    openModal,
-    closeModal
+    activeTask,
+    closeModal,
+    isOpen: activeTask !== null,
+    openModal
   };
 }

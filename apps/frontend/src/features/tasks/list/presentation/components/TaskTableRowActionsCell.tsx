@@ -5,6 +5,7 @@ export interface TaskTableRowActionsCellProps {
   canDeleteTask: boolean;
   isDeleting?: boolean;
   onDeleteTask: () => Promise<void> | void;
+  onShareTask: () => void;
   taskTitle: string;
 }
 
@@ -13,6 +14,7 @@ export default function TaskTableRowActionsCell({
   canDeleteTask,
   isDeleting = false,
   onDeleteTask,
+  onShareTask,
   taskTitle
 }: TaskTableRowActionsCellProps) {
   return (
@@ -31,6 +33,7 @@ export default function TaskTableRowActionsCell({
           hideUntilHover
           isDeleting={isDeleting}
           onDeleteTask={onDeleteTask}
+          onShareTask={onShareTask}
           taskTitle={taskTitle}
         />
       </Box>

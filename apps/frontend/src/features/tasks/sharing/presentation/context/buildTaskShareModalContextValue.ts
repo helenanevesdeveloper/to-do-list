@@ -1,0 +1,40 @@
+import type { TaskShare } from '../../domain/taskShare';
+import type { TaskShareModalContextValue } from './TaskShareModalContext';
+import type { UseTaskShareComposerResult } from '../hooks/useTaskShareComposer';
+import type { UseTaskShareModalResult } from '../hooks/useTaskShareModal';
+import type { UseTaskShareModalControllerResult } from '../hooks/useTaskShareModalController';
+
+export interface BuildTaskShareModalContextValueInput {
+  composer: UseTaskShareComposerResult;
+  controller: UseTaskShareModalControllerResult;
+  currentUserEmail: string | null;
+  modalSession: UseTaskShareModalResult;
+  shares: readonly TaskShare[];
+}
+
+/** Builds the public context contract exposed by the local task-share modal provider. */
+export function buildTaskShareModalContextValue({
+  composer,
+  controller,
+  currentUserEmail,
+  modalSession,
+  shares
+}: BuildTaskShareModalContextValueInput): TaskShareModalContextValue {
+  return {
+    canManageShares: modalSession.activeTask?.canManageShares ?? false,
+    closeTaskShareModal: controller.closeTaskShareModal,
+    composerEmail: composer.composerEmail,
+    composerPermission: composer.composerPermission,
+    currentUserEmail,
+    errorMessage: composer.errorMessage,
+    isOpen: modalSession.isOpen,
+    openTaskShareModal: controller.openTaskShareModal,
+    removeTaskShare: controller.removeTaskShare,
+    selectedTaskId: modalSession.activeTask?.taskId ?? null,
+    selectedTaskTitle: modalSession.activeTask?.taskTitle ?? null,
+    setComposerEmail: composer.setComposerEmail,
+    setComposerPermission: composer.setComposerPermission,
+    shares,
+    submitTaskShare: controller.submitTaskShare
+  };
+}

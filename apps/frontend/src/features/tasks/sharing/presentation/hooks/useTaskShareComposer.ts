@@ -1,29 +1,56 @@
-import type { TaskSharePermission } from '../../domain/taskSharePermission';
+import { useCallback, useState } from 'react';
+import type { ShareComposerPermission } from '../state/taskShareDraft';
+import { TASK_SHARE_EDITOR_UNAVAILABLE_MESSAGE } from '../state/taskShareDraft';
 
-/** State returned by the future hook that manages share creation inputs. */
+/** State returned by the hook that owns the local share-composer inputs. */
 export interface UseTaskShareComposerResult {
-  email: string;
-  permission: Exclude<TaskSharePermission, 'owner'>;
-  isSubmitting: boolean;
+  clearError: () => void;
+  composerEmail: string;
+  composerPermission: ShareComposerPermission;
   errorMessage: string | null;
-  setEmail: (value: string) => void;
-  setPermission: (value: Exclude<TaskSharePermission, 'owner'>) => void;
-  submitShare: () => Promise<void>;
   resetComposer: () => void;
+  setComposerEmail: (value: string) => void;
+  setComposerError: (value: string | null) => void;
+  setComposerPermission: (value: ShareComposerPermission) => void;
 }
 
-/** Placeholder hook for future task-share creation state. */
+/** Owns only the local composer input state used by the dashboard share modal. */
 export function useTaskShareComposer(): UseTaskShareComposerResult {
+  const [composerEmail, setComposerEmailState] = useState('');
+  const [composerPermission, setComposerPermissionState] =
+    useState<ShareComposerPermission>('reader');
+  const [errorMessage, setComposerError] = useState<string | null>(null);
+
+  const clearError = useCallback((): void => {
+    setComposerError(null);
+  }, []);
+
+  const resetComposer = useCallback((): void => {
+    setComposerEmailState('');
+    setComposerPermissionState('reader');
+    setComposerError(null);
+  }, []);
+
+  const setComposerEmail = useCallback((value: string): void => {
+    setComposerEmailState(value);
+    setComposerError(null);
+  }, []);
+
+  const setComposerPermission = useCallback((value: ShareComposerPermission): void => {
+    setComposerPermissionState(value);
+    setComposerError(
+      value === 'editor' ? TASK_SHARE_EDITOR_UNAVAILABLE_MESSAGE : null
+    );
+  }, []);
+
   return {
-    email: '',
-    permission: 'reader',
-    isSubmitting: false,
-    errorMessage: null,
-    setEmail() {},
-    setPermission() {},
-    async submitShare() {
-      throw new Error('TODO: implement useTaskShareComposer.submitShare.');
-    },
-    resetComposer() {},
+    clearError,
+    composerEmail,
+    composerPermission,
+    errorMessage,
+    resetComposer,
+    setComposerEmail,
+    setComposerError,
+    setComposerPermission
   };
 }

@@ -1,5 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import type { TaskListItem } from '../../../shared/types';
+import { useTaskShareModalContext } from '../../../sharing/presentation/context/TaskShareModalContext';
 import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
 import TaskItemActionsMenu from './TaskItemActionsMenu';
 import TaskTableCardContent from './TaskTableCardContent';
@@ -18,6 +19,7 @@ export default function TaskTableCard({
   onClick,
   onDeleteTask,
 }: TaskTableCardProps) {
+  const { openTaskShareModal } = useTaskShareModalContext();
   const display = buildTaskListItemDisplay(task);
   const canDeleteTask = task.sharing.isOwner;
 
@@ -38,6 +40,7 @@ export default function TaskTableCard({
             canDeleteTask={canDeleteTask}
             isDeleting={isDeleting}
             onDeleteTask={() => onDeleteTask(task)}
+            onShareTask={() => openTaskShareModal(task)}
             taskTitle={task.title}
           />
         </Box>
