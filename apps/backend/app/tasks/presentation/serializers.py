@@ -284,6 +284,7 @@ class TaskShareResponseSerializer(serializers.Serializer):
 
 class TaskShareListItemResponseSerializer(serializers.Serializer):
     id = serializers.CharField()
+    shared_with_user_email = serializers.CharField()
     permission = serializers.CharField()
     created_at = serializers.CharField()
 

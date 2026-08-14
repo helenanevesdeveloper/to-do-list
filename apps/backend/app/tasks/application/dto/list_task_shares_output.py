@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass(slots=True)
 class ListedTaskShareItem:
     id: str
+    shared_with_user_email: str
     permission: str
     created_at: str
 

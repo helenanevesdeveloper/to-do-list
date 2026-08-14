@@ -86,8 +86,11 @@ class DjangoOrmTaskQueryRepository(TaskQueryRepository):
         )
 
     def list_task_shares(self, input_dto: ListTaskSharesInput) -> ListedTaskShares:
+        """List shares for a task visible to the authenticated user."""
+
         task = (
-            TaskModel.objects.select_related("owner_user").filter(id=input_dto.task_id)
+            TaskModel.objects.select_related("owner_user")
+            .filter(id=input_dto.task_id)
             .filter(
                 Q(owner_user_id=input_dto.user_id)
                 | Q(shares__shared_with_user_id=input_dto.user_id)
@@ -101,16 +104,23 @@ class DjangoOrmTaskQueryRepository(TaskQueryRepository):
         return ListedTaskShares(
             is_owner=task.owner_user.id == input_dto.user_id,
             owner_email=task.owner_user.email,
-            items=[
-                ListedTaskShareItem(
-                    id=share.id,
-                    permission=share.permission,
-                    created_at=share.created_at.isoformat(),
-                )
-                for share in TaskShareModel.objects.filter(task_id=input_dto.task_id)
-                .order_by("created_at")
-            ]
+            items=self._list_task_share_items(task_id=input_dto.task_id),
         )
+
+    def _list_task_share_items(self, *, task_id: str) -> list[ListedTaskShareItem]:
+        """Return share rows enriched with recipient identity details."""
+
+        return [
+            ListedTaskShareItem(
+                id=share.id,
+                shared_with_user_email=share.shared_with_user.email,
+                permission=share.permission,
+                created_at=share.created_at.isoformat(),
+            )
+            for share in TaskShareModel.objects.select_related("shared_with_user")
+            .filter(task_id=task_id)
+            .order_by("created_at")
+        ]
 
     def _apply_scope(self, queryset, input_dto: ListTasksInput):
         if input_dto.scope == "owned":
