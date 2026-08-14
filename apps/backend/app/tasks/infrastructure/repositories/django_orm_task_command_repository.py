@@ -118,7 +118,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
         if task is None:
             raise TaskNotFoundError("task was not found")
 
-        self._validate_task_share_payload(input_dto)
+        shared_with_user = self._load_task_share_recipient(input_dto)
 
         share_id = self.generate_task_share_id()
         timestamp = self.get_now()
@@ -128,7 +128,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
                 TaskShareModel.objects.create(
                     id=share_id,
                     task_id=input_dto.task_id,
-                    shared_with_user_id=input_dto.shared_with_user_id,
+                    shared_with_user_id=shared_with_user.id,
                     permission=input_dto.permission,
                     created_at=timestamp,
                     updated_at=timestamp,
@@ -137,7 +137,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             raise InvalidTaskSharePayloadError(
                 [
                     ValidationIssue(
-                        field="shared_with_user_id",
+                        field="shared_with_user_email",
                         message="task is already shared with the provided user",
                     )
                 ]
@@ -145,7 +145,7 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
 
         return CreatedTaskShare(
             id=share_id,
-            shared_with_user_id=input_dto.shared_with_user_id,
+            shared_with_user_email=shared_with_user.email,
             permission=input_dto.permission,
             created_at=timestamp.isoformat(),
         )
@@ -282,26 +282,32 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
             )
         return category
 
-    def _validate_task_share_payload(self, input_dto: CreateTaskShareInput) -> None:
-        if input_dto.shared_with_user_id == input_dto.user_id:
+    def _load_task_share_recipient(self, input_dto: CreateTaskShareInput) -> UserModel:
+        shared_with_user = UserModel.objects.filter(
+            email__iexact=input_dto.shared_with_user_email.strip()
+        ).first()
+
+        if shared_with_user is None:
             raise InvalidTaskSharePayloadError(
                 [
                     ValidationIssue(
-                        field="shared_with_user_id",
+                        field="shared_with_user_email",
+                        message="shared user does not exist",
+                    )
+                ]
+            )
+
+        if shared_with_user.id == input_dto.user_id:
+            raise InvalidTaskSharePayloadError(
+                [
+                    ValidationIssue(
+                        field="shared_with_user_email",
                         message="task owner cannot be added as a share recipient",
                     )
                 ]
             )
 
-        if not UserModel.objects.filter(id=input_dto.shared_with_user_id).exists():
-            raise InvalidTaskSharePayloadError(
-                [
-                    ValidationIssue(
-                        field="shared_with_user_id",
-                        message="shared user does not exist",
-                    )
-                ]
-            )
+        return shared_with_user
 
     def _to_task_list_item_from_model(self, task: TaskModel) -> TaskListItem:
         category_item = None

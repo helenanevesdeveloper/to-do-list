@@ -5,5 +5,5 @@ from dataclasses import dataclass
 class CreateTaskShareInput:
     user_id: str
     task_id: str
-    shared_with_user_id: str
+    shared_with_user_email: str
     permission: str

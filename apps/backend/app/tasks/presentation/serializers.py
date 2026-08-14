@@ -112,7 +112,7 @@ class TaskCategoryCreateRequestSerializer(serializers.Serializer):
 
 
 class TaskShareCreateRequestSerializer(serializers.Serializer):
-    shared_with_user_id = serializers.CharField()
+    shared_with_user_email = serializers.EmailField()
     permission = serializers.ChoiceField(
         choices=TaskSharePermission.choices,
         default=TaskSharePermission.READER,
@@ -123,7 +123,7 @@ class TaskShareCreateRequestSerializer(serializers.Serializer):
         return CreateTaskShareInput(
             user_id=user_id,
             task_id=task_id,
-            shared_with_user_id=cast(str, data["shared_with_user_id"]),
+            shared_with_user_email=cast(str, data["shared_with_user_email"]),
             permission=cast(str, data["permission"]),
         )
 
@@ -277,7 +277,7 @@ class TaskCategoryDeleteResponseSerializer(serializers.Serializer):
 
 class TaskShareResponseSerializer(serializers.Serializer):
     id = serializers.CharField()
-    shared_with_user_id = serializers.CharField()
+    shared_with_user_email = serializers.EmailField()
     permission = serializers.CharField()
     created_at = serializers.CharField()
 
