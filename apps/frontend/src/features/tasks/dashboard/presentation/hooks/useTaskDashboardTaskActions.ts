@@ -3,6 +3,8 @@ import type { TaskInlineCreateInput } from '../../../create/presentation/hooks/u
 import { resolveTaskDeleteNextPage } from '../../../delete/application/resolveTaskDeleteNextPage';
 import { useTaskDeleteAction } from '../../../delete/presentation/hooks/useTaskDeleteAction';
 import type { TaskListItem } from '../../../shared/types';
+import { useTaskUpdate } from '../../../update/presentation/hooks/useTaskUpdate';
+import type { TaskInlineEditInput } from '../../../update/presentation/hooks/useTaskInlineEdit';
 
 export interface UseTaskDashboardTaskActionsInput {
   currentPage: number;
@@ -12,15 +14,18 @@ export interface UseTaskDashboardTaskActionsInput {
 }
 
 export interface UseTaskDashboardTaskActionsResult {
+  cancelTaskEdit: () => void;
   clearDeleteTaskError: () => void;
   deleteTaskErrorMessage: string | null;
   deletingTaskId: string | null;
+  editingTaskId: string | null;
   handleCreateTask: (input: TaskInlineCreateInput) => Promise<void>;
   handleTaskClick: (task: TaskListItem) => void;
   handleTaskDelete: (task: TaskListItem) => Promise<void>;
+  handleTaskUpdate: (taskId: string, input: TaskInlineEditInput) => Promise<void>;
 }
 
-/** Owns dashboard task actions such as delete, and share. */
+/** Owns dashboard task actions such as create, delete, and inline edit. */
 export function useTaskDashboardTaskActions({
   currentPage,
   reloadTasks,
@@ -33,6 +38,12 @@ export function useTaskDashboardTaskActions({
     requestTaskDelete,
     resetTaskDeleteError
   } = useTaskDeleteAction();
+  const {
+    cancelTaskEdit,
+    editingTaskId,
+    startTaskEdit,
+    submitTaskUpdate
+  } = useTaskUpdate({ reloadTasks });
 
   async function handleCreateTask(input: TaskInlineCreateInput): Promise<void> {
     await createTasksApi(input);
@@ -65,15 +76,26 @@ export function useTaskDashboardTaskActions({
     reloadTasks();
   }
 
-  function handleTaskClick(_task: TaskListItem): void {}
+  function handleTaskClick(task: TaskListItem): void {
+    startTaskEdit(task);
+  }
 
+  async function handleTaskUpdate(
+    taskId: string,
+    input: TaskInlineEditInput
+  ): Promise<void> {
+    await submitTaskUpdate(taskId, input);
+  }
 
   return {
+    cancelTaskEdit,
     clearDeleteTaskError: resetTaskDeleteError,
     deleteTaskErrorMessage,
     deletingTaskId,
+    editingTaskId,
     handleCreateTask,
     handleTaskClick,
     handleTaskDelete,
+    handleTaskUpdate
   };
 }

@@ -1,22 +1,23 @@
 import { useCallback, useState } from 'react';
-import { mapCreateTaskError } from '../../application/mapCreateTaskError';
-import { resolveTaskInlineCreateAttempt } from '../state/taskInlineCreateState';
+import { mapUpdateTaskError } from '../../application/mapUpdateTaskError';
+import { resolveTaskInlineEditAttempt } from '../state/taskInlineEditState';
 import type {
-  TaskInlineCreateDraft,
-  TaskInlineCreateInput
-} from '../state/taskInlineCreateTypes';
+  TaskInlineEditDraft,
+  TaskInlineEditInput
+} from '../state/taskInlineEditTypes';
 
-export type UseTaskInlineCreateSubmissionArgs = {
-  draftRef: React.RefObject<TaskInlineCreateDraft>;
+export type UseTaskInlineEditSubmissionArgs = {
+  draftRef: React.RefObject<TaskInlineEditDraft>;
+  initialDraftRef: React.RefObject<TaskInlineEditDraft>;
   isCategoryFieldOpenRef: React.RefObject<boolean>;
-  onCreateTaskRef: React.RefObject<(input: TaskInlineCreateInput) => Promise<void>>;
-  resetDraft: () => void;
+  onCancelRef: React.RefObject<() => void>;
+  onUpdateTaskRef: React.RefObject<(input: TaskInlineEditInput) => Promise<void>>;
   setErrorMessage: (value: string | null) => void;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
-export type UseTaskInlineCreateSubmissionResult = {
-  handlePointerDownOutside: (event: MouseEvent) => Promise<void>;
+export type UseTaskInlineEditSubmissionResult = {
+  handlePointerDownOutside: () => Promise<void>;
   isSubmitting: boolean;
 };
 
@@ -26,15 +27,16 @@ function focusTitleInput(
   titleInputRef.current?.focus();
 }
 
-/** Owns the async submit lifecycle triggered when the inline create row loses focus. */
-export function useTaskInlineCreateSubmission({
+/** Owns the async submit lifecycle triggered when the inline edit row loses focus. */
+export function useTaskInlineEditSubmission({
   draftRef,
+  initialDraftRef,
   isCategoryFieldOpenRef,
-  onCreateTaskRef,
-  resetDraft,
+  onCancelRef,
+  onUpdateTaskRef,
   setErrorMessage,
   titleInputRef
-}: UseTaskInlineCreateSubmissionArgs): UseTaskInlineCreateSubmissionResult {
+}: UseTaskInlineEditSubmissionArgs): UseTaskInlineEditSubmissionResult {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePointerDownOutside = useCallback(async (): Promise<void> => {
@@ -46,10 +48,14 @@ export function useTaskInlineCreateSubmission({
       return;
     }
 
-    const attempt = resolveTaskInlineCreateAttempt(draftRef.current);
+    const attempt = resolveTaskInlineEditAttempt({
+      draft: draftRef.current,
+      initialDraft: initialDraftRef.current
+    });
 
     if (attempt.type === 'ignore') {
       setErrorMessage(null);
+      onCancelRef.current();
       return;
     }
 
@@ -62,24 +68,21 @@ export function useTaskInlineCreateSubmission({
     setIsSubmitting(true);
 
     try {
-      await onCreateTaskRef.current(attempt.input);
-      resetDraft();
+      await onUpdateTaskRef.current(attempt.input);
       setErrorMessage(null);
-      window.setTimeout(() => {
-        focusTitleInput(titleInputRef);
-      }, 0);
     } catch (error) {
-      setErrorMessage(mapCreateTaskError(error));
+      setErrorMessage(mapUpdateTaskError(error));
       focusTitleInput(titleInputRef);
     } finally {
       setIsSubmitting(false);
     }
   }, [
     draftRef,
+    initialDraftRef,
     isCategoryFieldOpenRef,
     isSubmitting,
-    onCreateTaskRef,
-    resetDraft,
+    onCancelRef,
+    onUpdateTaskRef,
     setErrorMessage,
     titleInputRef
   ]);

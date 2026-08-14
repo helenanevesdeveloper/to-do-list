@@ -9,6 +9,9 @@ import {
 import {
   useTaskInlineCategoryPopoverState
 } from './useTaskInlineCategoryPopoverState';
+import type {
+  TaskInlineCategoryPopoverPosition
+} from './useTaskInlineCategoryPopoverState';
 import {
   useTaskInlineCategorySelectionActions
 } from './useTaskInlineCategorySelectionActions';
@@ -29,6 +32,8 @@ export type UseTaskInlineCategoryFieldResult = {
   isCreatingCategory: boolean;
   isOpen: boolean;
   listboxId: string;
+  popoverPosition: TaskInlineCategoryPopoverPosition | null;
+  popoverRef: React.RefObject<HTMLDivElement | null>;
   query: string;
   rootRef: React.RefObject<HTMLDivElement | null>;
   selectedCategory: TaskCategoryOption | null;
@@ -53,6 +58,8 @@ export function useTaskInlineCategoryField({
     inputRef,
     isOpen,
     listboxId,
+    popoverPosition,
+    popoverRef,
     query,
     rootRef,
     closeField,
@@ -95,6 +102,7 @@ export function useTaskInlineCategoryField({
     inputRef,
     isOpen,
     onPointerDownOutside: handlePointerDownOutside,
+    popoverRef,
     rootRef
   });
 
@@ -107,6 +115,8 @@ export function useTaskInlineCategoryField({
     isCreatingCategory,
     isOpen,
     listboxId,
+    popoverPosition,
+    popoverRef,
     query,
     rootRef,
     selectedCategory,

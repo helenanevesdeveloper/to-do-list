@@ -1,61 +1,50 @@
-import { Tr } from '@chakra-ui/react';
-import type { TaskListItem } from '../../../shared/types';
-import { useTaskShareModalContext } from '../../../sharing/presentation/context/TaskShareModalContext';
-import { buildTaskListItemDisplay } from '../mappers/buildTaskListItemDisplay';
-import TaskTableRowActionsCell from './TaskTableRowActionsCell';
-import TaskTableRowContentCell from './TaskTableRowContentCell';
-import TaskTableRowMetadataCells from './TaskTableRowMetadataCells';
+import type { TaskCategoryOption, TaskListItem } from '../../../shared/types';
+import type { TaskInlineEditInput } from '../../../update/presentation/hooks/useTaskInlineEdit';
+import TaskTableEditingRow from './TaskTableEditingRow';
+import TaskTableReadOnlyRow from './TaskTableReadOnlyRow';
 
 export type TaskTableRowProps = {
+  categoryOptions: TaskCategoryOption[];
+  isEditing?: boolean;
   isDeleting?: boolean;
+  onCancelEdit: () => void;
   task: TaskListItem;
   onClick: (task: TaskListItem) => void;
+  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onDeleteTask: (task: TaskListItem) => Promise<void> | void;
+  onUpdateTask: (taskId: string, input: TaskInlineEditInput) => Promise<void>;
 };
 
 /** Renders a single desktop row inside the task results table. */
 export default function TaskTableRow({
+  categoryOptions,
+  isEditing = false,
   isDeleting = false,
+  onCancelEdit,
   task,
   onClick,
+  onCreateCategory,
   onDeleteTask,
+  onUpdateTask,
 }: TaskTableRowProps) {
-  const { openTaskShareModal } = useTaskShareModalContext();
-  const display = buildTaskListItemDisplay(task);
-  const canDeleteTask = task.sharing.isOwner;
-
-  function handleRowClick(): void {
-    onClick(task);
-  }
-
-  function handleDeleteTask(): Promise<void> | void {
-    return onDeleteTask(task);
-  }
-
-  function handleShareTask(): void {
-    openTaskShareModal(task);
+  if (isEditing) {
+    return (
+      <TaskTableEditingRow
+        categoryOptions={categoryOptions}
+        onCancelEdit={onCancelEdit}
+        onCreateCategory={onCreateCategory}
+        onUpdateTask={onUpdateTask}
+        task={task}
+      />
+    );
   }
 
   return (
-    <Tr
-      key={task.id}
-      cursor="pointer"
-      onClick={handleRowClick}
-      role="group"
-      _hover={{ bg: 'gray.50' }}
-    >
-      <TaskTableRowContentCell
-        descriptionLabel={display.descriptionLabel}
-        title={task.title}
-      />
-      <TaskTableRowMetadataCells display={display} />
-      <TaskTableRowActionsCell
-        canDeleteTask={canDeleteTask}
-        isDeleting={isDeleting}
-        onDeleteTask={handleDeleteTask}
-        onShareTask={handleShareTask}
-        taskTitle={task.title}
-      />
-    </Tr>
+    <TaskTableReadOnlyRow
+      isDeleting={isDeleting}
+      onClick={onClick}
+      onDeleteTask={onDeleteTask}
+      task={task}
+    />
   );
 }

@@ -1,11 +1,11 @@
 import { FormControl, Input, Stack } from '@chakra-ui/react';
 import TaskInlineCategoryField from '../../../categories/presentation/components/TaskInlineCategoryField';
 import type { TaskCategoryOption } from '../../../shared/types';
-import type { TaskInlineCreateDraft } from '../state/taskInlineCreateTypes';
+import type { TaskInlineEditDraft } from '../state/taskInlineEditTypes';
 
-export type TaskCreateInlineFieldsProps = {
+export type TaskEditInlineFieldsProps = {
   categoryOptions: TaskCategoryOption[];
-  draft: TaskInlineCreateDraft;
+  draft: TaskInlineEditDraft;
   isSubmitting: boolean;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onCategoryFieldOpenChange: (isOpen: boolean) => void;
@@ -15,8 +15,8 @@ export type TaskCreateInlineFieldsProps = {
   titleInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
-/** Renders only the input fields and category selector for inline task creation. */
-export default function TaskCreateInlineFields({
+/** Renders only the editable fields and category selector for inline task editing. */
+export default function TaskEditInlineFields({
   categoryOptions,
   draft,
   isSubmitting,
@@ -26,7 +26,7 @@ export default function TaskCreateInlineFields({
   onSelectCategory,
   onTitleChange,
   titleInputRef
-}: TaskCreateInlineFieldsProps) {
+}: TaskEditInlineFieldsProps) {
   return (
     <Stack
       direction={{ base: 'column', md: 'row' }}
@@ -36,8 +36,8 @@ export default function TaskCreateInlineFields({
       <FormControl flex={{ md: '2' }}>
         <Input
           ref={titleInputRef}
-          aria-label="Título da tarefa"
-          placeholder="Título da tarefa"
+          aria-label="Editar titulo da tarefa"
+          placeholder="Titulo da tarefa"
           isDisabled={isSubmitting}
           value={draft.title}
           onChange={(event) => onTitleChange(event.target.value)}
@@ -46,8 +46,8 @@ export default function TaskCreateInlineFields({
 
       <FormControl flex={{ md: '2' }}>
         <Input
-          aria-label="Descrição da tarefa"
-          placeholder="Descrição opcional"
+          aria-label="Editar descricao da tarefa"
+          placeholder="Descricao opcional"
           isDisabled={isSubmitting}
           value={draft.description}
           onChange={(event) => onDescriptionChange(event.target.value)}

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useLatestRef } from './useLatestRef';
 import { useTaskInlineCreateDraftState } from './useTaskInlineCreateDraftState';
 import { useTaskInlineCreateEffects } from './useTaskInlineCreateEffects';
@@ -19,6 +19,7 @@ export type UseTaskInlineCreateResult = {
   errorMessage: string | null;
   isSubmitting: boolean;
   rootRef: React.RefObject<HTMLDivElement | null>;
+  setIsCategoryFieldOpen: (value: boolean) => void;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
   setCategoryId: (value: string) => void;
   setDescription: (value: string) => void;
@@ -31,6 +32,7 @@ export function useTaskInlineCreate({
 }: UseTaskInlineCreateArgs): UseTaskInlineCreateResult {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const [isCategoryFieldOpen, setIsCategoryFieldOpen] = useState(false);
   const {
     draft,
     errorMessage,
@@ -41,9 +43,11 @@ export function useTaskInlineCreate({
     setTitle
   } = useTaskInlineCreateDraftState();
   const draftRef = useLatestRef(draft);
+  const isCategoryFieldOpenRef = useLatestRef(isCategoryFieldOpen);
   const onCreateTaskRef = useLatestRef(onCreateTask);
   const { handlePointerDownOutside, isSubmitting } = useTaskInlineCreateSubmission({
     draftRef,
+    isCategoryFieldOpenRef,
     onCreateTaskRef,
     resetDraft,
     setErrorMessage,
@@ -61,6 +65,7 @@ export function useTaskInlineCreate({
     errorMessage,
     isSubmitting,
     rootRef,
+    setIsCategoryFieldOpen,
     titleInputRef,
     setCategoryId,
     setDescription,

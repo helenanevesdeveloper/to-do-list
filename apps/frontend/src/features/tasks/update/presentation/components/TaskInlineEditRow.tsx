@@ -1,24 +1,28 @@
+import { Box, Stack } from '@chakra-ui/react';
+import type { TaskCategoryOption, TaskListItem } from '../../../shared/types';
 import {
-  Box,
-  Stack
-} from '@chakra-ui/react';
-import type { TaskCategoryOption } from '../../../shared/types';
-import { useTaskInlineCreate, type TaskInlineCreateInput } from '../hooks/useTaskInlineCreate';
-import TaskCreateInlineFeedback from './TaskCreateInlineFeedback';
-import TaskCreateInlineFields from './TaskCreateInlineFields';
+  useTaskInlineEdit,
+  type TaskInlineEditInput
+} from '../hooks/useTaskInlineEdit';
+import TaskEditInlineFeedback from './TaskEditInlineFeedback';
+import TaskEditInlineFields from './TaskEditInlineFields';
 
-export type TaskCreateInlineRowProps = {
+export type TaskInlineEditRowProps = {
   categoryOptions: TaskCategoryOption[];
+  onCancel: () => void;
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
-  onCreateTask: (input: TaskInlineCreateInput) => Promise<void>;
+  onUpdateTask: (input: TaskInlineEditInput) => Promise<void>;
+  task: TaskListItem;
 };
 
-/** Renders the inline task-create row that saves a local task on outside click. */
-export default function TaskCreateInlineRow({
+/** Renders the inline task-edit row that saves on outside click. */
+export default function TaskInlineEditRow({
   categoryOptions,
+  onCancel,
   onCreateCategory,
-  onCreateTask
-}: TaskCreateInlineRowProps) {
+  onUpdateTask,
+  task
+}: TaskInlineEditRowProps) {
   const {
     draft,
     errorMessage,
@@ -29,7 +33,11 @@ export default function TaskCreateInlineRow({
     setCategoryId,
     setDescription,
     setTitle
-  } = useTaskInlineCreate({ onCreateTask });
+  } = useTaskInlineEdit({
+    onCancel,
+    onUpdateTask,
+    task
+  });
 
   return (
     <Box
@@ -40,7 +48,7 @@ export default function TaskCreateInlineRow({
       bg="white"
     >
       <Stack spacing={3}>
-        <TaskCreateInlineFields
+        <TaskEditInlineFields
           categoryOptions={categoryOptions}
           draft={draft}
           isSubmitting={isSubmitting}
@@ -52,7 +60,7 @@ export default function TaskCreateInlineRow({
           titleInputRef={titleInputRef}
         />
 
-        <TaskCreateInlineFeedback
+        <TaskEditInlineFeedback
           errorMessage={errorMessage}
           isSubmitting={isSubmitting}
         />

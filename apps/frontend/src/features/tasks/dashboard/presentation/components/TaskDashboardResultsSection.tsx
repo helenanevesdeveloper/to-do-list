@@ -1,40 +1,56 @@
+import type { TaskCategoryOption, TaskListItem, TaskListPage } from '../../../shared/types';
 import TaskPagination from '../../../list/presentation/components/TaskPagination';
 import TaskResultsPanel from '../../../list/presentation/components/TaskResultsPanel';
-import type { TaskListItem, TaskListPage } from '../../../shared/types';
+import type { TaskInlineEditInput } from '../../../update/presentation/hooks/useTaskInlineEdit';
 
 export interface TaskDashboardResultsSectionProps {
+  categoryOptions: TaskCategoryOption[];
   deletingTaskId?: string | null;
+  editingTaskId?: string | null;
   errorMessage?: string | null;
   isLoading?: boolean;
   onNextPage: () => void;
   onPreviousPage: () => void;
+  onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
   onRetry?: () => void;
+  onTaskCancelEdit: () => void;
   onTaskClick: (task: TaskListItem) => void;
   onTaskDelete: (task: TaskListItem) => Promise<void> | void;
+  onTaskUpdate: (taskId: string, input: TaskInlineEditInput) => Promise<void>;
   page: TaskListPage;
 }
 
 /** Renders the results panel plus pagination controls for the dashboard task list. */
 export default function TaskDashboardResultsSection({
+  categoryOptions,
   deletingTaskId = null,
+  editingTaskId = null,
   errorMessage = null,
   isLoading = false,
   onNextPage,
   onPreviousPage,
+  onCreateCategory,
   onRetry,
+  onTaskCancelEdit,
   onTaskClick,
   onTaskDelete,
+  onTaskUpdate,
   page
 }: TaskDashboardResultsSectionProps) {
   return (
     <>
       <TaskResultsPanel
+        categoryOptions={categoryOptions}
         deletingTaskId={deletingTaskId}
+        editingTaskId={editingTaskId}
         errorMessage={errorMessage}
         items={page.items}
         isLoading={isLoading}
+        onCreateCategory={onCreateCategory}
+        onTaskCancelEdit={onTaskCancelEdit}
         onTaskDelete={onTaskDelete}
         onTaskClick={onTaskClick}
+        onTaskUpdate={onTaskUpdate}
         onRetry={onRetry}
       />
 

@@ -5,6 +5,7 @@ export type UseTaskInlineCategoryFieldEffectsArgs = {
   inputRef: React.RefObject<HTMLInputElement | null>;
   isOpen: boolean;
   onPointerDownOutside: () => void;
+  popoverRef: React.RefObject<HTMLDivElement | null>;
   rootRef: React.RefObject<HTMLDivElement | null>;
 };
 
@@ -13,6 +14,7 @@ export function useTaskInlineCategoryFieldEffects({
   inputRef,
   isOpen,
   onPointerDownOutside,
+  popoverRef,
   rootRef
 }: UseTaskInlineCategoryFieldEffectsArgs): void {
   const handlePointerDownOutside = useCallback((): void => {
@@ -24,6 +26,7 @@ export function useTaskInlineCategoryFieldEffects({
   }, [isOpen, onPointerDownOutside]);
 
   usePointerDownOutside({
+    additionalRefs: [popoverRef],
     onPointerDownOutside: handlePointerDownOutside,
     rootRef
   });

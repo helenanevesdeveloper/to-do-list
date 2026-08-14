@@ -17,15 +17,18 @@ export default function DashboardPage() {
     actions,
     categoryErrorMessage,
     categoryOptions,
+    cancelTaskEdit,
     clearDeleteTaskError,
     deleteTaskErrorMessage,
     deletingTaskId,
+    editingTaskId,
     errorMessage,
     handleCreateCategory,
     filters,
     handleCreateTask,
     handleTaskClick,
     handleTaskDelete,
+    handleTaskUpdate,
     isLoading,
     isLoadingCategories,
     paginatedTasks,
@@ -68,14 +71,19 @@ export default function DashboardPage() {
           />
 
           <TaskDashboardResultsSection
+            categoryOptions={categoryOptions}
             deletingTaskId={deletingTaskId}
+            editingTaskId={editingTaskId}
             errorMessage={errorMessage}
             isLoading={isLoading}
+            onCreateCategory={handleCreateCategory}
             onNextPage={actions.goToNextPage}
             onPreviousPage={actions.goToPreviousPage}
             onRetry={reloadTasks}
+            onTaskCancelEdit={cancelTaskEdit}
             onTaskDelete={handleTaskDelete}
             onTaskClick={handleTaskClick}
+            onTaskUpdate={handleTaskUpdate}
             page={paginatedTasks}
           />
         </Stack>

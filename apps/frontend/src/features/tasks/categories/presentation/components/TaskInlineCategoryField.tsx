@@ -1,4 +1,5 @@
 import { Box, FormControl } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import type { TaskCategoryOption } from '../../../shared/types';
 import { useTaskInlineCategoryField } from '../hooks/useTaskInlineCategoryField';
 import TaskInlineCategoryPopover from './TaskInlineCategoryPopover';
@@ -7,6 +8,7 @@ import TaskInlineCategoryTrigger from './TaskInlineCategoryTrigger';
 export type TaskInlineCategoryFieldProps = {
   categoryOptions: TaskCategoryOption[];
   onCreateCategory: (name: string) => Promise<TaskCategoryOption>;
+  onOpenChange?: (isOpen: boolean) => void;
   onSelectCategory: (categoryId: string) => void;
   value: string;
 };
@@ -15,6 +17,7 @@ export type TaskInlineCategoryFieldProps = {
 export default function TaskInlineCategoryField({
   categoryOptions,
   onCreateCategory,
+  onOpenChange,
   onSelectCategory,
   value
 }: TaskInlineCategoryFieldProps) {
@@ -27,6 +30,8 @@ export default function TaskInlineCategoryField({
     isCreatingCategory,
     isOpen,
     listboxId,
+    popoverPosition,
+    popoverRef,
     query,
     rootRef,
     selectedCategory,
@@ -42,6 +47,10 @@ export default function TaskInlineCategoryField({
     onSelectCategory,
     value
   });
+
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
 
   return (
     <FormControl flex={{ md: '1.2' }} position="relative">
@@ -67,6 +76,8 @@ export default function TaskInlineCategoryField({
               selectedCategoryId: value,
               onSelectCategory: selectCategory
             }}
+            popoverRef={popoverRef}
+            position={popoverPosition}
             search={{
               inputRef,
               query,

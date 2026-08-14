@@ -1,4 +1,5 @@
 import { Box, HStack, Icon, Text } from '@chakra-ui/react';
+import type { MouseEvent } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
 export type TaskInlineCategoryTriggerProps = {
@@ -13,6 +14,10 @@ export default function TaskInlineCategoryTrigger({
   label,
   onClick
 }: TaskInlineCategoryTriggerProps) {
+  function handleMouseDown(event: MouseEvent<HTMLButtonElement>): void {
+    event.stopPropagation();
+  }
+
   return (
     <Box
       as="button"
@@ -25,6 +30,7 @@ export default function TaskInlineCategoryTrigger({
       px={3}
       py={2.5}
       textAlign="left"
+      onMouseDown={handleMouseDown}
       onClick={onClick}
       _hover={{ borderColor: 'gray.300' }}
       _focusVisible={{
