@@ -131,6 +131,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value = useMemo<AuthContextValue>(
     () => ({
       authState,
+      currentUserEmail: authState.session?.email || null,
       session: authState.session,
       isAuthenticated: authState.status === 'authenticated',
       isHydrated: authState.status !== 'hydrating',

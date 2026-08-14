@@ -29,6 +29,8 @@ export type AuthState =
 
 export type AuthContextValue = {
   authState: AuthState;
+  currentUserEmail: string | null;
+  /* email da sessão autenticada atual quando disponível */
   session: AuthSession | null;
   /* null quando não há sessão válida
   AuthSession quando a sessão está ativa*/

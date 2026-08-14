@@ -86,6 +86,7 @@ describe('AuthProvider', () => {
       expiresAt: null,
       email: 'user@example.com'
     });
+    expect(currentAuth.currentUserEmail).toBe('user@example.com');
     expect(storageMocks.clearSession).not.toHaveBeenCalled();
   });
 
@@ -105,6 +106,7 @@ describe('AuthProvider', () => {
 
     expect(storageMocks.clearSession).toHaveBeenCalledTimes(1);
     expect(currentAuth.session).toBeNull();
+    expect(currentAuth.currentUserEmail).toBeNull();
   });
 
   it('persists the session and authenticates the user after login', async () => {
@@ -146,6 +148,7 @@ describe('AuthProvider', () => {
     });
     expect(currentAuth.isAuthenticated).toBe(true);
     expect(currentAuth.session).toEqual(savedSession);
+    expect(currentAuth.currentUserEmail).toBe('user@example.com');
   });
 
   it('logs out, clears local session state, and redirects to login', async () => {
@@ -173,5 +176,6 @@ describe('AuthProvider', () => {
     expect(currentAuth.isAuthenticated).toBe(false);
     expect(currentAuth.authState.status).toBe('anonymous');
     expect(currentAuth.session).toBeNull();
+    expect(currentAuth.currentUserEmail).toBeNull();
   });
 });

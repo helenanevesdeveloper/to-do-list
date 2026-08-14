@@ -52,4 +52,26 @@ describe('normalizeAuthSession', () => {
       email: ''
     });
   });
+
+  it('falls back to an email claim from the JWT when the payload omits it', () => {
+    const jwtPayload = btoa(
+      JSON.stringify({
+        email: 'user@example.com'
+      })
+    )
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
+
+    expect(
+      normalizeAuthSession({
+        accessToken: `header.${jwtPayload}.signature`
+      })
+    ).toEqual({
+      accessToken: `header.${jwtPayload}.signature`,
+      tokenType: 'Bearer',
+      expiresAt: null,
+      email: 'user@example.com'
+    });
+  });
 });
