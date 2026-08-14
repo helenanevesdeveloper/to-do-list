@@ -5,3 +5,4 @@ from dataclasses import dataclass
 class AuthenticateUserOutput:
     access_token: str
     token_type: str
+    email: str

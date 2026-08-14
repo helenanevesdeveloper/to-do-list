@@ -64,4 +64,5 @@ class AuthenticateUserUseCase:
         return AuthenticateUserOutput(
             access_token=access_token,
             token_type=self.token_type,
+            email=str(user.email),
         )

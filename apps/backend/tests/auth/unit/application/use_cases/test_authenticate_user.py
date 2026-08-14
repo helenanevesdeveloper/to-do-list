@@ -136,6 +136,7 @@ def test_authenticates_user_successfully() -> None:
     ]
     assert result.access_token == "access-token"
     assert result.token_type == "Bearer"
+    assert result.email == "user@example.com"
 
 
 def test_raises_for_unknown_email() -> None:

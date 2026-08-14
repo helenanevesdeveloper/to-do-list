@@ -14,6 +14,7 @@ class LoginRequest(serializers.Serializer):
 class LoginResponse(serializers.Serializer):
     access_token = serializers.CharField()
     token_type = serializers.CharField()
+    email = serializers.CharField()
 
 
 class RegisterUserResponse(serializers.Serializer):

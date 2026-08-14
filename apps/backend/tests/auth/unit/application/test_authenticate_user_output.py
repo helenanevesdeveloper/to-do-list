@@ -9,7 +9,9 @@ def test_authenticate_user_output_stores_tokens() -> None:
     dto = AuthenticateUserOutput(
         access_token="access-token",
         token_type="Bearer",
+        email="user@example.com",
     )
 
     assert dto.access_token == "access-token"
     assert dto.token_type == "Bearer"
+    assert dto.email == "user@example.com"

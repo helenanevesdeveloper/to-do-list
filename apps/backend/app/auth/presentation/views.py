@@ -113,6 +113,7 @@ class LoginUserView(APIView):
         payload = {
             "access_token": result.access_token,
             "token_type": result.token_type,
+            "email": result.email,
         }
         return Response(LoginResponse(payload).data)
 

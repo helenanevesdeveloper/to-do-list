@@ -8,10 +8,12 @@ def test_login_response_accepts_access() -> None:
         {
             "access_token": "access-token",
             "token_type": "Bearer",
+            "email": "user@example.com",
         }
     )
 
     assert response.data == {
         "access_token": "access-token",
         "token_type": "Bearer",
+        "email": "user@example.com",
     }
