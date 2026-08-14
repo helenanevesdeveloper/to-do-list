@@ -6,6 +6,7 @@ from typing import Callable
 
 from django.db import IntegrityError
 from django.db import transaction
+from django.db.models import Q
 
 from app.auth.models import UserModel
 from app.shared.exceptions import ValidationIssue
@@ -105,7 +106,9 @@ class DjangoOrmTaskCommandRepository(TaskCommandRepository):
         deleted_count, _ = TaskShareModel.objects.filter(
             id=input_dto.share_id,
             task_id=input_dto.task_id,
-            task__owner_user_id=input_dto.user_id,
+        ).filter(
+            Q(task__owner_user_id=input_dto.user_id)
+            | Q(shared_with_user_id=input_dto.user_id)
         ).delete()
         if deleted_count == 0:
             raise TaskShareNotFoundError("task share was not found")
