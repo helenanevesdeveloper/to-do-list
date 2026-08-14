@@ -24,7 +24,7 @@ export function useTaskInlineEditDraftState(
 ): UseTaskInlineEditDraftStateResult {
   const initialDraft = useMemo(
     () => buildTaskInlineEditDraft(task),
-    [task.category?.id, task.description, task.id, task.title]
+    [task.category?.id, task.description, task.id, task.isCompleted, task.title]
   );
   const [draft, setDraft] = useState<TaskInlineEditDraft>(initialDraft);
   const draftRef = useRef<TaskInlineEditDraft>(initialDraft);

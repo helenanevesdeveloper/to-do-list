@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
 import { mapUpdateTaskError } from '../../application/mapUpdateTaskError';
 import {
-  normalizeTaskInlineEditDraft,
-  validateTaskInlineEditDraft
+  resolveTaskInlineEditAttempt
 } from '../state/taskInlineEditState';
 import type {
   TaskInlineEditDraft,
@@ -11,6 +10,7 @@ import type {
 
 export type UseTaskInlineEditSubmissionArgs = {
   draft: TaskInlineEditDraft;
+  initialDraft: TaskInlineEditDraft;
   onUpdateTask: (input: TaskInlineEditInput) => Promise<void>;
   setErrorMessage: (value: string | null) => void;
   titleInputRef: React.RefObject<HTMLInputElement | null>;
@@ -30,6 +30,7 @@ function focusTitleInput(
 /** Owns the async submit lifecycle triggered when the inline edit row loses focus. */
 export function useTaskInlineEditSubmission({
   draft,
+  initialDraft,
   onUpdateTask,
   setErrorMessage,
   titleInputRef
@@ -41,19 +42,26 @@ export function useTaskInlineEditSubmission({
       return;
     }
 
-    const validationError = validateTaskInlineEditDraft(draft);
+    const attempt = resolveTaskInlineEditAttempt({
+      draft,
+      initialDraft
+    });
 
-    if (validationError) {
-      setErrorMessage(validationError);
+    if (attempt.type === 'ignore') {
+      setErrorMessage(null);
+      return;
+    }
+
+    if (attempt.type === 'invalid') {
+      setErrorMessage(attempt.errorMessage);
       focusTitleInput(titleInputRef);
       return;
     }
 
-    const input = normalizeTaskInlineEditDraft(draft);
     setIsSubmitting(true);
 
     try {
-      await onUpdateTask(input);
+      await onUpdateTask(attempt.input);
       setErrorMessage(null);
     } catch (error) {
       setErrorMessage(mapUpdateTaskError(error));
@@ -63,6 +71,7 @@ export function useTaskInlineEditSubmission({
     }
   }, [
     draft,
+    initialDraft,
     isSubmitting,
     onUpdateTask,
     setErrorMessage,

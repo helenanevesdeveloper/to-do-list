@@ -39,6 +39,7 @@ export function useTaskInlineEdit({
   const {
     draft,
     errorMessage,
+    initialDraft,
     setCategoryId,
     setDescription,
     setErrorMessage,
@@ -47,6 +48,7 @@ export function useTaskInlineEdit({
   } = useTaskInlineEditDraftState(task);
   const { isSubmitting, submitUpdate } = useTaskInlineEditSubmission({
     draft,
+    initialDraft,
     onUpdateTask,
     setErrorMessage,
     titleInputRef
