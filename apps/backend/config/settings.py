@@ -130,7 +130,7 @@ CORS_ALLOWED_ORIGINS = _split_csv_env("ALLOWED_ORIGINS")
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "app.shared.http.openapi.DeleteRequestBodyAutoSchema",
     "EXCEPTION_HANDLER": "app.shared.http.exception_handlers.drf_exception_handler",
 }
 
