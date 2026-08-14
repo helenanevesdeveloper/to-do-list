@@ -10,6 +10,7 @@ from app.shared.http import AuthenticatedAPIView
 from app.tasks.application.dto.list_task_categories_input import (
     ListTaskCategoriesInput,
 )
+from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
 
 from .dependencies import (
     get_create_task_category_use_case,
@@ -17,6 +18,7 @@ from .dependencies import (
     get_create_tasks_use_case,
     get_delete_task_categories_use_case,
     get_delete_tasks_use_case,
+    get_list_task_shares_use_case,
     get_list_task_categories_use_case,
     get_list_tasks_use_case,
     get_update_task_category_use_case,
@@ -38,6 +40,7 @@ from .serializers import (
     TaskListQuerySerializer,
     TaskListResponseSerializer,
     TaskItemResponseSerializer,
+    TaskShareListResponseSerializer,
     TaskUpdateRequestSerializer,
 )
 
@@ -265,6 +268,29 @@ class TaskCategoryDetailView(AuthenticatedAPIView):
 
 
 class TaskShareListView(AuthenticatedAPIView):
+
+    @extend_schema(
+        tags=["tasks"],
+        operation_id="tasks_list_task_shares_get",
+        responses={200: TaskShareListResponseSerializer},
+        description="List shares for a task",
+    )
+    def get(self, request, task_id: str):
+        use_case = get_list_task_shares_use_case()
+        result = use_case.execute(
+            ListTaskSharesInput(
+                user_id=request.user.id,
+                task_id=task_id,
+            )
+        )
+        return Response(
+            TaskShareListResponseSerializer(
+                {
+                    "count": len(result.items),
+                    "results": [asdict(item) for item in result.items],
+                }
+            ).data
+        )
 
     @extend_schema(
         tags=["tasks"],

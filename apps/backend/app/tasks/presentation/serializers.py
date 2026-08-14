@@ -282,5 +282,10 @@ class TaskShareResponseSerializer(serializers.Serializer):
     created_at = serializers.CharField()
 
 
+class TaskShareListResponseSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    results = TaskShareResponseSerializer(many=True)
+
+
 class TaskDetailResponseSerializer(TaskItemResponseSerializer):
     shares = TaskShareResponseSerializer(many=True)

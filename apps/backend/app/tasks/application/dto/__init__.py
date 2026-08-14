@@ -17,6 +17,8 @@ from app.tasks.application.dto.delete_task_categories_output import (
 )
 from app.tasks.application.dto.delete_tasks_input import DeleteTasksInput
 from app.tasks.application.dto.delete_tasks_output import DeletedTasks
+from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
+from app.tasks.application.dto.list_task_shares_output import ListedTaskShares
 from app.tasks.application.dto.list_task_categories_input import (
     ListTaskCategoriesInput,
 )
@@ -43,8 +45,10 @@ __all__ = [
     "DeletedTaskCategories",
     "DeletedTasks",
     "DeleteTasksInput",
+    "ListedTaskShares",
     "ListedTaskCategories",
     "ListTaskCategoriesInput",
+    "ListTaskSharesInput",
     "ListTasksInput",
     "PaginatedTasks",
     "TaskCategoryItem",

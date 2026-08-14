@@ -14,6 +14,9 @@ from django.db.models import (
     When,
 )
 
+from app.tasks.application.dto.create_task_share_output import CreatedTaskShare
+from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
+from app.tasks.application.dto.list_task_shares_output import ListedTaskShares
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
 from app.tasks.application.dto.list_tasks_output import (
     PaginatedTasks,
@@ -22,6 +25,7 @@ from app.tasks.application.dto.list_tasks_output import (
     TaskSharingSummary,
 )
 from app.tasks.application.ports.task_query_repository import TaskQueryRepository
+from app.tasks.domain import TaskNotFoundError
 from app.tasks.models import (
     TaskModel,
     TaskShareModel,
@@ -77,6 +81,29 @@ class DjangoOrmTaskQueryRepository(TaskQueryRepository):
             total=total,
             page=input_dto.page,
             page_size=input_dto.page_size,
+        )
+
+    def list_task_shares(self, input_dto: ListTaskSharesInput) -> ListedTaskShares:
+        if not TaskModel.objects.filter(
+            id=input_dto.task_id,
+            owner_user_id=input_dto.user_id,
+        ).exists():
+            raise TaskNotFoundError("task was not found")
+
+        return ListedTaskShares(
+            items=[
+                CreatedTaskShare(
+                    id=share.id,
+                    shared_with_user_id=share.shared_with_user.id,
+                    permission=share.permission,
+                    created_at=share.created_at.isoformat(),
+                )
+                for share in TaskShareModel.objects.select_related(
+                    "shared_with_user"
+                )
+                .filter(task_id=input_dto.task_id)
+                .order_by("created_at")
+            ]
         )
 
     def _apply_scope(self, queryset, input_dto: ListTasksInput):
