@@ -60,7 +60,17 @@ export function mapRegisterUserError(error: unknown): MappedRegisterUserError {
           ? detail[0]?.code || detail[0]?.type || null
           : detail?.code || null;
 
-    if (detailCode === 'user_already_exists') {
+    const detailMessage =
+      typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? detail[0]?.message || detail[0]?.msg || ''
+          : detail?.message || '';
+
+    if (
+      detailCode === 'user_already_exists' ||
+      detailMessage === 'user with this email already exists'
+    ) {
       mapped.fieldErrorMessages.email = ['This email is already registered.'];
       mapped.formError = '';
       return mapped;
