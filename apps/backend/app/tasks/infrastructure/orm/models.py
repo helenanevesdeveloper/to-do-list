@@ -30,13 +30,6 @@ class TaskCategoryModel(models.Model):
                 name="uq_task_categories_owner_name",
             )
         ]
-        indexes = [
-            models.Index(
-                fields=["owner_user"],
-                include=["id", "name", "color", "updated_at"],
-                name="idx_task_cat_owner_user",
-            )
-        ]
 
 
 class TaskModel(models.Model):
@@ -116,11 +109,6 @@ class TaskShareModel(models.Model):
             ),
         ]
         indexes = [
-            models.Index(
-                fields=["task"],
-                include=["shared_with_user", "permission", "created_at"],
-                name="idx_task_shares_task",
-            ),
             models.Index(
                 fields=["shared_with_user", "-created_at"],
                 include=["task", "permission"],

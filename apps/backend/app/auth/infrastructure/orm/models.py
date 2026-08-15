@@ -27,13 +27,3 @@ class AuthSessionModel(models.Model):
 
     class Meta:
         db_table = "auth_sessions"
-        indexes = [
-            models.Index(
-                fields=["user"],
-                name="idx_auth_sessions_user_id",
-            ),
-            models.Index(
-                fields=["revoked_at"],
-                name="idx_auth_sessions_revoked_at",
-            ),
-        ]
