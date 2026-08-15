@@ -35,7 +35,10 @@ def repository(database_url: str) -> PostgresSessionRepository:
 
 
 @pytest.fixture
-def created_session_ids(database_url: str) -> Iterator[list[str]]:
+def created_session_ids(
+    database_url: str,
+    created_user_ids: list[str],
+) -> Iterator[list[str]]:
     session_ids: list[str] = []
     yield session_ids
 
