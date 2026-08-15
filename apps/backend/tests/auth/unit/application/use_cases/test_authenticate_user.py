@@ -1,7 +1,7 @@
 """Unit tests for the authenticate-user use case."""
 
-from dataclasses import dataclass
 from datetime import UTC, datetime
+from unittest.mock import Mock
 
 import pytest
 
@@ -13,99 +13,46 @@ from app.auth.application.use_cases.authenticate_user import (
 )
 from app.auth.domain.entities.auth_session import AuthSession
 from app.auth.domain.entities.user import User
-from app.shared.exceptions import InactiveUserError, InvalidCredentialsError
 from app.auth.domain.value_objects.email import Email
+from app.shared.exceptions import InactiveUserError, InvalidCredentialsError
 
 
-@dataclass
-class FakeUserRepository:
-    user: User | None = None
-    last_email_lookup: Email | None = None
-
-    def find_by_id(self, user_id: str) -> User | None:
-        return None
-
-    def find_by_email(self, email: Email) -> User | None:
-        self.last_email_lookup = email
-        return self.user
-
-    def save(self, user: User) -> User:
-        return user
+def build_user_repository(user: User | None) -> Mock:
+    repository = Mock()
+    repository.find_by_email.return_value = user
+    return repository
 
 
-@dataclass
-class FakePasswordHasher:
-    verify_result: bool = True
-    calls: list[tuple[str, str]] | None = None
-
-    def __post_init__(self) -> None:
-        if self.calls is None:
-            self.calls = []
-
-    def hash(self, password: str) -> str:
-        return f"hashed::{password}"
-
-    def verify(self, password: str, encoded_hash: str) -> bool:
-        assert self.calls is not None
-        self.calls.append((password, encoded_hash))
-        return self.verify_result
+def build_password_hasher(*, verify_result: bool = True) -> Mock:
+    password_hasher = Mock()
+    password_hasher.verify.return_value = verify_result
+    return password_hasher
 
 
-@dataclass
-class FakeSessionRepository:
-    saved_sessions: list[AuthSession] | None = None
-
-    def __post_init__(self) -> None:
-        if self.saved_sessions is None:
-            self.saved_sessions = []
-
-    def find_by_id(self, session_id: str) -> AuthSession | None:
-        assert self.saved_sessions is not None
-        for session in self.saved_sessions:
-            if session.id == session_id:
-                return session
-        return None
-
-    def save(self, session: AuthSession) -> AuthSession:
-        assert self.saved_sessions is not None
-        self.saved_sessions.append(session)
-        return session
-
-    def revoke(
-        self,
-        session_id: str,
-        revoked_at: datetime,
-    ) -> AuthSession | None:
-        return None
+def build_session_repository() -> Mock:
+    repository = Mock()
+    repository.save.side_effect = lambda session: session
+    return repository
 
 
-@dataclass
-class FakeAccessTokenIssuer:
-    issued_tokens: list[tuple[str, str]] | None = None
-    token: str = "access-token"
-
-    def __post_init__(self) -> None:
-        if self.issued_tokens is None:
-            self.issued_tokens = []
-
-    def issue(self, subject: str, session_id: str) -> str:
-        assert self.issued_tokens is not None
-        self.issued_tokens.append((subject, session_id))
-        return self.token
+def build_access_token_issuer(*, token: str = "access-token") -> Mock:
+    issuer = Mock()
+    issuer.issue.return_value = token
+    return issuer
 
 
 def test_authenticates_user_successfully() -> None:
-    repository = FakeUserRepository(
-        user=User(
+    repository = build_user_repository(
+        User(
             id="user-123",
             email=Email("user@example.com"),
             password_hash="stored-hash",
             created_at=datetime(2026, 3, 4, 10, 30, tzinfo=UTC),
         )
     )
-    password_hasher = FakePasswordHasher(verify_result=True)
-    session_repository = FakeSessionRepository()
-    access_token_issuer = FakeAccessTokenIssuer(token="access-token")
+    password_hasher = build_password_hasher(verify_result=True)
+    session_repository = build_session_repository()
+    access_token_issuer = build_access_token_issuer(token="access-token")
     use_case = AuthenticateUserUseCase(
         user_repository=repository,
         session_repository=session_repository,
@@ -123,27 +70,27 @@ def test_authenticates_user_successfully() -> None:
         )
     )
 
-    assert repository.last_email_lookup == Email("user@example.com")
-    assert password_hasher.calls == [("StrongPass1", "stored-hash")]
-    assert access_token_issuer.issued_tokens == [("user-123", "session-123")]
-    assert session_repository.saved_sessions == [
+    repository.find_by_email.assert_called_once_with(Email("user@example.com"))
+    password_hasher.verify.assert_called_once_with("StrongPass1", "stored-hash")
+    access_token_issuer.issue.assert_called_once_with("user-123", "session-123")
+    assert session_repository.save.call_args.args == (
         AuthSession(
             id="session-123",
             user_id="user-123",
             created_at=datetime(2026, 3, 4, 11, 0, tzinfo=UTC),
             expires_at=datetime(2026, 3, 4, 11, 15, tzinfo=UTC),
-        )
-    ]
+        ),
+    )
     assert result.access_token == "access-token"
     assert result.token_type == "Bearer"
     assert result.email == "user@example.com"
 
 
 def test_raises_for_unknown_email() -> None:
-    repository = FakeUserRepository(user=None)
-    password_hasher = FakePasswordHasher()
-    session_repository = FakeSessionRepository()
-    access_token_issuer = FakeAccessTokenIssuer(token="unused-token")
+    repository = build_user_repository(None)
+    password_hasher = build_password_hasher()
+    session_repository = build_session_repository()
+    access_token_issuer = build_access_token_issuer(token="unused-token")
     use_case = AuthenticateUserUseCase(
         user_repository=repository,
         session_repository=session_repository,
@@ -161,23 +108,23 @@ def test_raises_for_unknown_email() -> None:
             )
         )
 
-    assert password_hasher.calls == []
-    assert session_repository.saved_sessions == []
-    assert access_token_issuer.issued_tokens == []
+    password_hasher.verify.assert_not_called()
+    session_repository.save.assert_not_called()
+    access_token_issuer.issue.assert_not_called()
 
 
 def test_raises_for_invalid_password() -> None:
-    repository = FakeUserRepository(
-        user=User(
+    repository = build_user_repository(
+        User(
             id="user-123",
             email=Email("user@example.com"),
             password_hash="stored-hash",
             created_at=datetime(2026, 3, 4, 10, 30, tzinfo=UTC),
         )
     )
-    password_hasher = FakePasswordHasher(verify_result=False)
-    session_repository = FakeSessionRepository()
-    access_token_issuer = FakeAccessTokenIssuer(token="unused-token")
+    password_hasher = build_password_hasher(verify_result=False)
+    session_repository = build_session_repository()
+    access_token_issuer = build_access_token_issuer(token="unused-token")
     use_case = AuthenticateUserUseCase(
         user_repository=repository,
         session_repository=session_repository,
@@ -195,14 +142,14 @@ def test_raises_for_invalid_password() -> None:
             )
         )
 
-    assert password_hasher.calls == [("WrongPass1", "stored-hash")]
-    assert session_repository.saved_sessions == []
-    assert access_token_issuer.issued_tokens == []
+    password_hasher.verify.assert_called_once_with("WrongPass1", "stored-hash")
+    session_repository.save.assert_not_called()
+    access_token_issuer.issue.assert_not_called()
 
 
 def test_raises_for_inactive_user() -> None:
-    repository = FakeUserRepository(
-        user=User(
+    repository = build_user_repository(
+        User(
             id="user-123",
             email=Email("user@example.com"),
             password_hash="stored-hash",
@@ -210,9 +157,9 @@ def test_raises_for_inactive_user() -> None:
             is_active=False,
         )
     )
-    password_hasher = FakePasswordHasher(verify_result=True)
-    session_repository = FakeSessionRepository()
-    access_token_issuer = FakeAccessTokenIssuer(token="unused-token")
+    password_hasher = build_password_hasher(verify_result=True)
+    session_repository = build_session_repository()
+    access_token_issuer = build_access_token_issuer(token="unused-token")
     use_case = AuthenticateUserUseCase(
         user_repository=repository,
         session_repository=session_repository,
@@ -228,6 +175,6 @@ def test_raises_for_inactive_user() -> None:
             )
         )
 
-    assert password_hasher.calls == [("StrongPass1", "stored-hash")]
-    assert session_repository.saved_sessions == []
-    assert access_token_issuer.issued_tokens == []
+    password_hasher.verify.assert_called_once_with("StrongPass1", "stored-hash")
+    session_repository.save.assert_not_called()
+    access_token_issuer.issue.assert_not_called()

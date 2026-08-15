@@ -1,7 +1,7 @@
 """Unit tests for the logout use case."""
 
-from dataclasses import dataclass
 from datetime import UTC, datetime
+from unittest.mock import Mock
 
 import pytest
 
@@ -14,44 +14,30 @@ from app.shared.exceptions import (
 )
 
 
-@dataclass
-class FakeSessionRepository:
-    session: AuthSession | None = None
-    revoked_calls: list[tuple[str, datetime]] | None = None
+def build_session_repository(session: AuthSession | None) -> Mock:
+    repository = Mock()
+    repository.session = session
 
-    def __post_init__(self) -> None:
-        if self.revoked_calls is None:
-            self.revoked_calls = []
-
-    def find_by_id(self, session_id: str) -> AuthSession | None:
-        if self.session is None:
+    def find_by_id(session_id: str) -> AuthSession | None:
+        if repository.session is None or repository.session.id != session_id:
             return None
-        if self.session.id != session_id:
-            return None
-        return self.session
+        return repository.session
 
-    def save(self, session: AuthSession) -> AuthSession:
-        self.session = session
-        return session
-
-    def revoke(
-        self,
-        session_id: str,
-        revoked_at: datetime,
-    ) -> AuthSession | None:
-        assert self.revoked_calls is not None
-        self.revoked_calls.append((session_id, revoked_at))
-
-        if self.session is None or self.session.id != session_id:
+    def revoke(session_id: str, revoked_at: datetime) -> AuthSession | None:
+        if repository.session is None or repository.session.id != session_id:
             return None
 
-        self.session.revoked_at = revoked_at
-        return self.session
+        repository.session.revoked_at = revoked_at
+        return repository.session
+
+    repository.find_by_id.side_effect = find_by_id
+    repository.revoke.side_effect = revoke
+    return repository
 
 
 def test_logout_revokes_active_session() -> None:
-    repository = FakeSessionRepository(
-        session=AuthSession(
+    repository = build_session_repository(
+        AuthSession(
             id="session-123",
             user_id="user-123",
             created_at=datetime(2026, 3, 30, 10, 0, tzinfo=UTC),
@@ -65,9 +51,10 @@ def test_logout_revokes_active_session() -> None:
 
     use_case.execute(LogoutInput(session_id="session-123"))
 
-    assert repository.revoked_calls == [
-        ("session-123", datetime(2026, 3, 30, 10, 5, tzinfo=UTC))
-    ]
+    repository.revoke.assert_called_once_with(
+        session_id="session-123",
+        revoked_at=datetime(2026, 3, 30, 10, 5, tzinfo=UTC),
+    )
     assert repository.session is not None
     assert repository.session.revoked_at == datetime(
         2026, 3, 30, 10, 5, tzinfo=UTC
@@ -75,18 +62,18 @@ def test_logout_revokes_active_session() -> None:
 
 
 def test_logout_raises_when_session_does_not_exist() -> None:
-    repository = FakeSessionRepository(session=None)
+    repository = build_session_repository(None)
     use_case = LogoutUseCase(session_repository=repository)
 
     with pytest.raises(SessionNotFoundError, match="session was not found"):
         use_case.execute(LogoutInput(session_id="missing-session"))
 
-    assert repository.revoked_calls == []
+    repository.revoke.assert_not_called()
 
 
 def test_logout_raises_when_session_is_already_revoked() -> None:
-    repository = FakeSessionRepository(
-        session=AuthSession(
+    repository = build_session_repository(
+        AuthSession(
             id="session-123",
             user_id="user-123",
             created_at=datetime(2026, 3, 30, 10, 0, tzinfo=UTC),
@@ -102,4 +89,4 @@ def test_logout_raises_when_session_is_already_revoked() -> None:
     ):
         use_case.execute(LogoutInput(session_id="session-123"))
 
-    assert repository.revoked_calls == []
+    repository.revoke.assert_not_called()

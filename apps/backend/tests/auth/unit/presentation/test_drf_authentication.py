@@ -1,7 +1,7 @@
 """Unit tests for the DRF JWT authentication adapter."""
 
-from dataclasses import dataclass
 from datetime import UTC, datetime
+from unittest.mock import Mock
 
 import pytest
 from rest_framework.exceptions import AuthenticationFailed
@@ -12,51 +12,33 @@ from app.auth.domain.value_objects import Email
 from app.auth.presentation.drf_authentication import JwtAuthentication
 
 
-@dataclass
-class FakeAccessTokenDecoder:
-    user_id: str = "user-123"
-    session_id: str = "session-456"
-    error: Exception | None = None
-    tokens: list[str] | None = None
+def build_access_token_decoder(
+    *,
+    user_id: str = "user-123",
+    session_id: str = "session-456",
+    error: Exception | None = None,
+) -> Mock:
+    decoder = Mock()
 
-    def __post_init__(self) -> None:
-        if self.tokens is None:
-            self.tokens = []
+    def get_user_id(token: str) -> str:
+        if error is not None:
+            raise error
+        return user_id
 
-    def get_user_id(self, token: str) -> str:
-        assert self.tokens is not None
-        self.tokens.append(token)
-        if self.error is not None:
-            raise self.error
-        return self.user_id
+    def get_session_id(token: str) -> str:
+        if error is not None:
+            raise error
+        return session_id
 
-    def get_session_id(self, token: str) -> str:
-        assert self.tokens is not None
-        self.tokens.append(token)
-        if self.error is not None:
-            raise self.error
-        return self.session_id
+    decoder.get_user_id.side_effect = get_user_id
+    decoder.get_session_id.side_effect = get_session_id
+    return decoder
 
 
-@dataclass
-class FakeUserRepository:
-    user: User | None = None
-    looked_up_user_ids: list[str] | None = None
-
-    def __post_init__(self) -> None:
-        if self.looked_up_user_ids is None:
-            self.looked_up_user_ids = []
-
-    def find_by_id(self, user_id: str) -> User | None:
-        assert self.looked_up_user_ids is not None
-        self.looked_up_user_ids.append(user_id)
-        return self.user
-
-    def find_by_email(self, email: Email) -> User | None:
-        return None
-
-    def save(self, user: User) -> User:
-        return user
+def build_user_repository(user: User | None = None) -> Mock:
+    repository = Mock()
+    repository.find_by_id.return_value = user
+    return repository
 
 
 def test_returns_none_when_authorization_header_is_missing() -> None:
@@ -85,12 +67,12 @@ def test_returns_authenticated_user_and_auth_context_for_valid_token() -> None:
         "/api/tasks/",
         HTTP_AUTHORIZATION="Bearer valid-access-token",
     )
-    decoder = FakeAccessTokenDecoder(
+    decoder = build_access_token_decoder(
         user_id="user-123",
         session_id="session-456",
     )
-    repository = FakeUserRepository(
-        user=User(
+    repository = build_user_repository(
+        User(
             id="user-123",
             email=Email("user@example.com"),
             password_hash="stored-hash",
@@ -118,8 +100,9 @@ def test_returns_authenticated_user_and_auth_context_for_valid_token() -> None:
     assert auth_context.user_id == "user-123"
     assert auth_context.session_id == "session-456"
     assert auth_context.access_token == "valid-access-token"
-    assert decoder.tokens == ["valid-access-token", "valid-access-token"]
-    assert repository.looked_up_user_ids == ["user-123"]
+    decoder.get_user_id.assert_called_once_with("valid-access-token")
+    decoder.get_session_id.assert_called_once_with("valid-access-token")
+    repository.find_by_id.assert_called_once_with("user-123")
 
 
 def test_raises_when_bearer_token_is_missing() -> None:
@@ -138,10 +121,10 @@ def test_raises_when_token_is_invalid() -> None:
         "/api/tasks/",
         HTTP_AUTHORIZATION="Bearer invalid-access-token",
     )
-    decoder = FakeAccessTokenDecoder(error=ValueError("bad token"))
+    decoder = build_access_token_decoder(error=ValueError("bad token"))
     authentication = JwtAuthentication(
         decoder=decoder,
-        user_repository=FakeUserRepository(),
+        user_repository=build_user_repository(),
     )
 
     with pytest.raises(AuthenticationFailed, match="invalid access token"):
@@ -153,8 +136,8 @@ def test_raises_when_token_user_cannot_be_found() -> None:
         "/api/tasks/",
         HTTP_AUTHORIZATION="Bearer valid-access-token",
     )
-    decoder = FakeAccessTokenDecoder(user_id="user-404")
-    repository = FakeUserRepository(user=None)
+    decoder = build_access_token_decoder(user_id="user-404")
+    repository = build_user_repository(None)
     authentication = JwtAuthentication(
         decoder=decoder,
         user_repository=repository,
@@ -163,7 +146,7 @@ def test_raises_when_token_user_cannot_be_found() -> None:
     with pytest.raises(AuthenticationFailed, match="user is not authenticated"):
         authentication.authenticate(request)
 
-    assert repository.looked_up_user_ids == ["user-404"]
+    repository.find_by_id.assert_called_once_with("user-404")
 
 
 def test_raises_when_token_user_is_inactive() -> None:
@@ -171,9 +154,9 @@ def test_raises_when_token_user_is_inactive() -> None:
         "/api/tasks/",
         HTTP_AUTHORIZATION="Bearer valid-access-token",
     )
-    decoder = FakeAccessTokenDecoder()
-    repository = FakeUserRepository(
-        user=User(
+    decoder = build_access_token_decoder()
+    repository = build_user_repository(
+        User(
             id="user-123",
             email=Email("user@example.com"),
             password_hash="stored-hash",
