@@ -9,8 +9,7 @@ from app.auth.domain.entities import User
 from app.auth.infrastructure.repositories.postgres_user_repository import (
     PostgresUserRepository,
 )
-
-from .dependencies import get_access_token_decoder, get_user_repository
+from app.container import build_container
 
 
 @dataclass(slots=True, frozen=True)
@@ -80,7 +79,7 @@ class JwtAuthentication(BaseAuthentication):
             raise AuthenticationFailed("invalid access token")
 
         token = auth_header[1].decode("utf-8")
-        decoder = self._decoder or get_access_token_decoder()
+        decoder = self._decoder or build_container().access_token_decoder
 
         try:
             user_id = decoder.get_user_id(token)
@@ -88,7 +87,7 @@ class JwtAuthentication(BaseAuthentication):
         except (ValueError, jwt.InvalidTokenError) as exc:
             raise AuthenticationFailed("invalid access token") from exc
 
-        user_repository = self._user_repository or get_user_repository()
+        user_repository = self._user_repository or build_container().user_repository
         domain_user = user_repository.find_by_id(user_id)
         if domain_user is None:
             raise AuthenticationFailed("user is not authenticated")

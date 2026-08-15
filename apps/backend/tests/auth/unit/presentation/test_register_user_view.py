@@ -1,5 +1,6 @@
 """Unit tests for the register-user API view."""
 
+from types import SimpleNamespace
 from unittest.mock import Mock
 
 from app.auth.application.dto.register_user_input import RegisterUserInput
@@ -14,7 +15,11 @@ def test_register_user_returns_conflict_when_email_already_exists(
     use_case.execute.side_effect = UserAlreadyExistsError(
         "user with this email already exists"
     )
-    monkeypatch.setattr(views, "get_register_user_use_case", lambda: use_case)
+    monkeypatch.setattr(
+        views,
+        "build_container",
+        lambda: SimpleNamespace(register_user_use_case=use_case),
+    )
 
     response = client.post(
         "/api/auth/register",

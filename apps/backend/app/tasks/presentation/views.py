@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from typing import cast
 
+from app.container import build_container
 from app.shared.http import AuthenticatedAPIView
 from app.tasks.application.dto.list_task_categories_input import (
     ListTaskCategoriesInput,
@@ -16,19 +17,6 @@ from app.tasks.application.dto.delete_task_categories_input import (
 from app.tasks.application.dto.list_task_shares_input import ListTaskSharesInput
 from app.tasks.application.dto.delete_task_share_input import DeleteTaskShareInput
 
-from .dependencies import (
-    get_create_task_category_use_case,
-    get_create_task_share_use_case,
-    get_create_tasks_use_case,
-    get_delete_task_categories_use_case,
-    get_delete_task_share_use_case,
-    get_delete_tasks_use_case,
-    get_list_task_shares_use_case,
-    get_list_task_categories_use_case,
-    get_list_tasks_use_case,
-    get_update_task_category_use_case,
-    get_update_task_use_case,
-)
 from .serializers import (
     TaskCategoryCreateRequestSerializer,
     TaskCategoryItemResponseSerializer,
@@ -63,7 +51,7 @@ class TaskListView(AuthenticatedAPIView):
         )
         query.is_valid(raise_exception=True)
 
-        use_case = get_list_tasks_use_case()
+        use_case = build_container().list_tasks_use_case
         result = use_case.execute(query.to_dto(user_id=request.user.id))
         payload = {
             "count": result.total,
@@ -86,7 +74,7 @@ class TaskListView(AuthenticatedAPIView):
         )
         payload.is_valid(raise_exception=True)
 
-        use_case = get_create_tasks_use_case()
+        use_case = build_container().create_tasks_use_case
         result = use_case.execute(payload.to_dto(user_id=request.user.id))
         response_body = {
             "count": len(result.items),
@@ -110,7 +98,7 @@ class TaskListView(AuthenticatedAPIView):
         )
         payload.is_valid(raise_exception=True)
 
-        use_case = get_delete_tasks_use_case()
+        use_case = build_container().delete_tasks_use_case
         result = use_case.execute(payload.to_dto(user_id=request.user.id))
         return Response(
             TaskDeleteResponseSerializer(
@@ -162,7 +150,7 @@ class TaskCategoryListView(AuthenticatedAPIView):
         description="List task categories",
     )
     def get(self, request):
-        use_case = get_list_task_categories_use_case()
+        use_case = build_container().list_task_categories_use_case
         result = use_case.execute(ListTaskCategoriesInput(user_id=request.user.id))
         payload = {
             "count": len(result.items),
@@ -184,7 +172,7 @@ class TaskCategoryListView(AuthenticatedAPIView):
         )
         payload.is_valid(raise_exception=True)
 
-        use_case = get_create_task_category_use_case()
+        use_case = build_container().create_task_category_use_case
         result = use_case.execute(payload.to_dto(user_id=request.user.id))
         return Response(
             TaskCategoryItemResponseSerializer(asdict(result)).data,
@@ -208,7 +196,7 @@ class TaskDetailView(AuthenticatedAPIView):
         )
         payload.is_valid(raise_exception=True)
 
-        use_case = get_update_task_use_case()
+        use_case = build_container().update_task_use_case
         result = use_case.execute(
             payload.to_dto(
                 user_id=request.user.id,
@@ -234,7 +222,7 @@ class TaskCategoryDetailView(AuthenticatedAPIView):
         )
         payload.is_valid(raise_exception=True)
 
-        use_case = get_update_task_category_use_case()
+        use_case = build_container().update_task_category_use_case
         result = use_case.execute(
             payload.to_dto(
                 user_id=request.user.id,
@@ -250,7 +238,7 @@ class TaskCategoryDetailView(AuthenticatedAPIView):
         description="Delete one task category",
     )
     def delete(self, request, category_id: str):
-        use_case = get_delete_task_categories_use_case()
+        use_case = build_container().delete_task_categories_use_case
         use_case.execute(
             DeleteTaskCategoriesInput(
                 user_id=request.user.id,
@@ -270,7 +258,7 @@ class TaskShareListView(AuthenticatedAPIView):
         description="List shares for a task",
     )
     def get(self, request, task_id: str):
-        use_case = get_list_task_shares_use_case()
+        use_case = build_container().list_task_shares_use_case
         result = use_case.execute(
             ListTaskSharesInput(
                 user_id=request.user.id,
@@ -302,7 +290,7 @@ class TaskShareListView(AuthenticatedAPIView):
         )
         payload.is_valid(raise_exception=True)
 
-        use_case = get_create_task_share_use_case()
+        use_case = build_container().create_task_share_use_case
         result = use_case.execute(
             payload.to_dto(
                 user_id=request.user.id,
@@ -324,7 +312,7 @@ class TaskShareDetailView(AuthenticatedAPIView):
         description="Remove a user from the task access list",
     )
     def delete(self, request, task_id: str, share_id: str):
-        use_case = get_delete_task_share_use_case()
+        use_case = build_container().delete_task_share_use_case
         use_case.execute(
             DeleteTaskShareInput(
                 user_id=request.user.id,
