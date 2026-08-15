@@ -1,8 +1,10 @@
 """Unit tests for the task list API view."""
 
 from types import SimpleNamespace
+from typing import Any, cast
 from unittest.mock import Mock
 
+from django.contrib.auth import get_user_model
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from app.tasks.application.dto.list_tasks_input import ListTasksInput
@@ -53,16 +55,17 @@ def test_task_list_view_applies_filters_and_builds_pagination_links(
     request = APIRequestFactory().get(
         "/api/tasks/",
         {
-            "page": 2,
-            "page_size": 2,
+            "page": "2",
+            "page_size": "2",
             "scope": "all",
             "is_completed": "true",
             "category_id": "cat-1",
         },
     )
+    user = get_user_model()(id=cast(Any, "user-123"), username="task-owner")
     force_authenticate(
         request,
-        user=SimpleNamespace(id="user-123", is_authenticated=True),
+        user=user,
     )
 
     response = TaskListView.as_view()(request)
